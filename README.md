@@ -1,22 +1,12 @@
 # 🚀 InternHub
 
-> **InternHub** is a smart internship management platform designed to streamline the internship process by connecting students, companies, teachers, and administrators within a centralized and intelligent web application.
-
-
-
----
-
-## 📖 About
-
-InternHub is a web platform developed as a **3rd Year Engineering Project (PFE)** at **ENSI**.
-
-The platform digitizes the internship management process by providing dedicated workspaces for students, companies, teachers, and administrators. It also integrates Artificial Intelligence features to improve internship matching, automate repetitive tasks, and enhance the overall user experience.
+> **InternHub** is a smart internship management platform designed to streamline the internship process by connecting interns, companies, companies supervisors , and administrators within a centralized and intelligent web application.
 
 ---
 
 ## ✨ Features
 
-### 👨‍🎓 Student Portal
+### 👨‍🎓 Intern Portal
 - Secure authentication
 - Personal dashboard
 - Browse internship offers
@@ -31,7 +21,7 @@ The platform digitizes the internship management process by providing dedicated 
 - Review applications
 - Manage candidates
 
-### 👨‍🏫 Teacher Portal
+### 👨‍🏫 Company supervisor Portal
 - Supervise students
 - Validate internships
 - Monitor internship progress
@@ -142,8 +132,8 @@ feature/*
 ### Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/internhub.git
-cd internhub
+git clone https://github.com/YOUR_USERNAME/internhub-platform.git
+cd internhub-platform
 ```
 
 ### Start Docker
