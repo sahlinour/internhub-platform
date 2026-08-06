@@ -1,39 +1,43 @@
 # 🚀 InternHub
 
-**InternHub** is a Smart Internship Management Platform developed as a third-year engineering project at ENSI. The platform streamlines the internship management process by connecting students, companies, teachers, and administrators in a single digital ecosystem.
+> **InternHub** is a smart internship management platform designed to streamline the internship process by connecting students, companies, teachers, and administrators within a centralized and intelligent web application.
+
+
 
 ---
 
-## 📖 Overview
+## 📖 About
 
-InternHub simplifies every stage of internship management, from publishing internship offers to tracking applications and evaluating internships. It also integrates Artificial Intelligence features to enhance the user experience and automate repetitive tasks.
+InternHub is a web platform developed as a **3rd Year Engineering Project (PFE)** at **ENSI**.
+
+The platform digitizes the internship management process by providing dedicated workspaces for students, companies, teachers, and administrators. It also integrates Artificial Intelligence features to improve internship matching, automate repetitive tasks, and enhance the overall user experience.
 
 ---
 
 ## ✨ Features
 
-### 👨‍🎓 Student
+### 👨‍🎓 Student Portal
 - Secure authentication
 - Personal dashboard
-- Internship search and filtering
-- Internship applications
-- CV upload and management
-- Application tracking
-- Notifications
+- Browse internship offers
+- Apply for internships
+- Upload and manage CVs
+- Track applications
+- Receive notifications
 
-### 🏢 Company
+### 🏢 Company Portal
 - Company profile management
-- Internship offer publication
-- Candidate management
-- Application review
+- Publish internship opportunities
+- Review applications
+- Manage candidates
 
-### 👨‍🏫 Teacher
-- Student supervision
-- Internship validation
-- Progress monitoring
-- Evaluation management
+### 👨‍🏫 Teacher Portal
+- Supervise students
+- Validate internships
+- Monitor internship progress
+- Evaluate students
 
-### 👨‍💼 Administrator
+### 👨‍💼 Administration
 - User management
 - Internship management
 - Dashboard & analytics
@@ -51,25 +55,24 @@ InternHub simplifies every stage of internship management, from publishing inter
 ## 🛠️ Tech Stack
 
 ### Frontend
-- Vue.js
+- Vue.js 
 - Tailwind CSS
 - Vite
 
 ### Backend
-- Laravel
-- PHP
+- Laravel 
+- PHP 
 
 ### Database
 - PostgreSQL
 
 ### DevOps
 - Docker
-- Git
-- GitHub
+- Git & GitHub
 
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```
 internhub/
@@ -80,76 +83,141 @@ internhub/
 ├── docker/
 ├── docs/
 ├── .github/
+│   └── workflows/
+│
 ├── docker-compose.yml
 ├── README.md
-└── LICENSE
+├── LICENSE
+└── .gitignore
 ```
 
 ---
 
-## 🚀 Installation
+## 🌿 Git Branching Strategy
 
-Clone the repository:
+InternHub follows a simplified **Git Flow** workflow.
+
+### Main Branches
+
+| Branch | Purpose |
+|---------|---------|
+| `main` | Stable production-ready version |
+| `develop` | Main development branch |
+
+### Feature Branches
+
+- `feature/authentication`
+- `feature/student-module`
+- `feature/company-module`
+- `feature/teacher-module`
+- `feature/admin-module`
+- `feature/ai-features`
+- `feature/frontend-ui`
+- `feature/devops`
+- `feature/notifications`
+- `feature/reports`
+
+### Release & Maintenance
+
+- `release/v1.0.0`
+- `hotfix/*`
+- `docs/*`
+
+### Workflow
+
+```
+feature/*
+      ↓
+   develop
+      ↓
+ release/*
+      ↓
+     main
+```
+
+---
+
+## 🚀 Getting Started
+
+### Clone the repository
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/internhub.git
-```
-
-Navigate to the project:
-
-```bash
 cd internhub
 ```
 
-Start Docker:
+### Start Docker
 
 ```bash
 docker compose up -d
 ```
 
-Install backend dependencies:
+### Backend
 
 ```bash
 composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
 ```
 
-Install frontend dependencies:
+### Frontend
 
 ```bash
 npm install
-```
-
-Run database migrations:
-
-```bash
-php artisan migrate
-```
-
-Start the development server:
-
-```bash
-php artisan serve
+npm run dev
 ```
 
 ---
 
 ## 👥 Team
 
-- **Nour El Houda Sahli** — Project Manager & Full Stack Developer
-- **Wisal Nijad** — Full Stack Developer & DevOps Engineer
-- **Soukayna Zaidi** — Frontend Developer & Infrastructure Security Engineer
-- **Mohamed Reda Hachoum** — AI Engineer
-- **Ziad Chelouati** — Full Stack Developer & Application Security Engineer
-- **Moulay Youssef Bahedi** — Backend Developer & Quality Assurance Engineer
+| Member | Role |
+|--------|------|
+| **Nour El Houda Sahli** | Project Manager & Full Stack Developer |
+| **Wisal Nijad** | Full Stack Developer & DevOps Engineer |
+| **Soukayna Zaidi** | Frontend Developer & Infrastructure Security Engineer |
+| **Mohamed Reda Hachoum** | AI Engineer |
+| **Ziad Chelouati** | Full Stack Developer & Application Security Engineer |
+| **Moulay Youssef Bahedi** | Backend Developer & Quality Assurance Engineer |
 
 ---
 
-## 📌 Project Status
+## 📌 Roadmap
 
-🚧 Currently under development.
+- [x] Project planning
+- [x] Infrastructure setup
+- [ ] Authentication
+- [ ] Student Portal
+- [ ] Company Portal
+- [ ] Teacher Portal
+- [ ] Administration Module
+- [ ] AI Integration
+- [ ] Notification System
+- [ ] Reports & Analytics
+- [ ] Testing & Quality Assurance
+- [ ] Deployment
 
 ---
 
-## 📧 Contact
+## 🤝 Contributing
 
-For any questions or suggestions, feel free to open an issue or contact the development team.
+1. Create a new branch from `develop`.
+2. Implement your feature or bug fix.
+3. Commit your changes with clear commit messages.
+4. Open a Pull Request targeting `develop`.
+5. Wait for code review before merging.
+
+
+---
+
+
+
+For questions, suggestions, or bug reports, please open an **Issue** or contact one of the project contributors.
+
+---
+
+<p align="center">
+Developed with ❤️ by the InternHub Team
+</p>
