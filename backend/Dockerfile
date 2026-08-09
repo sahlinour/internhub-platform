@@ -1,0 +1,32 @@
+FROM php:8.3-cli
+
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
+# Copy Composer files first
+COPY composer.json composer.lock ./
+
+# Install dependencies without Laravel scripts
+RUN composer install \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts
+
+# Now copy the complete Laravel project
+COPY . .
+
+# Run Laravel Composer scripts now that artisan exists
+RUN php artisan package:discover --ansi
+
+EXPOSE 8000
+
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
