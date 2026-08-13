@@ -21,7 +21,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/var/www
+     - ./backend:/var/www
+     - backend_vendor:/var/www/vendor
     depends_on:
       - postgres
     environment:
@@ -57,6 +58,20 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: MyPgAdmin_2026@W
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -71,3 +86,5 @@ services:
 
 volumes:
   postgres_data:
+  pgadmin_data:
+  backend_vendor:
