@@ -3,6 +3,7 @@
 /backend/node_modules/
 /backend/.env
 /backend/.env.*
+!/backend/.env.example
 /backend/.phpunit.result.cache
 /backend/storage/*.key
 /backend/storage/app/public
@@ -18,6 +19,7 @@
 /frontend/dist/
 /frontend/.env
 /frontend/.env.*
+!/frontend/.env.example
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
@@ -31,6 +33,7 @@
 /fastapi/env/
 /fastapi/.env
 /fastapi/.env.*
+!/fastapi/.env.example
 
 # Docker
 /docker-compose.override.yml
