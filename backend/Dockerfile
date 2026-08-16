@@ -11,22 +11,23 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copy Composer files first
 COPY composer.json composer.lock ./
 
-# Install dependencies without Laravel scripts
 RUN composer install \
     --no-interaction \
     --prefer-dist \
     --optimize-autoloader \
     --no-scripts
 
-# Now copy the complete Laravel project
 COPY . .
 
-# Run Laravel Composer scripts now that artisan exists
 RUN php artisan package:discover --ansi
+
+# Laravel startup script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+ENTRYPOINT ["docker-entrypoint.sh"]
