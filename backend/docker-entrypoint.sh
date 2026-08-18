@@ -30,6 +30,17 @@ if ! grep -q "^APP_KEY=.\+" .env; then
     php artisan key:generate --force
 fi
 
+# Wait for the database to be ready before running migrations/cache cleanup
+until pg_isready -h postgres -U laravel_user -d laravel_db >/dev/null 2>&1; do
+    echo "Waiting for PostgreSQL to be ready..."
+    sleep 2
+done
+
+echo "PostgreSQL is ready!"
+
+# Run database migrations before cache cleanup so the cache table exists
+php artisan migrate --force
+
 # Clear Laravel cache
 php artisan optimize:clear
 
