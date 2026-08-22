@@ -2,48 +2,60 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'name',
+        'nom_complet',
         'email',
         'password',
+        'telephone',
+        'photo',
+        'role',
+        'etat',
+        'ville_id',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Ville de l'utilisateur
      */
-    protected function casts(): array
+    public function ville()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsTo(Ville::class, 'ville_id');
+    }
+
+    /**
+     * Profil stagiaire
+     */
+    public function stagiaire()
+    {
+        return $this->hasOne(Stagiaire::class, 'user_id');
+    }
+
+    /**
+     * Profil encadrant
+     */
+    public function encadrant()
+    {
+        return $this->hasOne(Encadrant::class, 'user_id');
+    }
+
+    /**
+     * Profil entreprise
+     */
+    public function entreprise()
+    {
+        return $this->hasOne(Entreprise::class, 'user_id');
     }
 }
