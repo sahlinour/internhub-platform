@@ -9,9 +9,10 @@ defineProps({
 defineEmits(['update:modelValue'])
 
 const roles = [
-  { value: 'student', label: 'Student' },
-  { value: 'employer', label: 'Employer' }
+  { value: 'Stagiaire', label: 'Intern' },
+  { value: 'Entreprise', label: 'Company' }
 ]
+
 </script>
 
 <template>

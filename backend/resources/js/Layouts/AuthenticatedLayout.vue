@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Shared/Dropdown.vue'
 import DropdownLink from '@/Components/Shared/DropdownLink.vue'
 import NavLink from '@/Components/Shared/NavLink.vue'
 import ResponsiveNavLink from '@/Components/Shared/ResponsiveNavLink.vue'
+import { router } from '@inertiajs/vue3'
 
 defineProps({
   role: {
@@ -12,7 +13,9 @@ defineProps({
     default: 'stagiaire' // stagiaire | encadrant | entreprise | admin
   }
 })
-
+const logout = () => {
+  router.post(route('logout'))
+}
 const showingMobileMenu = ref(false)
 </script>
 
@@ -42,7 +45,9 @@ const showingMobileMenu = ref(false)
               </template>
               <template #content>
                 <DropdownLink href="/profile">Profil</DropdownLink>
-                <DropdownLink href="/logout" as="button">Déconnexion</DropdownLink>
+                <button type="button" @click="logout" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none">
+                    Déconnexion
+                </button>
               </template>
             </Dropdown>
           </div>

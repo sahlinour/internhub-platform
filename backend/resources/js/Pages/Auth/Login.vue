@@ -6,6 +6,7 @@ import InputLabel from '@/Components/Shared/InputLabel.vue';
 import TextInput from '@/Components/Shared/TextInput.vue'
 import InputError from '@/Components/Shared/InputError.vue'
 import Checkbox from '@/Components/Shared/Checkbox.vue'
+import PrimaryButton from '@/Components/Shared/PrimaryButton.vue'
 
 defineProps({
   status: {

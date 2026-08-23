@@ -7,14 +7,29 @@ import InputLabel from '@/Components/Shared/InputLabel.vue';
 import TextInput from '@/Components/Shared/TextInput.vue'
 import InputError from '@/Components/Shared/InputError.vue';
 import Checkbox from '@/Components/Shared/Checkbox.vue'
+import PrimaryButton from '@/Components/Shared/PrimaryButton.vue'
 
 const form = useForm({
-  role: 'student',
+  role: 'Stagiaire',
   name: '',
   email: '',
+  ville_id: '',
+
+  secteur: '',
+  adresse: '',
+  site_web: '',
+  description: '',
+
   password: '',
   password_confirmation: '',
   terms: false
+})
+
+const props = defineProps({
+  villes: {
+    type: Array,
+    default: () => []
+  }
 })
 
 const submit = () => {
@@ -72,16 +87,138 @@ const submit = () => {
           />
           <InputError :message="form.errors.email" class="field-error" />
 
-          <InputLabel for="password" value="Password" class="field-label" />
-          <TextInput
+        <InputLabel for="ville_id" value="City"  class="field-label"/>
+   <select id="ville_id" v-model="form.ville_id" class="field-input">
+   <option value="" disabled>Select your city</option>
+   <option v-for="ville in props.villes" :key="ville.id" :value="ville.id">
+    {{ ville.nom }}
+   </option>
+   </select>
+
+<InputError
+  :message="form.errors.ville_id"
+  class="field-error"
+/>
+
+
+<template v-if="form.role === 'Entreprise'">
+  <InputLabel
+    for="secteur"
+    value="Industry"
+    class="field-label"
+  />
+
+  <TextInput
+    id="secteur"
+    v-model="form.secteur"
+    type="text"
+    placeholder="e.g. Information Technology"
+    class="field-input"
+  />
+
+  <InputError
+    :message="form.errors.secteur"
+    class="field-error"
+  />
+
+  <InputLabel
+    for="adresse"
+    value="Address"
+    class="field-label"
+  />
+
+  <TextInput
+    id="adresse"
+    v-model="form.adresse"
+    type="text"
+    placeholder="Company address"
+    class="field-input"
+  />
+
+  <InputError
+    :message="form.errors.adresse"
+    class="field-error"
+  />
+
+  <InputLabel
+    for="site_web"
+    value="Website"
+    class="field-label"
+  />
+
+  <TextInput
+    id="site_web"
+    v-model="form.site_web"
+    type="url"
+    placeholder="https://www.company.com"
+    class="field-input"
+  />
+
+  <InputError
+    :message="form.errors.site_web"
+    class="field-error"
+  />
+
+  <InputLabel
+    for="description"
+    value="Company Description"
+    class="field-label"
+  />
+
+  <textarea
+    id="description"
+    v-model="form.description"
+    class="field-input textarea-input"
+    placeholder="Tell us about your company..."
+    rows="4"
+  ></textarea>
+
+  <InputError
+    :message="form.errors.description"
+    class="field-error"
+  />
+</template>
+
+
+
+
+
+
+
+
+
+         <InputLabel for="password" value="Password" class="field-label" />
+
+            <TextInput
             id="password"
             v-model="form.password"
             type="password"
             placeholder="••••••••••••"
             class="field-input"
             autocomplete="new-password"
-          />
-          <InputError :message="form.errors.password" class="field-error" />
+            />
+
+            <InputError :message="form.errors.password" class="field-error" />
+
+            <InputLabel
+            for="password_confirmation"
+            value="Confirm Password"
+            class="field-label"
+            />
+
+            <TextInput
+            id="password_confirmation"
+            v-model="form.password_confirmation"
+            type="password"
+            placeholder="••••••••••••"
+            class="field-input"
+            autocomplete="new-password"
+            />
+
+            <InputError
+            :message="form.errors.password_confirmation"
+            class="field-error"
+            />
 
           <label class="terms">
             <Checkbox v-model:checked="form.terms" />
@@ -100,8 +237,8 @@ const submit = () => {
         </form>
 
         <p class="login-link">
-          Already have an account?
-          <Link :href="route('login')">Sign up for free</Link>
+         Already have an account?
+        <Link :href="route('login')">Sign in</Link>
         </p>
       </div>
     </div>
@@ -111,6 +248,13 @@ const submit = () => {
 </template>
 
 <style scoped>
+
+.textarea-input {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
 .auth-screen {
   display: grid;
   grid-template-columns: 1fr 1fr;
