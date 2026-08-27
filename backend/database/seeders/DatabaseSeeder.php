@@ -11,6 +11,16 @@ class DatabaseSeeder extends Seeder
         $this->call([
             VilleSeeder::class,
             UserSeeder::class,
+            OffredestageSeeder::class,
+            CompetenceSeeder::class,
+            PossedeSeeder::class,
+            FavorisSeeder::class,
+            CandidatureSeeder::class,
+            SignalementSeeder::class,
+            StageSeeder::class,
+            EvaluationSeeder::class,
+            DocumentSeeder::class,
+            TacheSeeder::class,
         ]);
     }
 }
