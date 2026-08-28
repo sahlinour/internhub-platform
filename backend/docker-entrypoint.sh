@@ -39,7 +39,7 @@ done
 echo "PostgreSQL is ready!"
 
 # Run database migrations before cache cleanup so the cache table exists
-php artisan migrate --force
+# php artisan migrate --force
 
 # Clear Laravel cache
 php artisan optimize:clear
