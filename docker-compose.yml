@@ -1,6 +1,5 @@
 services:
 
-
   backend:
     build:
       context: ./backend
@@ -54,12 +53,8 @@ services:
     restart: unless-stopped
     env_file:
       - ./backend/.env
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-      PGADMIN_PORT: ${PGADMIN_PORT:-5050}
     ports:
-      - "${PGADMIN_PORT:-5050}:80"
+      - "5050:80"
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     depends_on:
