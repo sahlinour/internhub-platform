@@ -8,6 +8,7 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
+<<<<<<< Updated upstream
         tailwindcss(),
     ],
     server: {
@@ -16,3 +17,21 @@ export default defineConfig({
         },
     },
 });
+=======
+        vue(),
+    ],
+
+    server: {
+        host: '0.0.0.0',
+        port: 5173,
+
+        watch: {
+            usePolling: true,
+        },
+
+        hmr: {
+            host: 'localhost',
+        },
+    },
+});
+>>>>>>> Stashed changes
