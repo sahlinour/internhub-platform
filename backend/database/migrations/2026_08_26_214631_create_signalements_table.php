@@ -14,19 +14,20 @@ return new class extends Migration
             $table->date('date_signalement');
             $table->string('statut')->default('En attente'); // En attente, Traité, Rejeté
 
-            // User who created the report
+            
             $table->foreignId('idUtilisateur_emetteur')
                   ->constrained('users')
                   ->onDelete('cascade');
 
-            // Admin who handles the report (references admins.idUtilisateur)
-            $table->foreignId('id_Utilisateur_Admin')
-                  ->nullable()
-                  ->constrained('admins', 'idUtilisateur')
-                  ->onDelete('set null');
-
-            // Optional targeted offer
+            
+            
+           $table->foreignId('id_Utilisateur_Admin')
+                 ->nullable()
+                 ->constrained('users', 'id')
+                 ->onDelete('set null');
+            
             $table->foreignId('id_Offre_De_Stage')
+                  ->nullable()
                   ->constrained('offredestages')
                   ->onDelete('cascade');
 
