@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+#app-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+
+    opacity: 1;
+    visibility: visible;
+
+    transition:
+        opacity 0.4s ease,
+        visibility 0.4s ease;
+}
+
+#app-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-image {
+    width: 100px !important;
+    max-width: 75vw !important;
+    height: auto;
+    animation: loader-float 1.8s ease-in-out infinite;
+}
+
+@keyframes loader-float {
+    0%,
+    100% {
+        transform: translateY(0) scale(0.98);
+        opacity: 0.9;
+    }
+
+    50% {
+        transform: translateY(-8px) scale(1);
+        opacity: 1;
+    }
+}
