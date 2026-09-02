@@ -23,15 +23,15 @@ class TacheSeeder extends Seeder
                 $statut = fake()->randomElement(['À faire', 'En cours', 'Terminée']);
 
                 Tache::create([
-                    'titre' => "Tâche {$index}: " . fake()->bs(),
-                    'description' => fake()->paragraph(),
-                    'priorite' => fake()->randomElement(['Basse', 'Moyenne', 'Haute']),
-                    'date_creation' => $dateCreation->format('Y-m-d'),
-                    'date_echeance' => $dateEcheance->format('Y-m-d'),
-                    'date_fin_effective' => $statut === 'Terminée' ? (clone $dateCreation)->modify('+5 days')->format('Y-m-d') : null,
-                    'statut' => $statut,
-                    'idUtilisateur' => $stage->candidature->idUtilisateur_Stagiaire ?? 1,
-                    'id_Stage' => $stage->id,
+                    'titre'                    => "Tâche {$index}: " . fake()->sentence(3),
+                    'description'              => fake()->paragraph(),
+                    'priorite'                 => fake()->randomElement(['Basse', 'Moyenne', 'Haute']),
+                    'date_creation'            => $dateCreation->format('Y-m-d'),
+                    'date_echeance'            => $dateEcheance->format('Y-m-d'),
+                    'date_fin_effective'       => $statut === 'Terminée' ? (clone $dateCreation)->modify('+5 days')->format('Y-m-d') : null,
+                    'statut'                   => $statut,
+                    'idUtilisateur_Encadrant' => $stage->idUtilisateur_Encadrant ?? 1,
+                    'id_Stage'                 => $stage->id,
                 ]);
             }
         }

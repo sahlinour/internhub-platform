@@ -17,13 +17,14 @@ class Document extends Model
         'nom',
         'version',
         'statut',
-        'idUtilisateur',
+        'fichier_url',
+        'idUtilisateur_Encadrant',
         'id_Stage',
     ];
 
-    public function utilisateur(): BelongsTo
+    public function encadrant(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'idUtilisateur');
+        return $this->belongsTo(Encadrant::class, 'idUtilisateur_Encadrant', 'user_id');//,'ville_id'
     }
 
     public function stage(): BelongsTo

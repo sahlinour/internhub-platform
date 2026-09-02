@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('candidatures', function (Blueprint $table) {
             $table->id();
-            $table->string('statut')->default('En attente'); // En attente, Acceptée, Refusée
+            $table->string('statut')->default('En attente'); // En attente,En cours d'examen, Acceptée, Refusée
             $table->date('date_postulation');
             $table->text('lettre_de_motivation')->nullable();
             $table->string('piece_jointe')->nullable();

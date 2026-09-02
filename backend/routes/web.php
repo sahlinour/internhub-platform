@@ -2,10 +2,13 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VilleController;
-use App\Http\Controllers\Stagiaire\NotificationController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\OffreDeStageController as GuestOffreController;
+use App\Http\Controllers\SignalementController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -31,22 +34,32 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 
+//new routes this is shared with all tables
+
     // Villes
-    Route::get('/villes', [VilleController::class, 'index'])
-        ->name('villes.index');
+    Route::get('/villes', [VilleController::class, 'index']) ->name('villes.index');
+    Route::get('/villes/{id}', [VilleController::class, 'show']) ->name('villes.show');
 
-    Route::get('/villes/{id}', [VilleController::class, 'show'])
-        ->name('villes.show');
+    // Notifications for all users
+    Route::get('/notifications', [NotificationController::class, 'index']) ->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead']) ->name('notifications.readAll');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    
+    // Signalement route for all users
+    Route::post('/offres/{id}/signalement', [SignalementController::class, 'store'])->name('signalements.store');
 
-    // Notifications
-    Route::get('/notifications', [NotificationController::class, 'index'])
-        ->name('notifications.index');
-
-    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])
-        ->name('notifications.read');
-
-    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])
-        ->name('notifications.readAll');
+    // Dashboard route for all users
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
 });
+
+    // Public routes accessible by unauthenticated visitors
+    Route::get('/offres', [GuestOffreController::class, 'index'])->name('villes.index');
+    Route::get('/offres/{id}', [GuestOffreController::class, 'show'])->name('villes.show');
+
+
+
+
+    
 
 require __DIR__.'/auth.php';

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Models\Encadrant;
 use App\Models\Stage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -16,15 +16,15 @@ class TacheFactory extends Factory
         $dateFin = $statut === 'Terminée' ? (clone $dateCreation)->modify('+1 week')->format('Y-m-d') : null;
 
         return [
-            'titre' => fake()->sentence(4),
-            'description' => fake()->paragraph(),
-            'priorite' => fake()->randomElement(['Basse', 'Moyenne', 'Haute', 'Urgente']),
-            'date_creation' => $dateCreation->format('Y-m-d'),
-            'date_echeance' => $dateEcheance->format('Y-m-d'),
-            'date_fin_effective' => $dateFin,
-            'statut' => $statut,
-            'idUtilisateur' => User::inRandomOrder()->value('id') ?? User::factory(),
-            'id_Stage' => Stage::inRandomOrder()->value('id') ?? Stage::factory(),
+            'titre'                   => fake()->sentence(4),
+            'description'             => fake()->paragraph(),
+            'priorite'                => fake()->randomElement(['Basse', 'Moyenne', 'Haute', 'Urgente']),
+            'date_creation'           => $dateCreation->format('Y-m-d'),
+            'date_echeance'           => $dateEcheance->format('Y-m-d'),
+            'date_fin_effective'      => $dateFin,
+            'statut'                  => $statut,
+            'idUtilisateur_Encadrant' => Encadrant::inRandomOrder()->value('user_id') ?? Encadrant::factory(),
+            'id_Stage'                => Stage::inRandomOrder()->value('id') ?? Stage::factory(),
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Ville;
 use App\Models\Entreprise;
 use App\Models\Encadrant;
 use App\Models\Stagiaire;
+use App\Models\Admin;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,15 +23,16 @@ class UserSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        User::create([
+        $admin = User::create([
             'nom_complet' => 'Admin System',
             'email' => 'admin@internhub.ma',
-            'password' => Hash::make('admin123'),
-            'telephone' => '+212600000001',
-            'etat' => 'active',
-            'role' => 'Admin',
-            'ville_id' => $villeIds[array_rand($villeIds)],
-        ]);
+             'password' => Hash::make('admin123'),
+              'telephone' => '+212600000001',
+              'etat' => 'active',
+              'role' => 'Admin',
+               'ville_id' => $villeIds[array_rand($villeIds)],
+         ]);
+          Admin::create([ 'idUtilisateur' => $admin->id, ]);
 
         /*
         |--------------------------------------------------------------------------

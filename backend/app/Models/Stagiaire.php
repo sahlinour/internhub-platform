@@ -24,8 +24,53 @@ class Stagiaire extends Model
         'statut_stage',
     ];
 
+    /**
+     * Get the associated base user profile.
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Offers saved as favorites by the Stagiaire.
+     */
+    public function favoris()
+    {
+        return $this->belongsToMany(
+            Offredestage::class,
+            'favoris',
+            'idUtilisateur_Stagiaire',
+            'id_Offre_De_Stage',
+            'user_id',
+            'id'
+        )->withTimestamps();
+    }
+
+    /**
+     * Skills belonging to the Stagiaire via Possede pivot.
+     */
+    public function competences()
+    {
+        return $this->belongsToMany(
+            Competence::class,
+            'possede',
+            'idUtilisateur_Stagiaire',
+            'id_Competence',
+            'user_id',
+            'id'
+        )->withPivot(['niveau', 'experience', 'date_ajout']);
+    }
+
+    /**
+     * Applications submitted by the Stagiaire.
+     */
+    public function candidatures()
+    {
+        return $this->hasMany(
+            Candidature::class,
+            'idUtilisateur_Stagiaire',
+            'user_id'
+        );
     }
 }

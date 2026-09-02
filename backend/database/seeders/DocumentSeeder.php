@@ -19,12 +19,15 @@ class DocumentSeeder extends Seeder
         foreach ($stages as $stage) {
             // Attach 1 to 3 documents per stage
             foreach (range(1, rand(1, 3)) as $index) {
+                $fileName = "Rapport_Etape_{$index}_" . fake()->word() . ".pdf";
+
                 Document::create([
-                    'nom' => "Rapport_Etape_{$index}_" . fake()->word() . ".pdf",
-                    'version' => "v{$index}.0",
-                    'statut' => fake()->randomElement(['En attente', 'Validé', 'Rejeté']),
-                    'idUtilisateur' => $stage->candidature->idUtilisateur_Stagiaire ?? 1,
-                    'id_Stage' => $stage->id,
+                    'nom'                      => $fileName,
+                    'version'                  => "v{$index}.0",
+                    'statut'                   => fake()->randomElement(['En attente', 'Validé', 'Rejeté']),
+                    'fichier_url'              => "documents/{$fileName}",
+                    'idUtilisateur_Encadrant' => $stage->idUtilisateur_Encadrant ?? 1,
+                    'id_Stage'                 => $stage->id,
                 ]);
             }
         }

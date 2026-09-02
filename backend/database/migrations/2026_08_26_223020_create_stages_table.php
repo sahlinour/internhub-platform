@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('sujet');
             $table->date('date_debut');
             $table->date('date_fin');
-            $table->string('statut')->default('En cours');
+            $table->string('statut')->default('En cours');//En cours,Terminée,Annulée
 
 
             $table->foreignId('idUtilisateur_Encadrant')

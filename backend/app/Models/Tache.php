@@ -21,7 +21,7 @@ class Tache extends Model
         'date_echeance',
         'date_fin_effective',
         'statut',
-        'idUtilisateur',
+        'idUtilisateur_Encadrant',
         'id_Stage',
     ];
 
@@ -31,9 +31,9 @@ class Tache extends Model
         'date_fin_effective' => 'date',
     ];
 
-    public function utilisateur(): BelongsTo
+    public function encadrant(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'idUtilisateur');
+        return $this->belongsTo(Encadrant::class, 'idUtilisateur_Encadrant', 'user_id');
     }
 
     public function stage(): BelongsTo

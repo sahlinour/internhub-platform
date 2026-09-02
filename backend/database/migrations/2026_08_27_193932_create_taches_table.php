@@ -12,15 +12,15 @@ return new class extends Migration
             $table->id();
             $table->string('titre');
             $table->text('description')->nullable();
-            $table->string('priorite')->default('Moyenne'); // Basse, Moyenne, Haute, Urgente
+            $table->string('priorite')->default('Moyenne');
             $table->date('date_creation');
             $table->date('date_echeance');
             $table->date('date_fin_effective')->nullable();
-            $table->string('statut')->default('À faire'); 
-
+            $table->string('statut')->default('À faire');
             
-            $table->foreignId('idUtilisateur')
-                  ->constrained('users')
+            // FK referencing Encadrant: idUtilisateur_Encadrant
+            $table->foreignId('idUtilisateur_Encadrant')
+                  ->constrained('encadrants', 'user_id')
                   ->onDelete('cascade');
 
             // FK referencing Stage

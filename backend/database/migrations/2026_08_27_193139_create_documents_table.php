@@ -12,11 +12,12 @@ return new class extends Migration
             $table->id();
             $table->string('nom');
             $table->string('version')->default('v1.0');
-            $table->string('statut')->default('En attente'); 
+            $table->string('statut')->default('En attente');
+            $table->string('fichier_url')->nullable();
 
-            // FK referencing the user who uploaded/owns the document
-            $table->foreignId('idUtilisateur')
-                  ->constrained('users')
+            // FK referencing Encadrant: idUtilisateur_Encadrant
+            $table->foreignId('idUtilisateur_Encadrant')
+                  ->constrained('encadrants', 'user_id')
                   ->onDelete('cascade');
 
             // FK referencing Stage
