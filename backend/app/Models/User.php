@@ -51,11 +51,15 @@ class User extends Authenticatable
         return $this->hasOne(Encadrant::class, 'user_id');
     }
 
-    /**
-     * Profil entreprise
-     */
+   
     public function entreprise()
     {
         return $this->hasOne(Entreprise::class, 'user_id');
     }
+
+    public function admin()
+{
+    return $this->hasOne(Admin::class,'idUtilisateur','id'
+    );
+}
 }

@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\OffreDeStageController as GuestOffreController;
 use App\Http\Controllers\SignalementController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -58,7 +59,29 @@ Route::middleware('auth')->group(function () {
     Route::get('/offres/{id}', [GuestOffreController::class, 'show'])->name('villes.show');
 
 
+   //admin related
 
+   
+
+    Route::middleware('guest')->group(function () {
+    Route::get('/admin/login', [AdminAuthenticatedSessionController::class, 'create'])
+        ->name('admin.login');
+
+    Route::post('/admin/login', [AdminAuthenticatedSessionController::class, 'store'])
+        ->name('admin.login.store');
+});
+
+Route::get('/admin/dashboard', function (Request $request) {
+    abort_unless($request->user()?->role === 'Admin', 403);
+
+    return Inertia::render('Admin/Dashboard');
+})
+    ->middleware('auth')
+    ->name('admin.dashboard');
+
+Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('admin.logout');
 
     
 

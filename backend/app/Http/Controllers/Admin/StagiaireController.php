@@ -6,49 +6,199 @@ use App\Http\Controllers\Controller;
 use App\Models\Stagiaire;
 use App\Models\User;
 use App\Models\Ville;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class StagiaireController extends Controller
 {
     /**
-     * Display a listing of all stagiaires with search and status filtering.
+     * Display all interns.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $query = User::where('role', 'stagiaire')
-            ->with(['stagiaire', 'ville']);
+        $query = Stagiaire::with([
+            'user.ville',
+        ]);
 
+        // Search
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
+
+            $query->whereHas('user', function ($q) use ($search) {
                 $q->where('nom_complet', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
+        // Account status filter
         if ($request->filled('etat')) {
-            $query->where('etat', $request->etat);
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('etat', $request->etat);
+            });
         }
 
-        $stagiaires = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $stagiaires = $query
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Admin/Stagiaires/Index', [
             'stagiaires' => $stagiaires,
-            'filters'    => $request->only(['search', 'etat']),
+            'filters' => $request->only([
+                'search',
+                'etat',
+            ]),
         ]);
     }
 
     /**
-     * Display details of a specific stagiaire.
+     * Show form for creating a new intern.
      */
-    public function show($id)
+    public function create(): Response
     {
-        $user = User::where('role', 'stagiaire')
-            ->with(['stagiaire', 'ville'])
+        $villes = Ville::orderBy('nom')
+            ->get([
+                'id',
+                'nom',
+            ]);
+
+        return Inertia::render('Admin/Stagiaires/Create', [
+            'villes' => $villes,
+        ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+{
+    $validated = $request->validate([
+        'nom_complet' => [
+            'required',
+            'string',
+            'max:255',
+        ],
+
+        'email' => [
+            'required',
+            'email',
+            'max:255',
+            'unique:users,email',
+        ],
+
+        'telephone' => [
+            'nullable',
+            'string',
+            'max:30',
+        ],
+
+        'ville_id' => [
+            'nullable',
+            'exists:villes,id',
+        ],
+
+        'universite' => [
+            'nullable',
+            'string',
+            'max:255',
+        ],
+
+        'filiere' => [
+            'nullable',
+            'string',
+            'max:255',
+        ],
+
+        'niveau' => [
+            'nullable',
+            'string',
+            'max:255',
+        ],
+
+        'date_naissance' => [
+            'nullable',
+            'date',
+        ],
+
+        'statut_stage' => [
+            'nullable',
+            'in:recherche,en_attente,en_cours,termine,annule',
+        ],
+
+        'linkedin_url' => [
+            'nullable',
+            'url',
+            'max:255',
+        ],
+
+        'portfolio_url' => [
+            'nullable',
+            'url',
+            'max:255',
+        ],
+
+        'password' => [
+            'required',
+            'confirmed',
+            Password::min(8),
+        ],
+    ]);
+
+    DB::transaction(function () use ($validated) {
+
+        $user = User::create([
+            'nom_complet' => $validated['nom_complet'],
+            'email' => $validated['email'],
+            'telephone' => $validated['telephone'] ?? null,
+            'ville_id' => $validated['ville_id'] ?? null,
+
+            'password' => Hash::make(
+                $validated['password']
+            ),
+
+            'role' => 'Stagiaire',
+            'etat' => 'active',
+        ]);
+
+        Stagiaire::create([
+            'user_id' => $user->id,
+
+            'universite' =>
+                $validated['universite'] ?? null,
+
+            'filiere' =>
+                $validated['filiere'] ?? null,
+
+            'niveau' =>
+                $validated['niveau'] ?? null,
+
+            'date_naissance' =>
+                $validated['date_naissance'] ?? null,
+
+            'statut_stage' =>
+                $validated['statut_stage'] ?? 'recherche',
+
+            'linkedin_url' =>
+                $validated['linkedin_url'] ?? null,
+
+            'portfolio_url' =>
+                $validated['portfolio_url'] ?? null,
+        ]);
+    });
+
+    return redirect()
+        ->route('admin.stagiaires.index')
+        ->with('success', 'Intern created successfully.');
+}
+    public function show($id): Response
+    {
+        $user = User::where('role', 'Stagiaire')
+            ->with([
+                'stagiaire',
+                'ville',
+            ])
             ->findOrFail($id);
 
         return Inertia::render('Admin/Stagiaires/Show', [
@@ -57,140 +207,213 @@ class StagiaireController extends Controller
     }
 
     /**
-     * Show edit form for a stagiaire.
+     * Show form for editing an intern.
      */
-    public function edit($id)
+    public function edit($id): Response
     {
-        $user = User::where('role', 'stagiaire')
-            ->with(['stagiaire', 'ville'])
+        $user = User::where('role', 'Stagiaire')
+            ->with([
+                'stagiaire',
+                'ville',
+            ])
             ->findOrFail($id);
 
-        $villes = Ville::select('id', 'nom')->get();
+        $villes = Ville::orderBy('nom')
+            ->get([
+                'id',
+                'nom',
+            ]);
 
         return Inertia::render('Admin/Stagiaires/Edit', [
             'stagiaire' => $user,
-            'villes'    => $villes,
+            'villes' => $villes,
         ]);
     }
 
     /**
-     * Update a stagiaire's account and profile data.
+     * Update an intern.
      */
-    public function update(Request $request, $id)
-    {
-        $user = User::where('role', 'stagiaire')->findOrFail($id);
+    public function update(
+        Request $request,
+        $id
+    ): RedirectResponse {
+        $user = User::where('role', 'Stagiaire')
+            ->findOrFail($id);
 
-        $request->validate([
-            'nom_complet'    => 'required|string|max:255',
-            'email'          => 'required|email|max:255|unique:users,email,' . $user->id,
-            'telephone'      => 'nullable|string|max:20',
-            'ville_id'       => 'required|exists:villes,id',
-            'etat'           => 'required|in:pending,active,block',
-            'universite'     => 'nullable|string|max:255',
-            'filiere'        => 'nullable|string|max:255',
-            'niveau'         => 'nullable|string|max:255',
-            'date_naissance' => 'nullable|date',
-            'cv'             => 'nullable|file|mimes:pdf,doc,docx|max:5000',
-            'linkedin_url'   => 'nullable|url|max:255',
-            'portfolio_url'  => 'nullable|url|max:255',
-            'statut_stage'   => 'nullable|string|max:255',
-            'photo'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        $validated = $request->validate([
+            'nom_complet' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                'unique:users,email,' . $user->id,
+            ],
+
+            'telephone' => [
+                'nullable',
+                'string',
+                'max:30',
+            ],
+
+            'ville_id' => [
+                'nullable',
+                'exists:villes,id',
+            ],
+
+            'etat' => [
+                'required',
+                'in:pending,active,block',
+            ],
+
+            'universite' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            'filiere' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            'niveau' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            'statut_stage' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
         ]);
 
-        if ($request->hasFile('photo')) {
-            if ($user->photo) {
-                Storage::disk('public')->delete($user->photo);
-            }
-            $user->photo = $request->file('photo')->store('profiles/stagiaires', 'public');
-        }
+        DB::transaction(function () use (
+            $user,
+            $validated
+        ) {
+            $user->update([
+                'nom_complet' => $validated['nom_complet'],
+                'email' => $validated['email'],
+                'telephone' => $validated['telephone'] ?? null,
+                'ville_id' => $validated['ville_id'] ?? null,
+                'etat' => $validated['etat'],
+            ]);
+
+            Stagiaire::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                ],
+                [
+                    'universite' =>
+                        $validated['universite'] ?? null,
+
+                    'filiere' =>
+                        $validated['filiere'] ?? null,
+
+                    'niveau' =>
+                        $validated['niveau'] ?? null,
+
+                    'statut_stage' =>
+                        $validated['statut_stage'] ?? null,
+                ]
+            );
+        });
+
+        return redirect()
+            ->route('admin.stagiaires.index')
+            ->with(
+                'message',
+                'Intern updated successfully.'
+            );
+    }
+
+    /**
+     * Update only the account status.
+     */
+    public function updateStatus(
+        Request $request,
+        $id
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'etat' => [
+                'required',
+                'in:pending,active,block',
+            ],
+        ]);
+
+        $user = User::where('role', 'Stagiaire')
+            ->findOrFail($id);
 
         $user->update([
-            'nom_complet' => $request->nom_complet,
-            'email'       => $request->email,
-            'telephone'   => $request->telephone,
-            'ville_id'    => $request->ville_id,
-            'etat'        => $request->etat,
+            'etat' => $validated['etat'],
         ]);
 
-        $stagiaire = Stagiaire::where('user_id', $user->id)->first();
-        $cvPath = $stagiaire?->cv_url;
-
-        if ($request->hasFile('cv')) {
-            if ($cvPath) {
-                Storage::disk('public')->delete($cvPath);
-            }
-            $cvPath = $request->file('cv')->store('cvs', 'public');
-        }
-
-        Stagiaire::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'universite'     => $request->universite,
-                'filiere'        => $request->filiere,
-                'niveau'         => $request->niveau,
-                'date_naissance' => $request->date_naissance,
-                'cv_url'         => $cvPath,
-                'linkedin_url'   => $request->linkedin_url,
-                'portfolio_url'  => $request->portfolio_url,
-                'statut_stage'   => $request->statut_stage ?? 'recherche',
-            ]
+        return back()->with(
+            'message',
+            'Intern status updated successfully.'
         );
-
-        return redirect()->route('admin.stagiaires.index')
-            ->with('message', 'Trainee successfully updated.');
     }
-    
+
     /**
-     * Admin force resets a Stagiaire user password (no current password required).
+     * Admin resets intern password.
      */
-    public function resetPassword(Request $request, $id)
-    {
+    public function resetPassword(
+        Request $request,
+        $id
+    ): RedirectResponse {
         $request->validate([
-            'password' => ['required', Password::defaults(), 'confirmed'],
+            'password' => [
+                'required',
+                Password::defaults(),
+                'confirmed',
+            ],
         ]);
 
-        $user = User::where('role', 'stagiaire')->findOrFail($id);
+        $user = User::where('role', 'Stagiaire')
+            ->findOrFail($id);
 
         $user->update([
-            'password' => Hash::make($request->password),
+            'password' => Hash::make(
+                $request->password
+            ),
         ]);
 
-        return back()->with('message', "The password for trainee {$user->nom_complet} has been reset.");
+        return back()->with(
+            'message',
+            "The password of {$user->nom_complet} has been reset."
+        );
     }
 
     /**
-     * Update only the state ('pending', 'active', 'block') of a stagiaire.
+     * Delete an intern.
      */
-    public function updateStatus(Request $request, $id)
+    public function destroy($id): RedirectResponse
     {
-        $request->validate([
-            'etat' => 'required|in:pending,active,block',
-        ]);
+        $user = User::where('role', 'Stagiaire')
+            ->findOrFail($id);
 
-        $user = User::where('role', 'stagiaire')->findOrFail($id);
-        $user->update(['etat' => $request->etat]);
+        DB::transaction(function () use ($user) {
+            Stagiaire::where(
+                'user_id',
+                $user->id
+            )->delete();
 
-        return back()->with('message', "The status of the trainee has been updated to '{$request->etat}'.");
-    }
+            $user->delete();
+        });
 
-    /**
-     * Delete a stagiaire account and associated files.
-     */
-    public function destroy($id)
-    {
-        $user = User::where('role', 'stagiaire')->with('stagiaire')->findOrFail($id);
-
-        if ($user->photo) {
-            Storage::disk('public')->delete($user->photo);
-        }
-
-        if ($user->stagiaire && $user->stagiaire->cv_url) {
-            Storage::disk('public')->delete($user->stagiaire->cv_url);
-        }
-
-        $user->delete();
-
-        return redirect()->route('admin.stagiaires.index')
-            ->with('message', 'Trainee removed from the system.');
+        return redirect()
+            ->route('admin.stagiaires.index')
+            ->with(
+                'message',
+                'Intern removed from the system.'
+            );
     }
 }
