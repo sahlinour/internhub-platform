@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/logo.png" alt="InternHub Logo" width="360"/>
+  <img src="./assests/logo.png" alt="InternHub Logo" width="360"/>
 </p>
 
 <h3 align="center">Simplifying Internships, Connecting Opportunities</h3>
