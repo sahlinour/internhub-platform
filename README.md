@@ -114,8 +114,7 @@ InternHub repose sur plusieurs profils utilisateurs.
 | **Frontend**           | Vue.js 3, Tailwind CSS, Vite |
 | **Gestion d'état**     | Pinia                        |
 | **Routing Frontend**   | Vue Router                   |
-| **Backend**            | Laravel 12, PHP              |
-| **API / Services**     | Laravel REST API             |
+| **Backend**            | Laravel 13, PHP 8.4          |
 | **Service IA**         | Python, FastAPI              |
 | **Base de données**    | PostgreSQL 16                |
 | **Serveur Web**        | Nginx                        |
@@ -140,36 +139,37 @@ internhub-platform/
 ├── nginx/
 │   └── nginx.conf          serveur frontal et règles de routage
 │
-├── frontend/               application Vue 3
-│   ├── Dockerfile
-│   ├── package.json        dépendances et scripts npm
-│   ├── vite.config.js      
-│   ├── index.html
-│   ├── public/
-│   └── src/
-│       ├── main.js         point d'entrée : Vue + Pinia + Router
-│       ├── App.vue         composant racine
-│       ├── router/         définition des routes
-│       └── stores/         magasins Pinia (état partagé)
-│
-├── backend/                API Laravel 13
-│   ├── Dockerfile
-│   ├── composer.json       dépendances PHP
-│   ├── artisan             utilitaire en ligne de commande
-│   ├── app/
-│   │   ├── Models/         modèles Eloquent
-│   │   ├── Http/Controllers/
-│   │   └── Providers/
-│   ├── routes/             web.php, console.php
-│   ├── config/             app, auth, database, session…
-│   ├── database/
-│   │   ├── migrations/     schéma versionné
-│   │   ├── seeders/        données de démonstration
-│   │   └── factories/      générateurs de données de test
-│   ├── resources/          vues et ressources front héritées
-│   ├── storage/            journaux, cache, fichiers déposés
-│   ├── tests/              Feature/ et Unit/
-│   └── public/             racine web (index.php)
+├── backend/                       code serveur + front intégré
+│   └── laravel/                   application Laravel 13
+│       ├── Dockerfile
+│       ├── composer.json          dépendances PHP
+│       ├── package.json           dépendances front (Vue 3, Vite)
+│       ├── vite.config.js         configuration de build Vite
+│       ├── artisan                utilitaire en ligne de commande
+│       ├── app/
+│       │   ├── Models/            modèles Eloquent
+│       │   ├── Http/Controllers/
+│       │   └── Providers/
+│       ├── routes/                web.php, api.php, console.php
+│       ├── config/                app, auth, database, session…
+│       ├── database/
+│       │   ├── migrations/        schéma versionné
+│       │   ├── seeders/           données de démonstration
+│       │   └── factories/         générateurs de données de test
+│       ├── resources/             ressources front-end
+│       │   ├── css/               styles CSS
+│       │   ├── js/                code JavaScript et Vue.js
+│       │   │   ├── Components/    composants Vue réutilisables
+│       │   │   ├── Layouts/       structures des pages
+│       │   │   ├── Pages/         pages de l'application
+│       │   │   ├── router/        configuration Vue Router
+│       │   │   ├── services/      appels aux API
+│       │   │   ├── app.js         point d'entrée Vue.js
+│       │   │   └── bootstrap.js   configuration JavaScript
+│       │   └── views/             vues Blade (app.blade.php)
+│       ├── storage/               journaux, cache, fichiers déposés
+│       ├── tests/                 Feature/ et Unit/
+│       └── public/                racine web (index.php, build Vite)
 │
 └── fastapi/                micro-service IA
     ├── Dockerfile
