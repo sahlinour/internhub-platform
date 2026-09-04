@@ -28,7 +28,7 @@ defineExpose({
     ref="input"
     :value="modelValue"
     @input="$emit('update:modelValue', $event.target.value)"
-    class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+    class="rounded-md border-gray-300 shadow-sm focus:border-[#3A7CA5] focus:ring-[#16425B]"
     v-bind="$attrs"
   />
 </template>
