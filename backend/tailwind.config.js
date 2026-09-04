@@ -12,8 +12,21 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                brand: {
+                    darkest: '#16425B',
+                    dark: '#2F6690',
+                    DEFAULT: '#3A7CA5',
+                    light: '#81C3D7',
+                    lightest: '#E8F3F7',
+                    muted: '#D9DCD6',
+                },
+            },
+
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                display: ['"Playfair Display"', ...defaultTheme.fontFamily.serif],
+                body: ['"DM Sans"', ...defaultTheme.fontFamily.sans],
             },
         },
     },
