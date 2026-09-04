@@ -12,7 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/status-in%20development-16425B?style=for-the-badge" alt="status"/>
   <img src="https://img.shields.io/badge/Vue.js-3-3A7CA5?style=for-the-badge&logo=vue.js&logoColor=white" alt="vue"/>
-  <img src="https://img.shields.io/badge/Laravel-12-16425B?style=for-the-badge&logo=laravel&logoColor=white" alt="laravel"/>
+  <img src="https://img.shields.io/badge/Laravel-13-16425B?style=for-the-badge&logo=laravel&logoColor=white" alt="laravel"/>
   <img src="https://img.shields.io/badge/FastAPI-Python-3A7CA5?style=for-the-badge&logo=fastapi&logoColor=white" alt="fastapi"/>
   <img src="https://img.shields.io/badge/PostgreSQL-16-16425B?style=for-the-badge&logo=postgresql&logoColor=white" alt="postgresql"/>
   <img src="https://img.shields.io/badge/Docker-Compose-3A7CA5?style=for-the-badge&logo=docker&logoColor=white" alt="docker"/>
