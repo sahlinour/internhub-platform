@@ -24,59 +24,130 @@ defineProps({
 </script>
 
 <template>
-  <div class="auth-hero">
-    <div class="circle circle-top"></div>
-    <div class="circle circle-bottom"></div>
-    <div class="glow"></div>
+  <div
+    class="relative flex min-h-screen h-full w-full items-center overflow-hidden
+           bg-[radial-gradient(circle_at_18%_18%,rgba(70,176,220,0.18),transparent_35%),linear-gradient(145deg,#0d3854_0%,#145675_48%,#102f47_100%)]
+           max-[900px]:min-h-0"
+  >
 
-    <div class="hero-content">
+    <!-- TOP CIRCLE -->
+    <div
+      class="pointer-events-none absolute -right-[140px] -top-[190px]
+             h-[440px] w-[440px] rounded-full
+             bg-[linear-gradient(145deg,rgba(91,190,227,0.17),rgba(56,138,184,0.025))]"
+    ></div>
 
-      <!-- Logo -->
-      <div class="hero-logo">
+    <!-- BOTTOM CIRCLE -->
+    <div
+      class="pointer-events-none absolute -bottom-[260px] -left-[230px]
+             h-[520px] w-[520px] rounded-full
+             bg-[linear-gradient(145deg,rgba(52,157,203,0.19),rgba(36,111,151,0.03))]"
+    ></div>
+
+    <!-- GLOW -->
+    <div
+      class="pointer-events-none absolute right-[-180px] top-[35%]
+             h-[320px] w-[320px] rounded-full
+             bg-[rgba(80,190,230,0.09)] blur-[60px]"
+    ></div>
+
+    <!-- CONTENT -->
+    <div
+      class="relative z-[2] w-full max-w-[620px] px-16 py-[58px] text-white
+             max-[900px]:px-8 max-[900px]:py-[45px]"
+    >
+
+      <!-- LOGO -->
+      <div class="mb-[58px] max-[900px]:mb-[35px]">
         <img
           src="/images/LogoBgDarkInternHub.png"
           alt="InternHub"
+          class="block h-auto w-[185px] object-contain max-[900px]:w-[160px]"
         />
       </div>
 
-      <!-- Main text -->
-      <div class="hero-message">
-        <div class="accent-line"></div>
+      <!-- MAIN TEXT -->
+      <div>
 
-        <h2 v-html="title"></h2>
+        <div
+          class="mb-6 h-1 w-12 rounded-full
+                 bg-gradient-to-r from-[#4fc0e9] to-[#8eddf5]"
+        ></div>
 
-        <p class="hero-subtitle">
+        <h2
+          v-html="title"
+          class="mb-5 max-w-[520px]
+                 text-[clamp(38px,4vw,54px)]
+                 font-extrabold leading-[1.08]
+                 tracking-[-1.5px]
+                 text-white
+                 [&_strong]:text-[#77d2f1]
+                 max-[900px]:text-[34px]"
+        ></h2>
+
+        <p
+          class="m-0 max-w-[500px]
+                 text-[15px] leading-[1.75]
+                 text-[rgba(235,247,252,0.82)]"
+        >
           {{ subtitle }}
         </p>
       </div>
 
-      <!-- Dynamic features -->
+      <!-- FEATURES -->
       <div
         v-if="features.length"
-        class="hero-features"
+        class="mt-[38px] flex flex-col gap-[19px]
+               max-[900px]:hidden"
       >
         <div
           v-for="(feature, index) in features"
           :key="index"
-          class="feature"
+          class="flex items-start gap-[14px]"
         >
-          <span class="feature-icon">✓</span>
+
+          <!-- ICON -->
+          <span
+            class="mt-px flex h-[27px] w-[27px] shrink-0
+                   items-center justify-center rounded-full
+                   border border-[rgba(112,210,242,0.3)]
+                   bg-[rgba(92,190,225,0.12)]
+                   text-[13px] font-extrabold text-[#77d7f4]"
+          >
+            ✓
+          </span>
 
           <div>
-            <strong>{{ feature.title }}</strong>
+            <strong
+              class="mb-[3px] block text-sm font-bold text-white"
+            >
+              {{ feature.title }}
+            </strong>
 
-            <p>
+            <p
+              class="m-0 text-xs leading-[1.5]
+                     text-[rgba(224,240,247,0.67)]"
+            >
               {{ feature.text }}
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Footer -->
-      <div class="hero-footer">
-        <span></span>
+      <!-- FOOTER -->
+      <div
+        class="mt-[45px] flex items-center gap-[14px]"
+      >
+        <span
+          class="h-px w-[35px]
+                 bg-[rgba(126,211,239,0.55)]"
+        ></span>
 
-        <p>
+        <p
+          class="m-0 text-xs font-medium
+                 tracking-[0.3px]
+                 text-[rgba(225,242,249,0.62)]"
+        >
           {{ footer }}
         </p>
       </div>
@@ -84,271 +155,3 @@ defineProps({
     </div>
   </div>
 </template>
-
-<style scoped>
-.auth-hero {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 100vh;
-
-  display: flex;
-  align-items: center;
-
-  overflow: hidden;
-
-  background:
-    radial-gradient(
-      circle at 18% 18%,
-      rgba(70, 176, 220, 0.18),
-      transparent 35%
-    ),
-    linear-gradient(
-      145deg,
-      #0d3854 0%,
-      #145675 48%,
-      #102f47 100%
-    );
-}
-
-.circle {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.circle-top {
-  width: 440px;
-  height: 440px;
-  top: -190px;
-  right: -140px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(91, 190, 227, 0.17),
-      rgba(56, 138, 184, 0.025)
-    );
-}
-
-.circle-bottom {
-  width: 520px;
-  height: 520px;
-  left: -230px;
-  bottom: -260px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(52, 157, 203, 0.19),
-      rgba(36, 111, 151, 0.03)
-    );
-}
-
-.glow {
-  position: absolute;
-  width: 320px;
-  height: 320px;
-
-  top: 35%;
-  right: -180px;
-
-  border-radius: 50%;
-
-  background: rgba(80, 190, 230, 0.09);
-
-  filter: blur(60px);
-
-  pointer-events: none;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-
-  width: 100%;
-  max-width: 620px;
-
-  box-sizing: border-box;
-
-  padding: 58px 64px;
-
-  color: #ffffff;
-}
-
-.hero-logo {
-  margin-bottom: 58px;
-}
-
-.hero-logo img {
-  display: block;
-
-  width: 185px;
-  height: auto;
-
-  object-fit: contain;
-}
-
-.accent-line {
-  width: 48px;
-  height: 4px;
-
-  margin-bottom: 24px;
-
-  border-radius: 999px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #4fc0e9,
-      #8eddf5
-    );
-}
-
-.hero-message h2 {
-  max-width: 520px;
-
-  margin: 0 0 20px;
-
-  color: #ffffff;
-
-  font-size: clamp(38px, 4vw, 54px);
-  font-weight: 800;
-
-  line-height: 1.08;
-
-  letter-spacing: -1.5px;
-}
-
-.hero-message :deep(strong) {
-  color: #77d2f1;
-}
-
-.hero-subtitle {
-  max-width: 500px;
-
-  margin: 0;
-
-  color: rgba(235, 247, 252, 0.82);
-
-  font-size: 15px;
-
-  line-height: 1.75;
-}
-
-.hero-features {
-  display: flex;
-  flex-direction: column;
-
-  gap: 19px;
-
-  margin-top: 38px;
-}
-
-.feature {
-  display: flex;
-
-  align-items: flex-start;
-
-  gap: 14px;
-}
-
-.feature-icon {
-  flex-shrink: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 27px;
-  height: 27px;
-
-  margin-top: 1px;
-
-  border: 1px solid rgba(112, 210, 242, 0.3);
-
-  border-radius: 50%;
-
-  background: rgba(92, 190, 225, 0.12);
-
-  color: #77d7f4;
-
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.feature strong {
-  display: block;
-
-  margin-bottom: 3px;
-
-  color: #ffffff;
-
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.feature p {
-  margin: 0;
-
-  color: rgba(224, 240, 247, 0.67);
-
-  font-size: 12px;
-
-  line-height: 1.5;
-}
-
-.hero-footer {
-  display: flex;
-
-  align-items: center;
-
-  gap: 14px;
-
-  margin-top: 45px;
-}
-
-.hero-footer span {
-  width: 35px;
-  height: 1px;
-
-  background: rgba(126, 211, 239, 0.55);
-}
-
-.hero-footer p {
-  margin: 0;
-
-  color: rgba(225, 242, 249, 0.62);
-
-  font-size: 12px;
-  font-weight: 500;
-
-  letter-spacing: 0.3px;
-}
-
-@media (max-width: 900px) {
-  .auth-hero {
-    min-height: auto;
-  }
-
-  .hero-content {
-    padding: 45px 32px;
-  }
-
-  .hero-logo {
-    margin-bottom: 35px;
-  }
-
-  .hero-logo img {
-    width: 160px;
-  }
-
-  .hero-message h2 {
-    font-size: 34px;
-  }
-
-  .hero-features {
-    display: none;
-  }
-}
-</style>

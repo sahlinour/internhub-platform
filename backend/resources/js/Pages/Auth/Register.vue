@@ -41,68 +41,89 @@ const submit = () => {
 <template>
   <Head title="Create an account" />
 
-  <div class="auth-screen">
+  <div
+    class="grid min-h-screen grid-cols-1 bg-white min-[901px]:grid-cols-2"
+  >
 
-
-    <div class="hero-panel">
-     <AuthHeroPanel
-    title="Start your journey. <strong>Build your future.</strong>"
-    subtitle="Create your InternHub account and connect your potential with real internship opportunities."
-    :features="[
-        {
-        title: 'Create your professional profile',
-        text: 'Showcase your skills, experience, and ambitions to companies looking for emerging talent.'
-        },
-        {
-        title: 'Find the right internship',
-        text: 'Discover opportunities that match your interests, skills, and career goals.'
-        },
-        {
-        title: 'Connect with companies',
-        text: 'Build meaningful connections with organizations searching for their next talent.'
-        }
-    ]"
-    footer="Your professional journey starts here."
-    />
+    <!-- LEFT PANEL -->
+    <div class="min-w-0 bg-[#123b55]">
+      <div
+        class="relative min-h-[320px] w-full
+               min-[901px]:sticky
+               min-[901px]:top-0
+               min-[901px]:h-screen
+               min-[901px]:min-h-screen"
+      >
+        <AuthHeroPanel
+          title="Start your journey. <strong>Build your future.</strong>"
+          subtitle="Create your InternHub account and connect your potential with real internship opportunities."
+          :features="[
+            {
+              title: 'Create your professional profile',
+              text: 'Showcase your skills, experience, and ambitions to companies looking for emerging talent.'
+            },
+            {
+              title: 'Find the right internship',
+              text: 'Discover opportunities that match your interests, skills, and career goals.'
+            },
+            {
+              title: 'Connect with companies',
+              text: 'Build meaningful connections with organizations searching for their next talent.'
+            }
+          ]"
+          footer="Your professional journey starts here."
+        />
+      </div>
     </div>
 
+    <!-- RIGHT PANEL -->
+    <div
+      class="flex min-h-0 w-full min-w-0 items-start justify-center bg-white
+             px-5 py-9
+             sm:px-6 sm:py-11
+             min-[901px]:min-h-screen
+             min-[901px]:px-12
+             min-[901px]:py-12"
+    >
+      <div class="w-full max-w-[440px]">
 
-    <div class="form-panel">
-
-      <div class="form-wrapper">
-
-        <!-- Logo -->
-        <div class="brand">
+        <!-- LOGO -->
+        <div class="mb-6 flex items-center justify-center sm:mb-[30px]">
           <img
             src="/images/LogoBgWhiteInternHub.png"
             alt="InternHub"
-            class="brand-logo"
+            class="block h-auto w-[160px] object-contain sm:w-[180px]"
           />
         </div>
 
-        <!-- Heading -->
-        <div class="heading">
-          <h1 class="title">
+        <!-- HEADING -->
+        <div class="mb-[26px] text-center">
+          <h1
+            class="mb-2 text-[25px] font-extrabold leading-[1.2]
+                   tracking-[-0.5px] text-[#1c3a52] sm:text-[28px]"
+          >
             Create your account
           </h1>
 
-          <p class="subtitle">
+          <p
+            class="text-[13px] leading-[1.6] text-[#6d8292]
+                   sm:text-sm"
+          >
             Join our ecosystem of professionals and future leaders.
           </p>
         </div>
 
-        <!-- Role -->
+        <!-- ROLE -->
         <RoleSelector v-model="form.role" />
-
 
         <form @submit.prevent="submit">
 
-          <!-- Full name -->
-          <div class="field-group">
+          <!-- FULL NAME -->
+          <div class="mb-4">
             <InputLabel
               for="name"
               value="Full Name"
-              class="field-label"
+              class="mb-[7px] block text-[13px] font-semibold text-[#1c3a52]"
             />
 
             <TextInput
@@ -110,23 +131,27 @@ const submit = () => {
               v-model="form.name"
               type="text"
               placeholder="John Doe"
-              class="field-input"
               autofocus
               autocomplete="name"
+              class="min-h-[46px] w-full rounded-[9px] border border-[#d3e0e8]
+                     bg-[#f4f8fa] px-[14px] py-[11px] text-sm text-[#1c3a52]
+                     placeholder:text-[#9babb6]
+                     focus:border-[#3b9ec4] focus:bg-white
+                     focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
             />
 
             <InputError
               :message="form.errors.name"
-              class="field-error"
+              class="mt-[5px]"
             />
           </div>
 
-          <!-- Email -->
-          <div class="field-group">
+          <!-- EMAIL -->
+          <div class="mb-4">
             <InputLabel
               for="email"
               value="E-Mail Address"
-              class="field-label"
+              class="mb-[7px] block text-[13px] font-semibold text-[#1c3a52]"
             />
 
             <TextInput
@@ -134,29 +159,36 @@ const submit = () => {
               v-model="form.email"
               type="email"
               placeholder="name@university.edu"
-              class="field-input"
               autocomplete="username"
+              class="min-h-[46px] w-full rounded-[9px] border border-[#d3e0e8]
+                     bg-[#f4f8fa] px-[14px] py-[11px] text-sm text-[#1c3a52]
+                     placeholder:text-[#9babb6]
+                     focus:border-[#3b9ec4] focus:bg-white
+                     focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
             />
 
             <InputError
               :message="form.errors.email"
-              class="field-error"
+              class="mt-[5px]"
             />
           </div>
 
-          <!-- City -->
-          <div class="field-group">
-
+          <!-- CITY -->
+          <div class="mb-4">
             <InputLabel
               for="ville_id"
               value="City"
-              class="field-label"
+              class="mb-[7px] block text-[13px] font-semibold text-[#1c3a52]"
             />
 
             <select
               id="ville_id"
               v-model="form.ville_id"
-              class="field-input"
+              class="min-h-[46px] w-full rounded-[9px] border border-[#d3e0e8]
+                     bg-[#f4f8fa] px-[14px] py-[11px] text-sm text-[#1c3a52]
+                     transition duration-200
+                     focus:border-[#3b9ec4] focus:bg-white
+                     focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
             >
               <option value="" disabled>
                 Select your city
@@ -173,24 +205,19 @@ const submit = () => {
 
             <InputError
               :message="form.errors.ville_id"
-              class="field-error"
+              class="mt-[5px]"
             />
-
           </div>
 
-          <!-- ========================================
-               COMPANY ONLY
-          ========================================= -->
-
+          <!-- COMPANY ONLY -->
           <template v-if="form.role === 'Entreprise'">
 
-            <!-- Industry -->
-            <div class="field-group">
-
+            <!-- INDUSTRY -->
+            <div class="mb-4">
               <InputLabel
                 for="secteur"
                 value="Industry"
-                class="field-label"
+                class="mb-[7px] block text-[13px] font-semibold text-[#1c3a52]"
               />
 
               <TextInput
@@ -198,23 +225,25 @@ const submit = () => {
                 v-model="form.secteur"
                 type="text"
                 placeholder="e.g. Information Technology"
-                class="field-input"
+                class="min-h-[46px] w-full rounded-[9px] border border-[#d3e0e8]
+                       bg-[#f4f8fa] px-[14px] py-[11px] text-sm text-[#1c3a52]
+                       placeholder:text-[#9babb6]
+                       focus:border-[#3b9ec4] focus:bg-white
+                       focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
               />
 
               <InputError
                 :message="form.errors.secteur"
-                class="field-error"
+                class="mt-[5px]"
               />
-
             </div>
 
-            <!-- Address -->
-            <div class="field-group">
-
+            <!-- ADDRESS -->
+            <div class="mb-4">
               <InputLabel
                 for="adresse"
                 value="Address"
-                class="field-label"
+                class="mb-[7px] block text-[13px] font-semibold text-[#1c3a52]"
               />
 
               <TextInput
@@ -222,23 +251,25 @@ const submit = () => {
                 v-model="form.adresse"
                 type="text"
                 placeholder="Company address"
-                class="field-input"
+                class="min-h-[46px] w-full rounded-[9px] border border-[#d3e0e8]
+                       bg-[#f4f8fa] px-[14px] py-[11px] text-sm text-[#1c3a52]
+                       placeholder:text-[#9babb6]
+                       focus:border-[#3b9ec4] focus:bg-white
+                       focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
               />
 
               <InputError
                 :message="form.errors.adresse"
-                class="field-error"
+                class="mt-[5px]"
               />
-
             </div>
 
-            <!-- Website -->
-            <div class="field-group">
-
+            <!-- WEBSITE -->
+            <div class="mb-4">
               <InputLabel
                 for="site_web"
                 value="Website"
-                class="field-label"
+                class="mb-[7px] block text-[13px] font-semibold text-[#1c3a52]"
               />
 
               <TextInput
@@ -246,49 +277,54 @@ const submit = () => {
                 v-model="form.site_web"
                 type="url"
                 placeholder="https://www.company.com"
-                class="field-input"
+                class="min-h-[46px] w-full rounded-[9px] border border-[#d3e0e8]
+                       bg-[#f4f8fa] px-[14px] py-[11px] text-sm text-[#1c3a52]
+                       placeholder:text-[#9babb6]
+                       focus:border-[#3b9ec4] focus:bg-white
+                       focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
               />
 
               <InputError
                 :message="form.errors.site_web"
-                class="field-error"
+                class="mt-[5px]"
               />
-
             </div>
 
-            <!-- Description -->
-            <div class="field-group">
-
+            <!-- DESCRIPTION -->
+            <div class="mb-4">
               <InputLabel
                 for="description"
                 value="Company Description"
-                class="field-label"
+                class="mb-[7px] block text-[13px] font-semibold text-[#1c3a52]"
               />
 
               <textarea
                 id="description"
                 v-model="form.description"
-                class="field-input textarea-input"
-                placeholder="Tell us about your company..."
                 rows="4"
+                placeholder="Tell us about your company..."
+                class="min-h-[110px] w-full resize-y rounded-[9px]
+                       border border-[#d3e0e8] bg-[#f4f8fa]
+                       px-[14px] py-[11px] text-sm text-[#1c3a52]
+                       placeholder:text-[#9babb6]
+                       focus:border-[#3b9ec4] focus:bg-white
+                       focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
               ></textarea>
 
               <InputError
                 :message="form.errors.description"
-                class="field-error"
+                class="mt-[5px]"
               />
-
             </div>
 
           </template>
 
-          <!-- Password -->
-          <div class="field-group">
-
+          <!-- PASSWORD -->
+          <div class="mb-4">
             <InputLabel
               for="password"
               value="Password"
-              class="field-label"
+              class="mb-[7px] block text-[13px] font-semibold text-[#1c3a52]"
             />
 
             <TextInput
@@ -296,24 +332,26 @@ const submit = () => {
               v-model="form.password"
               type="password"
               placeholder="••••••••••••"
-              class="field-input"
               autocomplete="new-password"
+              class="min-h-[46px] w-full rounded-[9px] border border-[#d3e0e8]
+                     bg-[#f4f8fa] px-[14px] py-[11px] text-sm text-[#1c3a52]
+                     placeholder:text-[#9babb6]
+                     focus:border-[#3b9ec4] focus:bg-white
+                     focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
             />
 
             <InputError
               :message="form.errors.password"
-              class="field-error"
+              class="mt-[5px]"
             />
-
           </div>
 
-          <!-- Confirm Password -->
-          <div class="field-group">
-
+          <!-- CONFIRM PASSWORD -->
+          <div class="mb-4">
             <InputLabel
               for="password_confirmation"
               value="Confirm Password"
-              class="field-label"
+              class="mb-[7px] block text-[13px] font-semibold text-[#1c3a52]"
             />
 
             <TextInput
@@ -321,49 +359,71 @@ const submit = () => {
               v-model="form.password_confirmation"
               type="password"
               placeholder="••••••••••••"
-              class="field-input"
               autocomplete="new-password"
+              class="min-h-[46px] w-full rounded-[9px] border border-[#d3e0e8]
+                     bg-[#f4f8fa] px-[14px] py-[11px] text-sm text-[#1c3a52]
+                     placeholder:text-[#9babb6]
+                     focus:border-[#3b9ec4] focus:bg-white
+                     focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
             />
 
             <InputError
               :message="form.errors.password_confirmation"
-              class="field-error"
+              class="mt-[5px]"
             />
-
           </div>
 
-          <!-- Terms -->
-          <label class="terms">
-
+          <!-- TERMS -->
+          <label
+            class="mt-[5px] flex cursor-pointer items-start gap-[9px]
+                   text-[13px] leading-[1.5] text-[#526a7b]"
+          >
             <Checkbox v-model:checked="form.terms" />
 
             <span>
               I agree to the
 
-              <Link href="/terms" target="_blank">
+              <Link
+                href="/terms"
+                target="_blank"
+                class="font-semibold text-[#2f8fd6] no-underline
+                       hover:text-[#1c3a52]"
+              >
                 Terms of Service
               </Link>
 
               and
 
-              <Link href="/privacy" target="_blank">
+              <Link
+                href="/privacy"
+                target="_blank"
+                class="font-semibold text-[#2f8fd6] no-underline
+                       hover:text-[#1c3a52]"
+              >
                 Privacy Policy
               </Link>.
             </span>
-
           </label>
 
           <InputError
             :message="form.errors.terms"
-            class="field-error"
+            class="mt-[5px]"
           />
 
-          <!-- Submit -->
+          <!-- SUBMIT -->
           <PrimaryButton
-            class="submit-btn"
             :disabled="form.processing"
+            class="mt-5 flex min-h-12 w-full items-center justify-center
+                   rounded-[9px] border-0 bg-[#1c3a52] px-4 py-3
+                   text-sm font-bold normal-case tracking-normal text-white
+                   shadow-[0_8px_20px_rgba(28,58,82,0.14)]
+                   transition duration-200
+                   hover:-translate-y-px
+                   hover:bg-[#285a78]
+                   hover:shadow-[0_10px_24px_rgba(28,58,82,0.2)]
+                   disabled:cursor-not-allowed
+                   disabled:opacity-65"
           >
-
             <span v-if="form.processing">
               Creating account...
             </span>
@@ -371,448 +431,24 @@ const submit = () => {
             <span v-else>
               Create Account
             </span>
-
           </PrimaryButton>
-
         </form>
 
-        <!-- Login -->
-        <p class="login-link">
+        <!-- LOGIN -->
+        <p class="mt-[22px] text-center text-[13px] text-[#6d8292]">
           Already have an account?
 
-          <Link :href="route('login')">
+          <Link
+            :href="route('login')"
+            class="ml-1 font-bold text-[#2f8fd6] no-underline
+                   hover:text-[#1c3a52]"
+          >
             Sign in
           </Link>
         </p>
 
       </div>
-
     </div>
 
   </div>
 </template>
-
-<style scoped>
-
-/* =========================================
-   MAIN LAYOUT
-
-   LEFT  = BLUE
-   RIGHT = FORM
-========================================= */
-
-.auth-screen {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-
-  min-height: 100vh;
-
-  background: #ffffff;
-}
-
-
-/* =========================================
-   LEFT — BLUE HERO
-========================================= */
-
-.hero-panel {
-  grid-column: 1;
-
-  min-width: 0;
-
-  background: #123b55;
-}
-
-.hero-panel :deep(.auth-hero) {
-  position: sticky;
-
-  top: 0;
-
-  width: 100%;
-  height: 100vh;
-  min-height: 100vh;
-}
-
-
-/* =========================================
-   RIGHT — FORM
-========================================= */
-
-.form-panel {
-  grid-column: 2;
-
-  display: flex;
-
-  align-items: flex-start;
-  justify-content: center;
-
-  min-width: 0;
-  min-height: 100vh;
-
-  padding: 48px 48px;
-
-  box-sizing: border-box;
-
-  background: #ffffff;
-}
-
-.form-wrapper {
-  width: 100%;
-  max-width: 440px;
-}
-
-
-/* =========================================
-   LOGO
-========================================= */
-
-.brand {
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  margin-bottom: 30px;
-}
-
-.brand-logo {
-  display: block;
-
-  width: 180px;
-  height: auto;
-
-  object-fit: contain;
-}
-
-
-/* =========================================
-   HEADING
-========================================= */
-
-.heading {
-  margin-bottom: 26px;
-
-  text-align: center;
-}
-
-.title {
-  margin: 0 0 8px;
-
-  color: #1c3a52;
-
-  font-size: 28px;
-  font-weight: 800;
-
-  line-height: 1.2;
-
-  letter-spacing: -0.5px;
-}
-
-.subtitle {
-  margin: 0;
-
-  color: #6d8292;
-
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-
-/* =========================================
-   DIVIDER
-========================================= */
-
-.divider {
-  display: flex;
-
-  align-items: center;
-
-  gap: 12px;
-
-  margin: 24px 0;
-}
-
-.divider .line {
-  flex: 1;
-
-  height: 1px;
-
-  background: #dce6ec;
-}
-
-.divider-text {
-  color: #7c8f9d;
-
-  font-size: 12px;
-  font-weight: 600;
-
-  white-space: nowrap;
-}
-
-
-/* =========================================
-   FORM FIELDS
-========================================= */
-
-.field-group {
-  margin-bottom: 16px;
-}
-
-.field-label {
-  display: block;
-
-  margin-bottom: 7px;
-
-  color: #1c3a52;
-
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.field-input {
-  width: 100%;
-  min-height: 46px;
-
-  box-sizing: border-box;
-
-  padding: 11px 14px;
-
-  border: 1px solid #d3e0e8;
-
-  border-radius: 9px;
-
-  background: #f4f8fa;
-
-  color: #1c3a52;
-
-  font-size: 14px;
-
-  transition:
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.field-input:focus {
-  outline: none;
-
-  border-color: #3b9ec4;
-
-  background: #ffffff;
-
-  box-shadow:
-    0 0 0 3px rgba(59, 158, 196, 0.12);
-}
-
-.field-input::placeholder {
-  color: #9babb6;
-}
-
-.field-error {
-  margin-top: 5px;
-}
-
-
-/* =========================================
-   TEXTAREA
-========================================= */
-
-.textarea-input {
-  min-height: 110px;
-
-  resize: vertical;
-
-  font-family: inherit;
-}
-
-
-/* =========================================
-   TERMS
-========================================= */
-
-.terms {
-  display: flex;
-
-  align-items: flex-start;
-
-  gap: 9px;
-
-  margin-top: 5px;
-
-  color: #526a7b;
-
-  font-size: 13px;
-  line-height: 1.5;
-
-  cursor: pointer;
-}
-
-.terms :deep(a) {
-  color: #2f8fd6;
-
-  font-weight: 600;
-
-  text-decoration: none;
-}
-
-.terms :deep(a):hover {
-  color: #1c3a52;
-}
-
-
-/* =========================================
-   CREATE ACCOUNT BUTTON
-========================================= */
-
-.submit-btn {
-  display: flex !important;
-
-  align-items: center;
-  justify-content: center;
-
-  width: 100% !important;
-
-  min-height: 48px;
-
-  box-sizing: border-box;
-
-  margin-top: 20px;
-
-  padding: 12px 16px;
-
-  border: none;
-
-  border-radius: 9px;
-
-  background: #1c3a52;
-
-  color: #ffffff;
-
-  font-size: 14px;
-  font-weight: 700;
-
-  text-transform: none;
-  letter-spacing: normal;
-
-  box-shadow:
-    0 8px 20px rgba(28, 58, 82, 0.14);
-
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-  background: #285a78;
-
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 10px 24px rgba(28, 58, 82, 0.2);
-}
-
-.submit-btn:disabled {
-  opacity: 0.65;
-
-  cursor: not-allowed;
-}
-
-
-/* =========================================
-   LOGIN LINK
-========================================= */
-
-.login-link {
-  margin: 22px 0 0;
-
-  color: #6d8292;
-
-  font-size: 13px;
-
-  text-align: center;
-}
-
-.login-link :deep(a) {
-  margin-left: 4px;
-
-  color: #2f8fd6;
-
-  font-weight: 700;
-
-  text-decoration: none;
-}
-
-.login-link :deep(a):hover {
-  color: #1c3a52;
-}
-
-
-/* =========================================
-   TABLET / MOBILE
-========================================= */
-
-@media (max-width: 900px) {
-
-  .auth-screen {
-    display: flex;
-
-    flex-direction: column;
-  }
-
-  /* blue first */
-  .hero-panel {
-    order: 1;
-  }
-
-  .hero-panel :deep(.auth-hero) {
-    position: relative;
-
-    height: auto;
-    min-height: 320px;
-  }
-
-  /* form underneath */
-  .form-panel {
-    order: 2;
-
-    width: 100%;
-    min-height: auto;
-
-    padding: 44px 24px;
-  }
-}
-
-
-/* =========================================
-   MOBILE
-========================================= */
-
-@media (max-width: 600px) {
-
-  .form-panel {
-    padding: 36px 20px;
-  }
-
-  .form-wrapper {
-    max-width: 100%;
-  }
-
-  .brand {
-    margin-bottom: 25px;
-  }
-
-  .brand-logo {
-    width: 160px;
-  }
-
-  .title {
-    font-size: 25px;
-  }
-
-  .subtitle {
-    font-size: 13px;
-  }
-}
-
-</style>

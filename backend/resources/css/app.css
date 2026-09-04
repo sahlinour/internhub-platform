@@ -2,25 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
+/* App loading screen */
 #app-loader {
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #ffffff;
-
+    @apply fixed inset-0 z-[99999] flex items-center justify-center bg-white;
     opacity: 1;
     visibility: visible;
-
-    transition:
-        opacity 0.4s ease,
-        visibility 0.4s ease;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
 #app-loader.hidden {
@@ -30,9 +17,7 @@
 }
 
 .loader-image {
-    width: 100px !important;
-    max-width: 75vw !important;
-    height: auto;
+    @apply h-auto w-[100px] max-w-[75vw];
     animation: loader-float 1.8s ease-in-out infinite;
 }
 

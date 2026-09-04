@@ -5,44 +5,29 @@ const providers = [
 ]
 
 function redirectToProvider(provider) {
-  // Route Laravel Socialite attendue : GET /auth/{provider}/redirect
+  // Route Laravel Socialite : GET /auth/{provider}/redirect
   window.location.href = `/auth/${provider}/redirect`
 }
 </script>
 
 <template>
-  <div class="social-buttons">
+  <div class="mb-6 grid grid-cols-2 gap-3">
     <button
       v-for="provider in providers"
       :key="provider.value"
       type="button"
-      class="social-btn"
+      class="
+        rounded-lg
+        border-[1.5px] border-[#cfe0ea]
+        bg-white
+        p-3.5
+        text-[15px] font-semibold text-[#1c3a52]
+        transition-colors duration-150
+        hover:border-[#3b9ec4]
+      "
       @click="redirectToProvider(provider.value)"
     >
       {{ provider.label }}
     </button>
   </div>
 </template>
-
-<style scoped>
-.social-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.social-btn {
-  padding: 14px;
-  border-radius: 8px;
-  border: 1.5px solid #cfe0ea;
-  background: #fff;
-  font-weight: 600;
-  font-size: 15px;
-  color: #1c3a52;
-}
-
-.social-btn:hover {
-  border-color: #3b9ec4;
-}
-</style>

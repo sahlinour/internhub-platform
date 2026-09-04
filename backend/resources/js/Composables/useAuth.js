@@ -14,8 +14,8 @@ export function useAuth() {
   const isStagiaire = computed(() => role.value === 'stagiaire')
   const isEncadrant = computed(() => role.value === 'encadrant')
   const isEntreprise = computed(() => role.value === 'entreprise')
-  const isAdmin = computed(() => role.value === 'admin')
 
-  return { user, role, isStagiaire, isEncadrant, isEntreprise, isAdmin }
+
+  return { user, role, isStagiaire, isEncadrant, isEntreprise }
 }
 

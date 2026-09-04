@@ -30,67 +30,76 @@ const submit = () => {
 <template>
   <Head title="Se connecter" />
 
-  <div class="auth-screen">
+  <div class="grid min-h-screen grid-cols-1 bg-white lg:grid-cols-2">
 
-
-    <div class="hero-panel">
-     <AuthHeroPanel
-  title="Welcome back. <strong>Your journey continues.</strong>"
-  subtitle="Sign in to access your opportunities, applications, and professional connections."
-  :features="[
-    {
-      title: 'Continue your applications',
-      text: 'Track the internships you have applied to and stay updated on their progress.'
-    },
-    {
-      title: 'Stay connected',
-      text: 'Keep in touch with companies, mentors, and opportunities relevant to your career.'
-    },
-    {
-      title: 'Discover what is next',
-      text: 'Explore new internships and opportunities tailored to your profile.'
-    }
-  ]"
-  footer="Your next opportunity may already be waiting."
-/>
+    <!-- LEFT PANEL -->
+    <div class="min-w-0 bg-[#1c3a52]">
+      <AuthHeroPanel
+        title="Welcome back. <strong>Your journey continues.</strong>"
+        subtitle="Sign in to access your opportunities, applications, and professional connections."
+        :features="[
+          {
+            title: 'Continue your applications',
+            text: 'Track the internships you have applied to and stay updated on their progress.'
+          },
+          {
+            title: 'Stay connected',
+            text: 'Keep in touch with companies, mentors, and opportunities relevant to your career.'
+          },
+          {
+            title: 'Discover what is next',
+            text: 'Explore new internships and opportunities tailored to your profile.'
+          }
+        ]"
+        footer="Your next opportunity may already be waiting."
+      />
     </div>
 
-    <div class="form-panel">
-      <div class="form-wrapper">
+    <!-- RIGHT PANEL -->
+    <div
+      class="flex items-center justify-center bg-white px-5 py-9 sm:px-6 lg:px-10 xl:px-16"
+    >
+      <div class="w-full max-w-[440px]">
 
-       <div class="brand">
-            <img
-                src="/images/LogoBgWhiteInternHub.png"
-                alt="InternHub"
-                class="brand-logo"
-        />
+        <!-- LOGO -->
+        <div class="mb-8 flex items-center justify-center">
+          <img
+            src="/images/LogoBgWhiteInternHub.png"
+            alt="InternHub"
+            class="block h-auto w-[180px] object-contain"
+          />
         </div>
-        <div class="heading">
-          <h2 class="title">Welcome back</h2>
 
-          <p class="subtitle">
+        <!-- HEADING -->
+        <div class="mb-7">
+          <h2
+            class="mb-2 text-[30px] font-extrabold leading-tight tracking-[-0.7px] text-[#172f43]"
+          >
+            Welcome back
+          </h2>
+
+          <p class="text-sm leading-relaxed text-[#718596]">
             Sign in to keep bridging ambition and opportunity.
           </p>
         </div>
 
+        <!-- STATUS -->
         <div
           v-if="status"
-          class="status-banner"
+          class="mb-5 rounded-[10px] border border-[#cde8d5] bg-[#f1faf4] px-4 py-3 text-center text-[13px] font-semibold text-[#287342]"
         >
           {{ status }}
         </div>
 
-
-       
-
+        <!-- FORM -->
         <form @submit.prevent="submit">
 
-
-          <div class="field-group">
+          <!-- EMAIL -->
+          <div class="mb-[18px]">
             <InputLabel
               for="email"
               value="E-Mail Address"
-              class="field-label"
+              class="mb-2 block text-[13px] font-semibold text-[#1c3a52]"
             />
 
             <TextInput
@@ -98,23 +107,23 @@ const submit = () => {
               v-model="form.email"
               type="email"
               placeholder="name@university.edu"
-              class="field-input"
               autofocus
               autocomplete="username"
+              class="box-border w-full rounded-[10px] border border-[#d7e2e9] bg-[#f8fafb] px-[15px] py-[13px] text-sm text-[#1c3a52] placeholder:text-[#9aabb7] transition duration-200 focus:border-[#3b9ec4] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
             />
 
             <InputError
               :message="form.errors.email"
-              class="field-error"
+              class="mt-1"
             />
           </div>
 
           <!-- PASSWORD -->
-          <div class="field-group">
+          <div class="mb-[18px]">
             <InputLabel
               for="password"
               value="Password"
-              class="field-label"
+              class="mb-2 block text-[13px] font-semibold text-[#1c3a52]"
             />
 
             <TextInput
@@ -122,38 +131,38 @@ const submit = () => {
               v-model="form.password"
               type="password"
               placeholder="••••••••••••"
-              class="field-input"
               autocomplete="current-password"
+              class="box-border w-full rounded-[10px] border border-[#d7e2e9] bg-[#f8fafb] px-[15px] py-[13px] text-sm text-[#1c3a52] placeholder:text-[#9aabb7] transition duration-200 focus:border-[#3b9ec4] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#3b9ec4]/10"
             />
 
             <InputError
               :message="form.errors.password"
-              class="field-error"
+              class="mt-1"
             />
           </div>
 
-          <!-- OPTIONS -->
-          <div class="row-between">
+          <!-- REMEMBER + FORGOT PASSWORD -->
+          <div class="mt-1 flex items-center justify-between text-[13px]">
 
-            <label class="remember">
+            <label
+              class="flex cursor-pointer items-center gap-2 text-[#536b7c]"
+            >
               <Checkbox v-model:checked="form.remember" />
-
               <span>Remember me</span>
             </label>
 
             <Link
               href="/forgot-password"
-              class="forgot-link"
+              class="font-semibold text-[#2f8fd6] no-underline transition-colors duration-200 hover:text-[#1c3a52]"
             >
               Forgot password?
             </Link>
-
           </div>
 
-          <!-- BUTTON -->
+          <!-- SUBMIT -->
           <PrimaryButton
-            class="submit-btn"
             :disabled="form.processing"
+            class="mt-[22px] flex min-h-[50px] w-full items-center justify-center rounded-[10px] border-0 bg-[#1c3a52] text-sm font-bold tracking-[0.1px] text-white shadow-[0_8px_20px_rgba(28,58,82,0.14)] transition duration-200 hover:-translate-y-px hover:bg-[#28546f] hover:shadow-[0_10px_24px_rgba(28,58,82,0.2)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-65"
           >
             <span v-if="form.processing">
               Signing in...
@@ -166,10 +175,14 @@ const submit = () => {
 
         </form>
 
-        <p class="login-link">
+        <!-- REGISTER -->
+        <p class="mt-6 text-center text-[13px] text-[#718596]">
           Don't have an account?
 
-          <Link :href="route('register')">
+          <Link
+            :href="route('register')"
+            class="ml-1 font-bold text-[#2f8fd6] no-underline transition-colors hover:text-[#1c3a52]"
+          >
             Sign up for free
           </Link>
         </p>
@@ -179,271 +192,3 @@ const submit = () => {
 
   </div>
 </template>
-
-<style scoped>
-.auth-screen {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
-  background: #ffffff;
-}
-
-.hero-panel {
-  min-width: 0;
-  background: #1c3a52;
-}
-
-.form-panel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 64px;
-  background: #ffffff;
-}
-
-.form-wrapper {
-  width: 100%;
-  max-width: 440px;
-}
-
-.brand {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 34px;
-}
-
-.brand-logo {
-  width: 180px;
-  height: auto;
-  display: block;
-  object-fit: contain;
-}
-
-.brand .line {
-  flex: 1;
-  height: 1px;
-  background: #dce7ed;
-}
-
-
-.brand h1 strong {
-  color: #1c3a52;
-}
-
-.heading {
-  margin-bottom: 28px;
-}
-
-.title {
-  margin: 0 0 8px;
-  color: #172f43;
-  font-size: 30px;
-  line-height: 1.2;
-  font-weight: 800;
-  letter-spacing: -0.7px;
-}
-
-.subtitle {
-  margin: 0;
-  color: #718596;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.status-banner {
-  margin-bottom: 20px;
-  padding: 12px 16px;
-  border: 1px solid #cde8d5;
-  border-radius: 10px;
-  background: #f1faf4;
-  color: #287342;
-  font-size: 13px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 24px 0;
-}
-
-.divider .line {
-  flex: 1;
-  height: 1px;
-  background: #e1e9ee;
-}
-
-.divider-text {
-  color: #8495a2;
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.field-group {
-  margin-bottom: 18px;
-}
-
-.field-label {
-  display: block;
-  margin-bottom: 8px;
-  color: #1c3a52;
-  font-size: 13px;
-  font-weight: 650;
-}
-
-.field-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 13px 15px;
-  border: 1px solid #d7e2e9;
-  border-radius: 10px;
-  background: #f8fafb;
-  color: #1c3a52;
-  font-size: 14px;
-  transition:
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.field-input:focus {
-  border-color: #3b9ec4;
-  background: #ffffff;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 158, 196, 0.12);
-}
-
-.field-input::placeholder {
-  color: #9aabb7;
-}
-
-.field-error {
-  margin-top: 5px;
-}
-
-.row-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
-  font-size: 13px;
-}
-
-.remember {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #536b7c;
-  cursor: pointer;
-}
-
-.forgot-link {
-  color: #2f8fd6;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.forgot-link:hover {
-  color: #1c3a52;
-}
-
-.submit-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 50px;
-  margin-top: 22px;
-  border: none;
-  border-radius: 10px;
-  background: #1c3a52;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.1px;
-  box-shadow: 0 8px 20px rgba(28, 58, 82, 0.14);
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-  background: #28546f;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(28, 58, 82, 0.2);
-}
-
-.submit-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.submit-btn:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-.login-link {
-  margin: 24px 0 0;
-  color: #718596;
-  font-size: 13px;
-  text-align: center;
-}
-
-.login-link :deep(a) {
-  margin-left: 4px;
-  color: #2f8fd6;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.login-link :deep(a):hover {
-  color: #1c3a52;
-}
-
-@media (max-width: 1000px) {
-  .form-panel {
-    padding: 40px;
-  }
-}
-
-@media (max-width: 900px) {
-  .auth-screen {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-panel {
-    order: 1;
-  }
-
-  .form-panel {
-    order: 2;
-    min-height: auto;
-    padding: 48px 24px;
-  }
-}
-
-@media (max-width: 600px) {
-  .form-panel {
-    padding: 36px 20px;
-  }
-
-  .form-wrapper {
-    max-width: 100%;
-  }
-
-  .title {
-    font-size: 26px;
-  }
-
-  .brand {
-    margin-bottom: 30px;
-  }
-}
-</style>

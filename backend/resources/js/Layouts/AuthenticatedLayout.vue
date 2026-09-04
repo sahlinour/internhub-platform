@@ -10,7 +10,7 @@ import { router } from '@inertiajs/vue3'
 defineProps({
   role: {
     type: String,
-    default: 'stagiaire' // stagiaire | encadrant | entreprise | admin
+    default: 'stagiaire' // stagiaire | encadrant | entreprise 
   }
 })
 const logout = () => {
