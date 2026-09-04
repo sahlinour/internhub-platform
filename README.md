@@ -133,59 +133,50 @@ InternHub repose sur plusieurs profils utilisateurs.
 ```text
 internhub-platform/
 │
-├── docker-compose.yml
-├── README.md
+├── docker-compose.yml      orchestration des six services
+├── README.md               présentation, équipe, stratégie Git
 ├── .gitignore
 │
-├── assets/
-│   ├── logo.png
-│   └── divider.svg
-│
 ├── nginx/
-│   └── nginx.conf
+│   └── nginx.conf          serveur frontal et règles de routage
 │
-├── frontend/
+├── frontend/               application Vue 3
 │   ├── Dockerfile
-│   ├── package.json
-│   ├── vite.config.js
+│   ├── package.json        dépendances et scripts npm
+│   ├── vite.config.js      
 │   ├── index.html
 │   ├── public/
 │   └── src/
-│       ├── main.js
-│       ├── App.vue
-│       ├── router/
-│       ├── stores/
-│       ├── components/
-│       ├── views/
-│       └── layouts/
+│       ├── main.js         point d'entrée : Vue + Pinia + Router
+│       ├── App.vue         composant racine
+│       ├── router/         définition des routes
+│       └── stores/         magasins Pinia (état partagé)
 │
-├── backend/
+├── backend/                API Laravel 13
 │   ├── Dockerfile
-│   ├── composer.json
-│   ├── artisan
+│   ├── composer.json       dépendances PHP
+│   ├── artisan             utilitaire en ligne de commande
 │   ├── app/
-│   │   ├── Models/
-│   │   ├── Http/
-│   │   │   ├── Controllers/
-│   │   │   ├── Requests/
-│   │   │   └── Resources/
+│   │   ├── Models/         modèles Eloquent
+│   │   ├── Http/Controllers/
 │   │   └── Providers/
-│   ├── routes/
-│   ├── config/
+│   ├── routes/             web.php, console.php
+│   ├── config/             app, auth, database, session…
 │   ├── database/
-│   │   ├── migrations/
-│   │   ├── seeders/
-│   │   └── factories/
-│   ├── resources/
-│   ├── storage/
-│   ├── tests/
-│   └── public/
+│   │   ├── migrations/     schéma versionné
+│   │   ├── seeders/        données de démonstration
+│   │   └── factories/      générateurs de données de test
+│   ├── resources/          vues et ressources front héritées
+│   ├── storage/            journaux, cache, fichiers déposés
+│   ├── tests/              Feature/ et Unit/
+│   └── public/             racine web (index.php)
 │
-└── fastapi/
+└── fastapi/                micro-service IA
     ├── Dockerfile
     ├── requirements.txt
     └── app/
-        └── main.py
+        └── main.py         points d'entrée FastAPI
+
 ```
 
 <p align="center">
@@ -303,7 +294,6 @@ Pour un service spécifique :
 
 ```bash
 docker compose logs backend
-docker compose logs frontend
 docker compose logs fastapi
 ```
 
@@ -340,8 +330,7 @@ docker compose up -d
 ## 🌐 Accès aux services
 
 | Service             | URL                     |
-| ------------------- | ----------------------- |
-| **Frontend Vue.js** | `http://localhost:5173` |
+| ------------------- | ----------------------- | |
 | **Backend Laravel** | `http://localhost:8000` |
 | **FastAPI**         | `http://localhost:8001` |
 | **Nginx**           | `http://localhost`      |
@@ -372,14 +361,14 @@ InternHub est composé de six services principaux.
 
 Projet réalisé par une équipe de six étudiants ingénieurs.
 
-| Membre                    | Rôle                                                  |
-| ------------------------- | ----------------------------------------------------- |
-| **Nour El Houda Sahli**   | Project Manager & Full Stack Developer & CI/CD        |
-| **Wisal Nijad**           | Full Stack Developer & Docker Infrastructure          |
-| **Soukayna Zaidi**        | Frontend Developer & Infrastructure Security Engineer |
-| **Mohamed Reda Hachoum**  | Backend Developer & AI Engineer                       |
-| **Ziad Chelouati**        | Application Security Engineer & Full Stack Developer  |
-| **Moulay Youssef Bahedi** | Quality Assurance Engineer & Backend Developer        |
+| Membre                    | Rôle                                                                                          |
+| ------------------------- | ----------------------------------------------------------------------------------------------|
+| **Nour El Houda Sahli**   | Project Manager & Full Stack Developer & CI/CD                                                |
+| **Wisal Nijad**           | Assistant Project Manager & Full Stack Developer & Docker Infrastructure/Cloud & AI Engineer  |
+| **Soukayna Zaidi**        | Frontend Developer & Infrastructure Security Engineer                                         |
+| **Mohamed Reda Hachoum**  | Backend Developer & AI Engineer                                                               |
+| **Ziad Chelouati**        | Application Security Engineer & Full Stack Developer                                          |
+| **Moulay Youssef Bahedi** | Quality Assurance Engineer & Backend Developer                                                |
 
 <p align="center">
   <img src="./assets/divider.svg" width="100%" height="4" alt=""/>
