@@ -368,7 +368,7 @@ Projet réalisé par une équipe de six étudiants ingénieurs.
 | **Soukayna Zaidi**        | Frontend Developer & Infrastructure Security Engineer                                         |
 | **Mohamed Reda Hachoum**  | Backend Developer & AI Engineer                                                               |
 | **Ziad Chelouati**        | Application Security Engineer & Full Stack Developer                                          |
-| **Moulay Youssef Bahedi** | Quality Assurance Engineer & Backend Developer                                                |
+| **Moulay Youssef Bahedi** | Quality Assurance Engineer & Backend Developer & AI Engineer                                  |
 
 <p align="center">
   <img src="./assets/divider.svg" width="100%" height="4" alt=""/>
