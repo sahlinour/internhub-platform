@@ -330,7 +330,7 @@ docker compose up -d
 ## 🌐 Accès aux services
 
 | Service             | URL                     |
-| ------------------- | ----------------------- | |
+| ------------------- | ----------------------- |
 | **Backend Laravel** | `http://localhost:8000` |
 | **FastAPI**         | `http://localhost:8001` |
 | **Nginx**           | `http://localhost`      |
