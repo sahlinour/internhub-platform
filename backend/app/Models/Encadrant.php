@@ -33,4 +33,15 @@ class Encadrant extends Model
             'user_id'
         );
     }
+    public function stages()
+    {
+        return $this->hasMany(Stage::class, 'idUtilisateur_Encadrant', 'user_id');
+    }
+    public function documents()
+    {
+        return $this->hasMany(Document::class, 'idUtilisateur_Encadrant', 'user_id');
+    }
+    public function evaluations(){
+        return $this->HasMany(Evaluation::class, 'idUtilisateur_Encadrant', 'user_id');
+    }
 }

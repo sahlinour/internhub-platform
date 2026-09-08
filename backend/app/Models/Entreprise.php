@@ -33,4 +33,16 @@ class Entreprise extends Model
             'user_id'
         );
     }
+
+    /**
+     * Relationship to internship offers (offredestages).
+     */
+    public function offres()
+    {
+        return $this->hasMany(
+            Offredestage::class,
+            'idUtilisateur_Entreprise',
+            'user_id'
+        );
+    }
 }
