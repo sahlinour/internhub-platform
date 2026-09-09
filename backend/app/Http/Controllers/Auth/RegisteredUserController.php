@@ -1,6 +1,5 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -88,9 +87,6 @@ class RegisteredUserController extends Controller
     }
 
     event(new Registered($user));
-
-    Auth::login($user);
-
-    return redirect()->route('login')->with('status','Account successfully created. You can now log in.');
+        return redirect()->route('login')->with('status','Account successfully created. You can now log in.');
 }
 }
