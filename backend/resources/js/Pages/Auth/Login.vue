@@ -64,7 +64,7 @@ const submit = () => {
         <!-- LOGO -->
         <div class="mb-8 flex items-center justify-center">
           <img
-            src="/images/LogoBgWhiteInternHub.png"
+            :src="`/images/LogoBgWhiteInternHub.png`"
             alt="InternHub"
             class="block h-auto w-[180px] object-contain"
           />

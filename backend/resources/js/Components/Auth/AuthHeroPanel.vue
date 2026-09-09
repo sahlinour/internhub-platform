@@ -60,7 +60,7 @@ defineProps({
       <!-- LOGO -->
       <div class="mb-[58px] max-[900px]:mb-[35px]">
         <img
-          src="/images/LogoBgDarkInternHub.png"
+          :src="`/images/LogoBgDarkInternHub.png`"
           alt="InternHub"
           class="block h-auto w-[185px] object-contain max-[900px]:w-[160px]"
         />

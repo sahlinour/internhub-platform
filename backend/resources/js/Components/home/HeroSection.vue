@@ -6,7 +6,7 @@ import { Link } from '@inertiajs/vue3'
     <section class="relative bg-brand-darkest overflow-hidden min-h-screen flex items-center">
         <div class="absolute inset-0 z-0">
             <img
-                src="/images/Hero.jpg"
+                :src="`/images/Hero.jpg`"
                 alt="Hero"
                 class="w-full h-full object-cover opacity-40"
             />

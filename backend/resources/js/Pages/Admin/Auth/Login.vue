@@ -1,8 +1,8 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3'
-import InputLabel from '@/Components/InputLabel.vue'
-import TextInput from '@/Components/TextInput.vue'
-import InputError from '@/Components/InputError.vue'
+import InputLabel from '@/Components/Shared/InputLabel.vue'
+import TextInput from '@/Components/Shared/TextInput.vue'
+import InputError from '@/Components/Shared/InputError.vue'
 
 const logoUrl = '/images/LogoBgDarkInternHub.png'
 const logoUrl2 = '/images/LogoBgWhiteInternHub.png'
