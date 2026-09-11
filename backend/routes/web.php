@@ -90,6 +90,10 @@ Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'destr
     ->middleware('auth')
     ->name('admin.logout');
 
+#ai route chatbot
+Route::get('/ai/chatbot', function () {
+    return Inertia::render('AI/chatbot/index');
+})->name('ai.chatbot');
     
 
 require __DIR__.'/auth.php';
