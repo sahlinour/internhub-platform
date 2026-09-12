@@ -54,7 +54,7 @@ class Stagiaire extends Model
     {
         return $this->belongsToMany(
             Competence::class,
-            'possede',
+            'possedes',
             'idUtilisateur_Stagiaire',
             'id_Competence',
             'user_id',

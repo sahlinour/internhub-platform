@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Candidature;
 use App\Models\Document;
 use App\Models\OffreDeStage;
 use App\Models\Stage;
@@ -59,18 +60,106 @@ class DashboardController extends Controller
      * Build static metrics for Entreprise.
      */
     public static function entrepriseView(int $entrepriseId): Response
-    {
-        $offresIds = OffreDeStage::where('idUtilisateur_Entreprise', $entrepriseId)->pluck('id');
+{
+    $offresIds = OffreDeStage::where(
+        'idUtilisateur_Entreprise',
+        $entrepriseId
+    )->pluck('id');
 
-        $stats = [
-            'total_offres'     => $offresIds->count(),
-            'offres_actives'   => OffreDeStage::where('idUtilisateur_Entreprise', $entrepriseId)->where('statut', 'Ouverte')->count(),
-            'total_stages'     => Stage::whereHas('candidature', fn($q) => $q->whereIn('idOffreDeStage', $offresIds))->count(),
-            'recent_offres'    => OffreDeStage::where('idUtilisateur_Entreprise', $entrepriseId)->latest()->take(5)->get(),
-        ];
+    $openOffers = OffreDeStage::where(
+        'idUtilisateur_Entreprise',
+        $entrepriseId
+    )
+        ->where('statut', 'active')
+        ->count();
 
-        return Inertia::render('Dashboard/Entreprise/Index', ['stats' => $stats]);
-    }
+    $applicants = Candidature::whereIn(
+        'id_Offre_De_Stage',
+        $offresIds
+    )->count();
+
+    $accepted = Candidature::whereIn(
+        'id_Offre_De_Stage',
+        $offresIds
+    )
+        ->where('statut', 'acceptee')
+        ->count();
+
+    $activeInterns = Stage::where(
+        'statut',
+        'en_cours'
+    )
+        ->whereHas(
+            'candidature',
+            function ($q) use ($offresIds) {
+                $q->whereIn(
+                    'id_Offre_De_Stage',
+                    $offresIds
+                );
+            }
+        )
+        ->count();
+
+    $recentApplicants = Candidature::whereIn(
+        'id_Offre_De_Stage',
+        $offresIds
+    )
+        ->with([
+            'stagiaire.user',
+            'offreDeStage',
+        ])
+        ->latest()
+        ->take(5)
+        ->get()
+        ->map(function ($candidature) {
+            $name =
+                $candidature->stagiaire?->user?->nom_complet
+                ?? 'Student';
+
+            $initials = collect(
+                preg_split('/\s+/', trim($name))
+            )
+                ->filter()
+                ->take(2)
+                ->map(
+                    fn ($word) =>
+                    strtoupper(substr($word, 0, 1))
+                )
+                ->implode('');
+
+            return [
+                'id' => $candidature->id,
+                'name' => $name,
+                'initials' => $initials,
+                'offer' =>
+                    $candidature->offreDeStage?->titre
+                    ?? 'Internship',
+                'status' => match ($candidature->statut) {
+                    'en_attente' => 'Pending',
+                    'acceptee' => 'Accepted',
+                    'refusee' => 'Rejected',
+                    default => $candidature->statut,
+                },
+            ];
+        });
+
+    return Inertia::render(
+        'Entreprise/Dashboard',
+        [
+            'stats' => [
+                'open_offers' => $openOffers,
+                'applicants' => $applicants,
+                'accepted' => $accepted,
+                'active_interns' => $activeInterns,
+            ],
+
+            'recentApplicants' => $recentApplicants,
+
+            // No interview backend exists yet.
+            'upcomingInterviews' => [],
+        ]
+    );
+}
 
     /**
      * Build static metrics for Encadrant.

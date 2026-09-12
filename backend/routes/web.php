@@ -11,6 +11,9 @@ use App\Http\Controllers\OffreDeStageController as GuestOffreController;
 use App\Http\Controllers\SignalementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
+use App\Http\Controllers\Entreprise\CandidatureController;
+
+
 
 Route::get('/', function () {
     return Inertia::render('Home', [
@@ -21,15 +24,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function (Request $request) {
-    return match ($request->user()->role) {
-        'Admin' => Inertia::render('Dashboard/Admin/Index'),
-        'Encadrant' => Inertia::render('Dashboard/Encadrant/Index'),
-        'Entreprise' => Inertia::render('Dashboard/Entreprise/Index'),
-        'Stagiaire' => Inertia::render('Dashboard/Stagiaire/Index'),
-        default => abort(403, 'Unauthorized role'),
-    };
-})->middleware('auth')->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
 
@@ -53,7 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead']) ->name('notifications.readAll');
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
-    
+
     // Signalement route for all users
     Route::post('/offres/{id}/signalement', [SignalementController::class, 'store'])->name('signalements.store');
 
@@ -68,7 +63,7 @@ Route::middleware('auth')->group(function () {
 
    //admin related
 
-   
+
 
     Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [AdminAuthenticatedSessionController::class, 'create'])
@@ -90,6 +85,6 @@ Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'destr
     ->middleware('auth')
     ->name('admin.logout');
 
-    
+
 
 require __DIR__.'/auth.php';

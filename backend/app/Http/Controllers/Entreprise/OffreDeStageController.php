@@ -22,6 +22,11 @@ class OffreDeStageController extends Controller
             'offres' => $offres,
         ]);
     }
+    public function create()
+    {
+            return Inertia::render('Entreprise/Offres/Create');
+    }
+
 
     public function store(Request $request)
     {

@@ -3,101 +3,261 @@
 namespace App\Http\Controllers\Entreprise;
 
 use App\Http\Controllers\Controller;
-use App\Models\Stage;
 use App\Models\Candidature;
+use App\Models\Stage;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
 
 class StageController extends Controller
 {
     /**
-     * List internships created by the logged-in Entreprise.
+     * List current interns belonging to the logged-in Entreprise.
      */
     public function index(): Response
     {
         $entrepriseId = Auth::id();
 
-        $stages = Stage::whereHas('candidature.offreDeStage', function ($q) use ($entrepriseId) {
-            $q->where('idUtilisateur_Entreprise', $entrepriseId);
-        })->with([
-            'candidature.stagiaire.user',
-            'candidature.offreDeStage',
-            'encadrant.user'
-        ])
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+        $stages = Stage::where('statut', 'en_cours')
+            ->whereHas(
+                'candidature.offreDeStage',
+                function ($q) use ($entrepriseId) {
+                    $q->where(
+                        'idUtilisateur_Entreprise',
+                        $entrepriseId
+                    );
+                }
+            )
+            ->with([
+                'candidature.stagiaire.user',
+                'candidature.offreDeStage',
+                'encadrant.user',
+            ])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        return Inertia::render('Entreprise/Stages/Index', [
-            'stages' => $stages,
-        ]);
+        return Inertia::render(
+            'Entreprise/Stages/Index',
+            [
+                'stages' => $stages,
+            ]
+        );
     }
 
     /**
-     * Create a new Stage from an accepted Candidature.
+     * Create a Stage from an accepted Candidature.
      */
     public function store(Request $request): RedirectResponse
     {
+        $entrepriseId = Auth::id();
+
         $request->validate([
-            'sujet'                   => 'required|string|max:255',
-            'date_debut'              => 'required|date',
-            'date_fin'                => 'nullable|date|after_or_equal:date_debut',
-            'id_Candidature'          => 'required|exists:candidatures,id',
-            'idUtilisateur_Encadrant' => 'nullable|exists:encadrants,user_id',
+            'sujet' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'date_debut' => [
+                'required',
+                'date',
+            ],
+
+            'date_fin' => [
+                'nullable',
+                'date',
+                'after_or_equal:date_debut',
+            ],
+
+            'id_Candidature' => [
+                'required',
+                'exists:candidatures,id',
+            ],
+
+            'idUtilisateur_Encadrant' => [
+                'nullable',
+                Rule::exists('encadrants', 'user_id')
+                    ->where(function ($query) use ($entrepriseId) {
+                        $query->where(
+                            'entreprise_id',
+                            $entrepriseId
+                        );
+                    }),
+            ],
         ]);
 
-        $candidature = Candidature::findOrFail($request->id_Candidature);
+        /*
+        |--------------------------------------------------------------------------
+        | Verify candidature belongs to this company
+        |--------------------------------------------------------------------------
+        */
 
-        // Ensure candidature is accepted
-        if ($candidature->statut !== 'Acceptée') {
-            return back()->with('error', 'The application must be accepted before creating an internship.');
+        $candidature = Candidature::whereHas(
+            'offreDeStage',
+            function ($q) use ($entrepriseId) {
+                $q->where(
+                    'idUtilisateur_Entreprise',
+                    $entrepriseId
+                );
+            }
+        )
+            ->findOrFail(
+                $request->id_Candidature
+            );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Candidature must be accepted
+        |--------------------------------------------------------------------------
+        */
+
+        if ($candidature->statut !== 'acceptee') {
+            return back()->with(
+                'error',
+                'The application must be accepted before creating an internship.'
+            );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Avoid creating another Stage for the same candidature
+        |--------------------------------------------------------------------------
+        */
+
+        if ($candidature->stage) {
+            return back()->with(
+                'error',
+                'An internship has already been created for this application.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create internship
+        |--------------------------------------------------------------------------
+        */
+
         Stage::create([
-            'sujet'                   => $request->sujet,
-            'date_debut'              => $request->date_debut,
-            'date_fin'                => $request->date_fin,
-            'statut'                  => 'en_cours',
-            'id_Candidature'          => $request->id_Candidature,
-            'idUtilisateur_Encadrant' => $request->idUtilisateur_Encadrant,
+            'sujet' => $request->sujet,
+
+            'date_debut' => $request->date_debut,
+
+            'date_fin' => $request->date_fin,
+
+            'statut' => 'en_cours',
+
+            'id_Candidature' =>
+                $candidature->id,
+
+            'idUtilisateur_Encadrant' =>
+                $request->idUtilisateur_Encadrant,
         ]);
 
-        return back()->with('message', 'Internship successfully created.');
+        return back()->with(
+            'message',
+            'Internship successfully created.'
+        );
     }
 
     /**
-     * Assign or update the Encadrant assigned to the Stage.
+     * Assign or change the company supervisor.
      */
-    public function assignEncadrant(Request $request, $id): RedirectResponse
-    {
+    public function assignEncadrant(
+        Request $request,
+        $id
+    ): RedirectResponse {
+        $entrepriseId = Auth::id();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Supervisor must belong to this company
+        |--------------------------------------------------------------------------
+        */
+
         $request->validate([
-            'idUtilisateur_Encadrant' => 'required|exists:encadrants,user_id',
+            'idUtilisateur_Encadrant' => [
+                'required',
+
+                Rule::exists(
+                    'encadrants',
+                    'user_id'
+                )->where(
+                    function ($query) use ($entrepriseId) {
+                        $query->where(
+                            'entreprise_id',
+                            $entrepriseId
+                        );
+                    }
+                ),
+            ],
         ]);
 
-        $stage = Stage::findOrFail($id);
+        /*
+        |--------------------------------------------------------------------------
+        | Stage must belong to this company
+        |--------------------------------------------------------------------------
+        */
+
+        $stage = Stage::whereHas(
+            'candidature.offreDeStage',
+            function ($q) use ($entrepriseId) {
+                $q->where(
+                    'idUtilisateur_Entreprise',
+                    $entrepriseId
+                );
+            }
+        )
+            ->findOrFail($id);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Assign supervisor
+        |--------------------------------------------------------------------------
+        */
+
         $stage->update([
-            'idUtilisateur_Encadrant' => $request->idUtilisateur_Encadrant,
+            'idUtilisateur_Encadrant' =>
+                $request->idUtilisateur_Encadrant,
         ]);
 
-        return back()->with('message', 'Encadrant assigné au stage.');
+        return back()->with(
+            'message',
+            'Supervisor assigned successfully.'
+        );
     }
 
     /**
-     * Remove or cancel an internship record.
+     * Delete an internship.
      */
     public function destroy($id): RedirectResponse
     {
         $entrepriseId = Auth::id();
 
-        // Ensure the company owns the offer linked to this stage
-        $stage = Stage::whereHas('candidature.offreDeStage', function ($q) use ($entrepriseId) {
-            $q->where('idUtilisateur_Entreprise', $entrepriseId);
-        })->findOrFail($id);
+        /*
+        |--------------------------------------------------------------------------
+        | Only delete stages belonging to this company
+        |--------------------------------------------------------------------------
+        */
+
+        $stage = Stage::whereHas(
+            'candidature.offreDeStage',
+            function ($q) use ($entrepriseId) {
+                $q->where(
+                    'idUtilisateur_Entreprise',
+                    $entrepriseId
+                );
+            }
+        )
+            ->findOrFail($id);
 
         $stage->delete();
 
-        return back()->with('message', 'Stage deleted successfully.');
+        return back()->with(
+            'message',
+            'Internship deleted successfully.'
+        );
     }
 }
