@@ -33,6 +33,7 @@ services:
       - ./fastapi:/app
     depends_on:
       - postgres
+      - ollama
 
   postgres:
     image: postgres:16
@@ -72,8 +73,18 @@ services:
       - backend
       - fastapi
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: internhub-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   pgadmin_data:
   backend_vendor:
   backend_node_modules:
+  ollama_data:
