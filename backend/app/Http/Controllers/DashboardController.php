@@ -102,6 +102,6 @@ class DashboardController extends Controller
             'docs_count'   => $activeStage ? Document::where('id_Stage', $activeStage->id)->count() : 0,
         ];
 
-        return Inertia::render('Dashboard/Stagiaire/Index', ['stats' => $stats]);
+        return Inertia::render('Stagiaire/Dashboard', ['stats' => $stats]);
     }
 }

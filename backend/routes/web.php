@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\OffreDeStageController as GuestOffreController;
 use App\Http\Controllers\SignalementController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
 
 Route::get('/', function () {
@@ -21,15 +20,6 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function (Request $request) {
-    return match ($request->user()->role) {
-        'Admin' => Inertia::render('Dashboard/Admin/Index'),
-        'Encadrant' => Inertia::render('Dashboard/Encadrant/Index'),
-        'Entreprise' => Inertia::render('Dashboard/Entreprise/Index'),
-        'Stagiaire' => Inertia::render('Dashboard/Stagiaire/Index'),
-        default => abort(403, 'Unauthorized role'),
-    };
-})->middleware('auth')->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -57,13 +47,12 @@ Route::middleware('auth')->group(function () {
     // Signalement route for all users
     Route::post('/offres/{id}/signalement', [SignalementController::class, 'store'])->name('signalements.store');
 
-    // Dashboard route for all users
-    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    
 });
 
     // Public routes accessible by unauthenticated visitors
-    Route::get('/offres', [GuestOffreController::class, 'index'])->name('villes.index');
-    Route::get('/offres/{id}', [GuestOffreController::class, 'show'])->name('villes.show');
+    Route::get('/offres', [GuestOffreController::class, 'index'])->name('offres.index');
+    Route::get('/offres/{id}', [GuestOffreController::class, 'show'])->name('offres.show');
 
 
    //admin related

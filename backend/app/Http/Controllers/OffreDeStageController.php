@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Offredestage;
+use App\Models\Ville;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,30 +17,91 @@ class OffreDeStageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Inertia\Response
      */
+    
     public function index(Request $request): Response
     {
-        // Query only 'active' offers with company profile and user info
-        $query = Offredestage::with(['entreprise.user', 'entreprise.user.ville']);
+        $query = Offredestage::with([
+            'entreprise.user',
+            'entreprise.user.ville',
+        ]);
 
-        // Search by offer title
+        /*
+        |--------------------------------------------------------------------------
+        | Search by title
+        |--------------------------------------------------------------------------
+        */
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = $request->input('search');
+
             $query->where('titre', 'like', "%{$search}%");
         }
 
-        // Filter by duration if provided
-        if ($request->filled('duree')) {
-            $query->where('duree', $request->duree);
+        /*
+        |--------------------------------------------------------------------------
+        | Filter by location
+        |--------------------------------------------------------------------------
+        */
+        if (
+            $request->filled('location') &&
+            $request->input('location') !== 'all'
+        ) {
+            $location = $request->input('location');
+
+            $query->whereHas('entreprise.user.ville', function ($q) use ($location) {
+                $q->where('nom', $location);
+            });
         }
 
-        // Paginate active offers
-        $offres = $query->orderBy('created_at', 'desc')
-                        ->paginate(12)
-                        ->withQueryString();
+        /*
+        |--------------------------------------------------------------------------
+        | Filter by duration
+        |--------------------------------------------------------------------------
+        */
+        if (
+            $request->filled('duration') &&
+            $request->input('duration') !== 'all'
+        ) {
+            $duration = $request->input('duration');
 
-        return Inertia::render('Villes/Index', [
-            'offres'  => $offres,
-            'filters' => $request->only(['search', 'duree']),
+            $query->where('duree', $duration);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Get offers
+        |--------------------------------------------------------------------------
+        */
+        $offres = $query
+            ->orderBy('created_at', 'desc')
+            ->paginate(12)
+            ->withQueryString();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Get all cities
+        |--------------------------------------------------------------------------
+        */
+        $villes = Ville::query()
+            ->orderBy('nom', 'asc')
+            ->get(['id', 'nom']);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Return Inertia page
+        |--------------------------------------------------------------------------
+        */
+        return Inertia::render('Stagiaire/Offres/Index', [
+            'offres' => $offres,
+
+            'villes' => $villes,
+
+            'filters' => [
+                'search' => $request->input('search', ''),
+                'location' => $request->input('location', 'all'),
+                'duration' => $request->input('duration', 'all'),
+                'workType' => $request->input('workType', []),
+                'skills' => $request->input('skills', ''),
+            ],
         ]);
     }
 
@@ -51,12 +113,12 @@ class OffreDeStageController extends Controller
      */
     public function show($id): Response
     {
-        // Load single active offer with full enterprise details
-        $offre = Offredestage::where('statut', 'active')
-            ->with(['entreprise.user', 'entreprise.user.ville'])
-            ->findOrFail($id);
+        $offre = Offredestage::with([
+            'entreprise.user',
+            'entreprise.user.ville',
+        ])->findOrFail($id);
 
-        return Inertia::render('Guest/Offres/Show', [
+        return Inertia::render('Stagiaire/Offres/Show', [
             'offre' => $offre,
         ]);
     }

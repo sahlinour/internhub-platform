@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Stagiaire\StagiaireController;
+use App\Http\Controllers\DashboardController;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Stagiaire\CompetenceController as StagiaireCompetenceController;
 use App\Http\Controllers\Stagiaire\FavorisController;
 use App\Http\Controllers\Stagiaire\CandidatureController as StagiaireCandidatureController;
@@ -14,8 +16,9 @@ Route::middleware(['auth', 'role:Stagiaire'])
     ->name('stagiaire.')
     ->group(function () {
 
-        Route::get('/dashboard', [StagiaireController::class, 'dashboard'])
-            ->name('dashboard');
+        Route::get('/dashboard', function () {
+            return DashboardController::stagiaireView(Auth::id());
+        })->name('dashboard');
 
         // Stagiaire Profile CRUD
         Route::get('/profile', [StagiaireController::class, 'show'])->name('profile.show');
@@ -36,10 +39,17 @@ Route::middleware(['auth', 'role:Stagiaire'])
         Route::delete('/favoris/{offreId}', [FavorisController::class, 'destroy'])->name('favoris.destroy');
 
         // Stagiaire Candidature CRUD
-        Route::get('/candidatures', [StagiaireCandidatureController::class, 'index'])->name('candidatures.index');
-        Route::post('/offres/{offreId}/apply', [StagiaireCandidatureController::class, 'store'])->name('candidatures.store');
-        Route::delete('/candidatures/{id}', [StagiaireCandidatureController::class, 'destroy'])->name('candidatures.destroy');
+        Route::get('/candidatures', [StagiaireCandidatureController::class, 'index'])
+            ->name('candidatures.index');
 
+        Route::get('/offres/{offreId}/apply', [StagiaireCandidatureController::class, 'create'])
+            ->name('candidatures.create');
+
+        Route::post('/offres/{offreId}/apply', [StagiaireCandidatureController::class, 'store'])
+            ->name('candidatures.store');
+
+        Route::delete('/candidatures/{id}', [StagiaireCandidatureController::class, 'destroy'])
+            ->name('candidatures.destroy');
         //Stagiaire Document
         Route::get('/documents', [StagiaireDocumentController::class, 'index'])->name('documents.index');
         Route::post('/documents', [StagiaireDocumentController::class, 'store'])->name('documents.store');

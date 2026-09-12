@@ -17,17 +17,147 @@ class CandidatureController extends Controller
     /**
      * List all applications submitted by the logged-in Stagiaire.
      */
-    public function index(): Response
+    public function index(Request $request): Response
+{
+    $stagiaire = Auth::user()->stagiaire;
+
+    $sort = $request->get('sort', 'recently_updated');
+
+    $query = Candidature::where(
+        'idUtilisateur_Stagiaire',
+        $stagiaire->user_id
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sorting
+    |--------------------------------------------------------------------------
+    */
+
+    switch ($sort) {
+
+        case 'recently_applied':
+            $query->orderBy('date_postulation', 'desc');
+            break;
+
+        case 'company_asc':
+            $query
+                ->join(
+                    'offredestages',
+                    'candidatures.id_Offre_De_Stage',
+                    '=',
+                    'offredestages.id'
+                )
+                ->join(
+                    'entreprises',
+                    'offredestages.idUtilisateur_Entreprise',
+                    '=',
+                    'entreprises.user_id'
+                )
+                ->join(
+                    'users',
+                    'entreprises.user_id',
+                    '=',
+                    'users.id'
+                )
+                ->select('candidatures.*')
+                ->orderBy('users.nom_complet', 'asc');
+
+            break;
+
+        case 'status':
+            $query->orderBy('statut', 'asc');
+            break;
+
+        case 'deadline':
+            $query
+                ->join(
+                    'offredestages',
+                    'candidatures.id_Offre_De_Stage',
+                    '=',
+                    'offredestages.id'
+                )
+                ->select('candidatures.*')
+                ->orderBy('offredestages.date_limite', 'asc');
+
+            break;
+
+        case 'recently_updated':
+        default:
+            $query->orderBy('updated_at', 'desc');
+            break;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Applications
+    |--------------------------------------------------------------------------
+    */
+
+    $candidatures = $query
+        ->with([
+            'offreDeStage.entreprise.user',
+        ])
+        ->paginate(10)
+        ->withQueryString();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Statistics
+    |--------------------------------------------------------------------------
+    */
+
+    $statsQuery = Candidature::where(
+        'idUtilisateur_Stagiaire',
+        $stagiaire->user_id
+    );
+
+    $stats = [
+        'applied' => (clone $statsQuery)->count(),
+
+        'under_review' => (clone $statsQuery)
+            ->where('statut', 'En cours d\'examen')
+            ->count(),
+
+        // Pas encore de statut Interview dans la DB
+        'interview' => 0,
+
+        'offer' => (clone $statsQuery)
+            ->where('statut', 'Acceptée')
+            ->count(),
+
+        'rejected' => (clone $statsQuery)
+            ->where('statut', 'Refusée')
+            ->count(),
+    ];
+
+    return Inertia::render('Stagiaire/Candidatures/Index', [
+        'candidatures' => $candidatures,
+        'stats' => $stats,
+        'sortBy' => $sort,
+    ]);
+}
+
+    /**
+     * Display the internship application form.
+     */
+    public function create($offreId): Response
     {
-        $stagiaire = Auth::user()->stagiaire;
+        $offre = Offredestage::where('statut', 'Ouverte')
+        ->with([
+            'entreprise.user',
+            'entreprise.user.ville',
+        ])
+        ->findOrFail($offreId);
 
-        $candidatures = Candidature::where('idUtilisateur_Stagiaire', $stagiaire->user_id)
-            ->with(['offreDeStage.entreprise.user'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $user = Auth::user()->load([
+            'stagiaire',
+            'ville',
+        ]);
 
-        return Inertia::render('Stagiaire/Candidatures/Index', [
-            'candidatures' => $candidatures,
+        return Inertia::render('Stagiaire/Offres/ApplyInternship', [
+            'offre' => $offre,
+            'stagiaire' => $user,
         ]);
     }
 
