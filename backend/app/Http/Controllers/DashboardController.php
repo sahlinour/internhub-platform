@@ -69,7 +69,7 @@ class DashboardController extends Controller
             'recent_offres'    => OffreDeStage::where('idUtilisateur_Entreprise', $entrepriseId)->latest()->take(5)->get(),
         ];
 
-        return Inertia::render('Entreprise/Dashboard', ['stats' => $stats]);
+        return Inertia::render('Dashboard/Entreprise/Index', ['stats' => $stats]);
     }
 
     /**
@@ -85,7 +85,7 @@ class DashboardController extends Controller
             'recent_documents'    => Document::where('idUtilisateur_Encadrant', $encadrantId)->with('stage.candidature.stagiaire.user')->latest()->take(5)->get(),
         ];
 
-        return Inertia::render('Encadrant/Dashboard', ['stats' => $stats]);
+        return Inertia::render('Dashboard/Encadrant/Index', ['stats' => $stats]);
     }
 
     /**
@@ -102,6 +102,6 @@ class DashboardController extends Controller
             'docs_count'   => $activeStage ? Document::where('id_Stage', $activeStage->id)->count() : 0,
         ];
 
-        return Inertia::render('Stagiaire/Dashboard', ['stats' => $stats]);
+        return Inertia::render('Dashboard/Stagiaire/Index', ['stats' => $stats]);
     }
 }

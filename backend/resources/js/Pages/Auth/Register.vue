@@ -90,7 +90,7 @@ const submit = () => {
         <!-- LOGO -->
         <div class="mb-6 flex items-center justify-center sm:mb-[30px]">
           <img
-            src="/images/LogoBgWhiteInternHub.png"
+            :src="`/images/LogoBgWhiteInternHub.png`"
             alt="InternHub"
             class="block h-auto w-[160px] object-contain sm:w-[180px]"
           />

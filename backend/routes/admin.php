@@ -242,15 +242,45 @@ Route::middleware(['auth:admin', 'role:Admin'])
         |--------------------------------------------------------------------------
         */
 
-            Route::get(
-            '/stages',
-            [AdminStageController::class, 'index']
-        )->name('stages.index');
+           Route::get(
+                '/stages',
+                [AdminStageController::class, 'index']
+            )->name('stages.index');
 
-        Route::get(
-            '/stages/{id}',
-            [AdminStageController::class, 'show']
-        )->name('stages.show');
+            Route::get(
+                '/stages/create',
+                [AdminStageController::class, 'create']
+            )->name('stages.create');
+
+            Route::post(
+                '/stages',
+                [AdminStageController::class, 'store']
+            )->name('stages.store');
+
+            Route::get(
+                '/stages/{id}/edit',
+                [AdminStageController::class, 'edit']
+            )->name('stages.edit');
+
+            Route::put(
+                '/stages/{id}',
+                [AdminStageController::class, 'update']
+            )->name('stages.update');
+
+            Route::patch(
+                '/stages/{id}/status',
+                [AdminStageController::class, 'updateStatus']
+            )->name('stages.updateStatus');
+
+            Route::get(
+                '/stages/{id}',
+                [AdminStageController::class, 'show']
+            )->name('stages.show');
+
+            Route::delete(
+                '/stages/{id}',
+                [AdminStageController::class, 'destroy']
+            )->name('stages.destroy');
         /*
         |--------------------------------------------------------------------------
         | Evaluations

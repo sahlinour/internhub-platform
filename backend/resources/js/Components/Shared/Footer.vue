@@ -29,7 +29,7 @@ const legalLinks = [
                 <div class="md:col-span-2">
                     <Link href="/" class="flex items-center gap-2 group">
                         <img
-                            src="/images/LogoBgDarkInternHub.png"
+                            :src="`/images/LogoBgDarkInternHub.png`"
                             alt="InternHub"
                             class="block h-auto w-[150px] object-contain"
                         />
