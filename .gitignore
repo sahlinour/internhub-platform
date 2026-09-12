@@ -64,4 +64,5 @@ Thumbs.db
 *.tmp
 
 # Vite
-/backend/.vite/
+/backend/.vite/__pycache__/
+*.pyc
