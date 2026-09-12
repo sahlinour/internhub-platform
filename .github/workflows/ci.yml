@@ -1,0 +1,116 @@
+name: InternHub CI
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - feature/ci-cd
+
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+
+  backend:
+    name: Laravel - Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_pgsql
+          tools: composer
+          coverage: none
+
+      - name: Install Composer dependencies
+        working-directory: backend
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Prepare Laravel environment
+        working-directory: backend
+        run: cp .env.example .env
+
+      - name: Generate Laravel application key
+        working-directory: backend
+        run: php artisan key:generate
+
+      - name: Clear Laravel configuration
+        working-directory: backend
+        run: php artisan config:clear
+
+      - name: Check Laravel application
+        working-directory: backend
+        run: php artisan about
+
+
+  frontend:
+    name: Vue - Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install npm dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Build Vue/Inertia frontend
+        working-directory: backend
+        run: npm run build
+
+
+  fastapi:
+    name: FastAPI - Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install FastAPI dependencies
+        working-directory: fastapi
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify FastAPI import
+        working-directory: fastapi
+        run: |
+          python -c "from app.main import app; print('FastAPI application loaded successfully')"
+
+
+  docker:
+    name: Docker - Build
+    runs-on: ubuntu-latest
+    needs:
+      - backend
+      - frontend
+      - fastapi
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker images
+        run: docker compose build
