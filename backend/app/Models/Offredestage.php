@@ -30,17 +30,27 @@ class Offredestage extends Model
 
     public function entreprise(): BelongsTo
     {
-        return $this->belongsTo(Entreprise::class, 'idUtilisateur_Entreprise', 'user_id');
+        return $this->belongsTo(
+            Entreprise::class,
+            'idUtilisateur_Entreprise',
+            'user_id'
+        );
     }
 
     public function candidatures(): HasMany
     {
-        return $this->hasMany(Candidature::class, 'id_Offre_De_Stage');
+        return $this->hasMany(
+            Candidature::class,
+            'id_Offre_De_Stage'
+        );
     }
 
     public function signalements(): HasMany
     {
-        return $this->hasMany(Signalement::class, 'id_Offre_De_Stage');
+        return $this->hasMany(
+            Signalement::class,
+            'id_Offre_De_Stage'
+        );
     }
 
     public function favorisParStagiaires(): BelongsToMany

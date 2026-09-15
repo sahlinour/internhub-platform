@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\OffreDeStageController as GuestOffreController;
 use App\Http\Controllers\SignalementController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
 
 Route::get('/', function () {
@@ -19,7 +20,6 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
-
 
 Route::middleware('auth')->group(function () {
 
@@ -32,34 +32,29 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 
-//new routes this is shared with all tables
-
     // Villes
-    Route::get('/villes', [VilleController::class, 'index']) ->name('villes.index');
-    Route::get('/villes/{id}', [VilleController::class, 'show']) ->name('villes.show');
+    Route::get('/villes', [VilleController::class, 'index'])->name('villes.index');
+    Route::get('/villes/{id}', [VilleController::class, 'show'])->name('villes.show');
 
     // Notifications for all users
-    Route::get('/notifications', [NotificationController::class, 'index']) ->name('notifications.index');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
-    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead']) ->name('notifications.readAll');
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
-    
+
     // Signalement route for all users
     Route::post('/offres/{id}/signalement', [SignalementController::class, 'store'])->name('signalements.store');
 
-    
+    // Dashboard route for all authenticated users
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
 });
 
-    // Public routes accessible by unauthenticated visitors
-    Route::get('/offres', [GuestOffreController::class, 'index'])->name('offres.index');
-    Route::get('/offres/{id}', [GuestOffreController::class, 'show'])->name('offres.show');
+// Public routes accessible by unauthenticated visitors
+Route::get('/offres', [GuestOffreController::class, 'index'])->name('offres.index');
+Route::get('/offres/{id}', [GuestOffreController::class, 'show'])->name('offres.show');
 
-
-   //admin related
-
-   
-
-    Route::middleware('guest')->group(function () {
+// Admin related
+Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [AdminAuthenticatedSessionController::class, 'create'])
         ->name('admin.login');
 
@@ -78,7 +73,5 @@ Route::get('/admin/dashboard', function (Request $request) {
 Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('admin.logout');
-
-    
 
 require __DIR__.'/auth.php';

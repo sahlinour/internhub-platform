@@ -1,17 +1,24 @@
 <script setup>
-import ApplicationLogo from '@/Components/Shared/ApplicationLogo.vue'
+import EntrepriseSidebar from '@/Components/Entreprise/EntrepriseSidebar.vue'
+import EntrepriseHeader from '@/Components/Entreprise/EntrepriseHeader.vue'
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
-    <div>
-      <a href="/">
-        <ApplicationLogo class="h-16 w-16" />
-      </a>
-    </div>
+    <div class="min-h-screen bg-[#f5f7fa]">
+        <!-- SIDEBAR -->
+        <EntrepriseSidebar />
 
-    <div class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg">
-      <slot />
+        <!-- RIGHT SIDE -->
+        <div class="min-h-screen ml-[230px] max-[850px]:ml-0">
+
+            <!-- HEADER -->
+            <EntrepriseHeader />
+
+            <!-- PAGE CONTENT -->
+            <main class="p-6 lg:p-7">
+                <slot />
+            </main>
+
+        </div>
     </div>
-  </div>
 </template>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Candidature;
 use App\Models\Document;
 use App\Models\OffreDeStage;
 use App\Models\Stage;
@@ -21,7 +22,6 @@ class DashboardController extends Controller
     public function __invoke(Request $request): Response
     {
         $user = Auth::user();
-
         return match ($user->role) {
             'Admin'      => self::adminView(),
             'Entreprise' => self::entrepriseView($user->id),
@@ -30,52 +30,180 @@ class DashboardController extends Controller
             default      => abort(403, 'Rôle non autorisé.'),
         };
     }
+
     /**
      * Build static metrics for Admin.
      */
     public static function adminView(): Response
     {
         $stats = [
-            'total_users'     => User::count(),
-            'users_by_role'   => User::select('role', DB::raw('count(*) as total'))->groupBy('role')->pluck('total', 'role'),
-            'total_offres'    => OffreDeStage::count(),
-            'total_stages'    => Stage::count(),
+            'total_users' => User::count(),
+            'users_by_role' => User::select(
+                'role',
+                DB::raw('count(*) as total')
+            )
+                ->groupBy('role')
+                ->pluck('total', 'role'),
+
+            'total_offres' => OffreDeStage::count(),
+            'total_stages' => Stage::count(),
             'total_documents' => Document::count(),
-            'total_taches'    => Tache::count(),
-            'recent_users'    => User::latest()->take(5)->get(['id', 'nom_complet', 'email', 'role']),
+            'total_taches' => Tache::count(),
+            'recent_users' => User::latest()
+                ->take(5)
+                ->get([
+                    'id',
+                    'nom_complet',
+                    'email',
+                    'role',
+                ]),
         ];
 
-        return Inertia::render('Admin/Dashboard', ['stats' => $stats]);
+        return Inertia::render('Admin/Dashboard', [
+            'stats' => $stats,
+        ]);
     }
+
     /**
-     * Build static metrics for Entreprise.
+     * Build metrics for Entreprise.
      */
     public static function entrepriseView(int $entrepriseId): Response
     {
-        $offresIds = OffreDeStage::where('idUtilisateur_Entreprise', $entrepriseId)->pluck('id');
-        $stats = [
-            'total_offres'     => $offresIds->count(),
-            'offres_actives'   => OffreDeStage::where('idUtilisateur_Entreprise', $entrepriseId)->where('statut', 'Ouverte')->count(),
-            'total_stages'     => Stage::whereHas('candidature', fn($q) => $q->whereIn('idOffreDeStage', $offresIds))->count(),
-            'recent_offres'    => OffreDeStage::where('idUtilisateur_Entreprise', $entrepriseId)->latest()->take(5)->get(),
-        ];
+        $offresIds = OffreDeStage::where(
+            'idUtilisateur_Entreprise',
+            $entrepriseId
+        )->pluck('id');
+        $openOffers = OffreDeStage::where(
+            'idUtilisateur_Entreprise',
+            $entrepriseId
+        )
+            ->where('statut', 'active')
+            ->count();
+        $applicants = Candidature::whereIn(
+            'id_Offre_De_Stage',
+            $offresIds
+        )->count();
+        $accepted = Candidature::whereIn(
+            'id_Offre_De_Stage',
+            $offresIds
+        )
+            ->where('statut', 'acceptee')
+            ->count();
+        $activeInterns = Stage::where(
+            'statut',
+            'en_cours'
+        )
+            ->whereHas(
+                'candidature',
+                function ($q) use ($offresIds) {
+                    $q->whereIn(
+                        'id_Offre_De_Stage',
+                        $offresIds
+                    );
+                }
+            )
+            ->count();
+        $recentApplicants = Candidature::whereIn(
+            'id_Offre_De_Stage',
+            $offresIds
+        )
+            ->with([
+                'stagiaire.user',
+                'offreDeStage',
+            ])
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($candidature) {
+                $name =
+                    $candidature->stagiaire?->user?->nom_complet
+                    ?? 'Student';
 
-        return Inertia::render('Dashboard/Entreprise/Index', ['stats' => $stats]);
+                $initials = collect(
+                    preg_split('/\s+/', trim($name))
+                )
+                    ->filter()
+                    ->take(2)
+                    ->map(
+                        fn ($word) =>
+                        strtoupper(substr($word, 0, 1))
+                    )
+                    ->implode('');
+
+                return [
+                    'id' => $candidature->id,
+                    'name' => $name,
+                    'initials' => $initials,
+                    'offer' =>
+                        $candidature->offreDeStage?->titre
+                        ?? 'Internship',
+                    'status' => match ($candidature->statut) {
+                        'en_attente' => 'Pending',
+                        'acceptee' => 'Accepted',
+                        'refusee' => 'Rejected',
+                        default => $candidature->statut,
+                    },
+                ];
+            });
+
+        return Inertia::render(
+            'Entreprise/Dashboard',
+            [
+                'stats' => [
+                    'open_offers' => $openOffers,
+                    'applicants' => $applicants,
+                    'accepted' => $accepted,
+                    'active_interns' => $activeInterns,
+                ],
+
+                'recentApplicants' => $recentApplicants,
+                'upcomingInterviews' => [],
+            ]
+        );
     }
+
     /**
      * Build static metrics for Encadrant.
      */
     public static function encadrantView(int $encadrantId): Response
     {
         $stats = [
-            'total_stages'        => Stage::where('idUtilisateur_Encadrant', $encadrantId)->count(),
-            'taches_totales'      => Tache::where('idUtilisateur_Encadrant', $encadrantId)->count(),
-            'taches_a_faire'      => Tache::where('idUtilisateur_Encadrant', $encadrantId)->where('statut', 'À faire')->count(),
-            'documents_a_valider' => Document::where('idUtilisateur_Encadrant', $encadrantId)->where('statut', 'En attente')->count(),
-            'recent_documents'    => Document::where('idUtilisateur_Encadrant', $encadrantId)->with('stage.candidature.stagiaire.user')->latest()->take(5)->get(),
+            'total_stages' => Stage::where(
+                'idUtilisateur_Encadrant',
+                $encadrantId
+            )->count(),
+            'taches_totales' => Tache::where(
+                'idUtilisateur_Encadrant',
+                $encadrantId
+            )->count(),
+            'taches_a_faire' => Tache::where(
+                'idUtilisateur_Encadrant',
+                $encadrantId
+            )
+                ->where('statut', 'À faire')
+                ->count(),
+            'documents_a_valider' => Document::where(
+                'idUtilisateur_Encadrant',
+                $encadrantId
+            )
+                ->where('statut', 'En attente')
+                ->count(),
+            'recent_documents' => Document::where(
+                'idUtilisateur_Encadrant',
+                $encadrantId
+            )
+                ->with('stage.candidature.stagiaire.user')
+                ->latest()
+                ->take(5)
+                ->get(),
         ];
 
-        return Inertia::render('Dashboard/Encadrant/Index', ['stats' => $stats]);
+        return Inertia::render(
+            'Dashboard/Encadrant/Index',
+            [
+                'stats' => $stats,
+            ]
+        );
     }
 
     /**
@@ -84,7 +212,11 @@ class DashboardController extends Controller
     public static function stagiaireView(int $userId): Response
     {
         $user = User::findOrFail($userId);
-        $stagiaire = \App\Models\Stagiaire::where('user_id',$userId)->first();
+        $stagiaire = \App\Models\Stagiaire::where(
+            'user_id',
+            $userId
+        )->first();
+
         $profileFields = [
             'Full name' => !empty($user->nom_complet),
             'Email' => !empty($user->email),
@@ -121,11 +253,13 @@ class DashboardController extends Controller
         $applications = \App\Models\Candidature::with([
             'offreDeStage.entreprise.user',
         ])
-            ->where('idUtilisateur_Stagiaire', $userId)
+            ->where(
+                'idUtilisateur_Stagiaire',
+                $userId
+            )
             ->latest('date_postulation')
             ->take(5)
             ->get();
-
         $applicationsCount = \App\Models\Candidature::where(
             'idUtilisateur_Stagiaire',
             $userId
@@ -143,23 +277,26 @@ class DashboardController extends Controller
 
         $tasksCount = 0;
         $documentsCount = 0;
-
         if ($activeStage) {
             $tasksCount = Tache::where(
                 'id_Stage',
                 $activeStage->id
             )->count();
-
             $documentsCount = Document::where(
                 'id_Stage',
                 $activeStage->id
             )->count();
         }
-
         $recommendedOffers = OffreDeStage::with([
             'entreprise.user.ville',
         ])
-            ->whereIn('statut', ['Ouverte', 'ouverte'])
+            ->whereIn(
+                'statut',
+                [
+                    'Ouverte',
+                    'ouverte',
+                ]
+            )
             ->latest()
             ->take(4)
             ->get();
@@ -170,7 +307,8 @@ class DashboardController extends Controller
                 ? $activeStage->load([
                     'candidature.offreDeStage.entreprise.user',
                     'encadrant.user',
-                ]): null,
+                ])
+                : null,
             'taches_count' => $tasksCount,
             'docs_count' => $documentsCount,
             'applications_count' => $applicationsCount,
@@ -181,15 +319,18 @@ class DashboardController extends Controller
             'profile_items' => $profileItems,
         ];
 
-        return Inertia::render('Stagiaire/Dashboard', [
-            'user' => $user->only([
-                'id',
-                'nom_complet',
-                'email',
-                'telephone',
-                'photo',
-            ]),
-            'stats' => $stats,
-        ]);
+        return Inertia::render(
+            'Stagiaire/Dashboard',
+            [
+                'user' => $user->only([
+                    'id',
+                    'nom_complet',
+                    'email',
+                    'telephone',
+                    'photo',
+                ]),
+                'stats' => $stats,
+            ]
+        );
     }
 }
