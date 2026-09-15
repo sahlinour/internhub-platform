@@ -7,28 +7,23 @@ const props = defineProps({
         default: () => [],
     },
 })
-
 const emit = defineEmits(['filter'])
-
 const filters = reactive({
     location: 'all',
-    workType: [],
     duration: 'all',
-    skills: '',
+    status: 'all',
+    deadline: 'all',
 })
-
 const applyFilters = () => {
     emit('filter', {
         ...filters,
-        workType: [...filters.workType],
     })
 }
-
 const resetFilters = () => {
     filters.location = 'all'
-    filters.workType = []
     filters.duration = 'all'
-    filters.skills = ''
+    filters.status = 'all'
+    filters.deadline = 'all'
 
     applyFilters()
 }
@@ -146,112 +141,6 @@ const resetFilters = () => {
                 </select>
             </div>
 
-            <!-- WORK TYPE -->
-            <div>
-                <label
-                    class="mb-2 flex items-center gap-2
-                           text-[11px] font-bold uppercase
-                           tracking-wide text-[#16425B]"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.8"
-                        stroke="currentColor"
-                        class="h-3.5 w-3.5 text-[#3A7CA5]"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"
-                        />
-
-                        <rect
-                            width="18"
-                            height="12"
-                            x="3"
-                            y="7"
-                            rx="2"
-                        />
-
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M3 12h18"
-                        />
-                    </svg>
-
-                    Work Type
-                </label>
-
-                <div class="space-y-1.5">
-
-                    <!-- ON-SITE -->
-                    <label
-                        class="flex cursor-pointer items-center gap-2.5
-                               rounded-lg px-2.5 py-2
-                               transition hover:bg-[#E8F1F5]"
-                    >
-                        <input
-                            v-model="filters.workType"
-                            type="checkbox"
-                            value="On-site"
-                            class="h-4 w-4 rounded
-                                   border-slate-300
-                                   text-[#3A7CA5]
-                                   focus:ring-[#81C3D7]"
-                        />
-
-                        <span class="text-xs text-slate-600">
-                            On-site
-                        </span>
-                    </label>
-
-                    <!-- HYBRID -->
-                    <label
-                        class="flex cursor-pointer items-center gap-2.5
-                               rounded-lg px-2.5 py-2
-                               transition hover:bg-[#E8F1F5]"
-                    >
-                        <input
-                            v-model="filters.workType"
-                            type="checkbox"
-                            value="Hybrid"
-                            class="h-4 w-4 rounded
-                                   border-slate-300
-                                   text-[#3A7CA5]
-                                   focus:ring-[#81C3D7]"
-                        />
-
-                        <span class="text-xs text-slate-600">
-                            Hybrid
-                        </span>
-                    </label>
-
-                    <!-- REMOTE -->
-                    <label
-                        class="flex cursor-pointer items-center gap-2.5
-                               rounded-lg px-2.5 py-2
-                               transition hover:bg-[#E8F1F5]"
-                    >
-                        <input
-                            v-model="filters.workType"
-                            type="checkbox"
-                            value="Remote"
-                            class="h-4 w-4 rounded
-                                   border-slate-300
-                                   text-[#3A7CA5]
-                                   focus:ring-[#81C3D7]"
-                        />
-
-                        <span class="text-xs text-slate-600">
-                            Remote
-                        </span>
-                    </label>
-                </div>
-            </div>
-
             <!-- DURATION -->
             <div>
                 <label
@@ -313,10 +202,10 @@ const resetFilters = () => {
                 </select>
             </div>
 
-            <!-- SKILLS -->
+            <!-- STATUS -->
             <div>
                 <label
-                    class="mb-1.5 flex items-center gap-2
+                    class="mb-2 flex items-center gap-2
                            text-[11px] font-bold uppercase
                            tracking-wide text-[#16425B]"
                 >
@@ -331,36 +220,147 @@ const resetFilters = () => {
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M20.59 13.41 13.41 20.59a2 2 0 0 1-2.82 0L3.41 13.41a2 2 0 0 1 0-2.82l7.18-7.18a2 2 0 0 1 1.41-.59H19a2 2 0 0 1 2 2v7a2 2 0 0 1-.59 1.41Z"
+                            d="M5 12.5 9 16l10-10"
                         />
 
                         <circle
-                            cx="16.5"
-                            cy="7.5"
-                            r="1"
+                            cx="12"
+                            cy="12"
+                            r="9"
                         />
                     </svg>
 
-                    Skills
+                    Status
                 </label>
 
-                <input
-                    v-model="filters.skills"
-                    type="text"
-                    placeholder="e.g. Laravel, Vue, Python..."
+                <div class="space-y-1.5">
+
+                   <!-- OPEN -->
+                    <label
+                        class="flex cursor-pointer items-center gap-2.5
+                            rounded-lg px-2.5 py-2
+                            transition hover:bg-[#E8F1F5]"
+                    >
+                        <input
+                            v-model="filters.status"
+                            type="radio"
+                            value="Ouverte"
+                            class="h-4 w-4
+                                border-slate-300
+                                text-[#3A7CA5]
+                                focus:ring-[#81C3D7]"
+                        />
+
+                        <span class="text-xs text-slate-600">
+                            Open
+                        </span>
+                    </label>
+
+                    <!-- CLOSED -->
+                    <label
+                        class="flex cursor-pointer items-center gap-2.5
+                            rounded-lg px-2.5 py-2
+                            transition hover:bg-[#E8F1F5]"
+                    >
+                        <input
+                            v-model="filters.status"
+                            type="radio"
+                            value="Fermée"
+                            class="h-4 w-4
+                                border-slate-300
+                                text-[#3A7CA5]
+                                focus:ring-[#81C3D7]"
+                        />
+
+                        <span class="text-xs text-slate-600">
+                            Closed
+                        </span>
+                    </label>
+
+                    <!-- PENDING -->
+                    <label
+                        class="flex cursor-pointer items-center gap-2.5
+                            rounded-lg px-2.5 py-2
+                            transition hover:bg-[#E8F1F5]"
+                    >
+                        <input
+                            v-model="filters.status"
+                            type="radio"
+                            value="En attente"
+                            class="h-4 w-4
+                                border-slate-300
+                                text-[#3A7CA5]
+                                focus:ring-[#81C3D7]"
+                        />
+
+                        <span class="text-xs text-slate-600">
+                            Pending
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- DEADLINE -->
+            <div>
+                <label
+                    class="mb-1.5 flex items-center gap-2
+                           text-[11px] font-bold uppercase
+                           tracking-wide text-[#16425B]"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-3.5 w-3.5 text-[#3A7CA5]"
+                    >
+                        <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="17"
+                            rx="2"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M16 2v4M8 2v4M3 10h18"
+                        />
+                    </svg>
+
+                    Deadline
+                </label>
+
+                <select
+                    v-model="filters.deadline"
                     class="w-full rounded-lg
                            border border-[#E8F1F5]
                            bg-[#E8F1F5]/40
                            px-3 py-2.5
                            text-xs text-[#16425B]
                            outline-none transition
-                           placeholder:text-slate-400
-                           hover:border-[#81C3D7]
                            focus:border-[#3A7CA5]
                            focus:bg-white
                            focus:ring-2 focus:ring-[#81C3D7]/30"
-                    @keyup.enter="applyFilters"
-                />
+                >
+                    <option value="all">
+                        All deadlines
+                    </option>
+
+                    <option value="available">
+                        Available now
+                    </option>
+
+                    <option value="soon">
+                        Closing soon
+                    </option>
+
+                    <option value="expired">
+                        Expired
+                    </option>
+                </select>
             </div>
 
             <!-- APPLY -->

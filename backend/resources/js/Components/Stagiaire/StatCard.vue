@@ -29,9 +29,11 @@ defineProps({
         class="rounded-[11px]
                border border-[#e1e7ec]
                bg-white p-4
-               shadow-[0_2px_8px_rgba(35,63,85,0.04)]"
+               shadow-[0_2px_8px_rgba(35,63,85,0.04)]
+               transition duration-200
+               hover:-translate-y-0.5
+               hover:shadow-[0_4px_12px_rgba(35,63,85,0.08)]"
     >
-
         <!-- ICON -->
         <div
             class="mb-3 flex h-9 w-9
@@ -59,6 +61,7 @@ defineProps({
         <span
             class="mb-1.5 block
                    text-[11px]
+                   font-medium
                    text-[#778b99]"
         >
             {{ label }}
@@ -67,11 +70,10 @@ defineProps({
         <!-- DETAIL -->
         <small
             v-if="detail"
-            class="text-[9px]
+            class="block text-[9px]
                    text-[#4baa70]"
         >
             {{ detail }}
         </small>
-
     </article>
 </template>

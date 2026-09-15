@@ -7,7 +7,6 @@ use App\Models\Candidature;
 use App\Models\Offredestage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
@@ -18,125 +17,92 @@ class CandidatureController extends Controller
      * List all applications submitted by the logged-in Stagiaire.
      */
     public function index(Request $request): Response
-{
-    $stagiaire = Auth::user()->stagiaire;
+    {
+        $stagiaire = Auth::user()->stagiaire;
+        $sort = $request->get('sort', 'recently_updated');
+        $query = Candidature::where(
+            'idUtilisateur_Stagiaire',
+            $stagiaire->user_id
+        );
 
-    $sort = $request->get('sort', 'recently_updated');
+        switch ($sort) {
+            case 'recently_applied':
+                $query->orderBy('date_postulation', 'desc');
+                break;
+            case 'company_asc':
+                $query
+                    ->join(
+                        'offredestages',
+                        'candidatures.id_Offre_De_Stage',
+                        '=',
+                        'offredestages.id'
+                    )
+                    ->join(
+                        'entreprises',
+                        'offredestages.idUtilisateur_Entreprise',
+                        '=',
+                        'entreprises.user_id'
+                    )
+                    ->join(
+                        'users',
+                        'entreprises.user_id',
+                        '=',
+                        'users.id'
+                    )
+                    ->select('candidatures.*')
+                    ->orderBy('users.nom_complet', 'asc');
+                break;
+            case 'status':
+                $query->orderBy('statut', 'asc');
+                break;
+            case 'deadline':
+                $query
+                    ->join(
+                        'offredestages',
+                        'candidatures.id_Offre_De_Stage',
+                        '=',
+                        'offredestages.id'
+                    )
+                    ->select('candidatures.*')
+                    ->orderBy('offredestages.date_limite', 'asc');
+                break;
+            case 'recently_updated':
+            default:
+                $query->orderBy('updated_at', 'desc');
+                break;
+        }
 
-    $query = Candidature::where(
-        'idUtilisateur_Stagiaire',
-        $stagiaire->user_id
-    );
+        $candidatures = $query
+            ->with([
+                'offreDeStage.entreprise.user.ville',
+            ])
+            ->paginate(10)
+            ->withQueryString();
 
-    /*
-    |--------------------------------------------------------------------------
-    | Sorting
-    |--------------------------------------------------------------------------
-    */
+        $statsQuery = Candidature::where(
+            'idUtilisateur_Stagiaire',
+            $stagiaire->user_id
+        );
+        $stats = [
+            'applied' => (clone $statsQuery)->count(),
+            'under_review' => (clone $statsQuery)
+                ->where('statut', 'En cours d\'examen')
+                ->count(),
+            'interview' => 0,
+            'offer' => (clone $statsQuery)
+                ->where('statut', 'Acceptée')
+                ->count(),
+            'rejected' => (clone $statsQuery)
+                ->where('statut', 'Refusée')
+                ->count(),
+        ];
 
-    switch ($sort) {
-
-        case 'recently_applied':
-            $query->orderBy('date_postulation', 'desc');
-            break;
-
-        case 'company_asc':
-            $query
-                ->join(
-                    'offredestages',
-                    'candidatures.id_Offre_De_Stage',
-                    '=',
-                    'offredestages.id'
-                )
-                ->join(
-                    'entreprises',
-                    'offredestages.idUtilisateur_Entreprise',
-                    '=',
-                    'entreprises.user_id'
-                )
-                ->join(
-                    'users',
-                    'entreprises.user_id',
-                    '=',
-                    'users.id'
-                )
-                ->select('candidatures.*')
-                ->orderBy('users.nom_complet', 'asc');
-
-            break;
-
-        case 'status':
-            $query->orderBy('statut', 'asc');
-            break;
-
-        case 'deadline':
-            $query
-                ->join(
-                    'offredestages',
-                    'candidatures.id_Offre_De_Stage',
-                    '=',
-                    'offredestages.id'
-                )
-                ->select('candidatures.*')
-                ->orderBy('offredestages.date_limite', 'asc');
-
-            break;
-
-        case 'recently_updated':
-        default:
-            $query->orderBy('updated_at', 'desc');
-            break;
+        return Inertia::render('Stagiaire/Candidatures/Index', [
+            'candidatures' => $candidatures,
+            'stats' => $stats,
+            'sortBy' => $sort,
+        ]);
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Applications
-    |--------------------------------------------------------------------------
-    */
-
-    $candidatures = $query
-        ->with([
-            'offreDeStage.entreprise.user',
-        ])
-        ->paginate(10)
-        ->withQueryString();
-
-    /*
-    |--------------------------------------------------------------------------
-    | Statistics
-    |--------------------------------------------------------------------------
-    */
-
-    $statsQuery = Candidature::where(
-        'idUtilisateur_Stagiaire',
-        $stagiaire->user_id
-    );
-
-    $stats = [
-        'applied' => (clone $statsQuery)->count(),
-
-        'under_review' => (clone $statsQuery)
-            ->where('statut', 'En cours d\'examen')
-            ->count(),
-
-        // Pas encore de statut Interview dans la DB
-        'interview' => 0,
-
-        'offer' => (clone $statsQuery)
-            ->where('statut', 'Acceptée')
-            ->count(),
-
-        'rejected' => (clone $statsQuery)
-            ->where('statut', 'Refusée')
-            ->count(),
-    ];
-
-    return Inertia::render('Stagiaire/Candidatures/Index', [
-        'candidatures' => $candidatures,
-        'stats' => $stats,
-        'sortBy' => $sort,
-    ]);
-}
 
     /**
      * Display the internship application form.
@@ -144,11 +110,11 @@ class CandidatureController extends Controller
     public function create($offreId): Response
     {
         $offre = Offredestage::where('statut', 'Ouverte')
-        ->with([
-            'entreprise.user',
-            'entreprise.user.ville',
-        ])
-        ->findOrFail($offreId);
+            ->with([
+                'entreprise.user',
+                'entreprise.user.ville',
+            ])
+            ->findOrFail($offreId);
 
         $user = Auth::user()->load([
             'stagiaire',
@@ -174,29 +140,35 @@ class CandidatureController extends Controller
 
         $offre = Offredestage::findOrFail($offreId);
         $stagiaire = Auth::user()->stagiaire;
-
-        // Prevent duplicate applications
-        $exists = Candidature::where('idUtilisateur_Stagiaire', $stagiaire->user_id)
-            ->where('id_Offre_De_Stage', $offre->id)
+        $exists = Candidature::where(
+                'idUtilisateur_Stagiaire',
+                $stagiaire->user_id
+            )
+            ->where(
+                'id_Offre_De_Stage',
+                $offre->id
+            )
             ->exists();
-
         if ($exists) {
-            return back()->with('error', 'You have already applied to this offer.');
+            return back()->with(
+                'error',
+                'You have already applied to this offer.'
+            );
         }
 
-        // Handle CV file (use submitted file, fallback to Stagiaire profile CV)
         $cvUrl = $stagiaire->cv_url;
         if ($request->hasFile('cv')) {
-            $cvUrl = $request->file('cv')->store('candidatures/cvs', 'public');
+            $cvUrl = $request
+                ->file('cv')
+                ->store('candidatures/cvs', 'public');
         }
-
-        // Handle additional attachment
         $pieceJointeUrl = null;
         if ($request->hasFile('piece_jointe')) {
-            $pieceJointeUrl = $request->file('piece_jointe')->store('candidatures/attachments', 'public');
+            $pieceJointeUrl = $request
+                ->file('piece_jointe')
+                ->store('candidatures/attachments', 'public');
         }
-
-        Candidature::create([
+        $candidature = Candidature::create([
             'statut'                  => 'En attente',
             'date_postulation'        => now(),
             'lettre_de_motivation'    => $request->lettre_de_motivation,
@@ -206,7 +178,31 @@ class CandidatureController extends Controller
             'id_Offre_De_Stage'       => $offre->id,
         ]);
 
-        return back()->with('message', 'Your application has been successfully submitted.');
+        return redirect()->route(
+            'stagiaire.candidatures.show',
+            $candidature->id
+        );
+    }
+
+    /**
+     * Display a specific application submitted by the logged-in Stagiaire.
+     */
+    public function show($id): Response
+    {
+        $stagiaire = Auth::user()->stagiaire;
+        $candidature = Candidature::where('id', $id)
+            ->where(
+                'idUtilisateur_Stagiaire',
+                $stagiaire->user_id
+            )
+            ->with([
+                'offreDeStage.entreprise.user.ville',
+            ])
+            ->firstOrFail();
+
+        return Inertia::render('Stagiaire/Candidatures/Show', [
+            'candidature' => $candidature,
+        ]);
     }
 
     /**
@@ -215,13 +211,17 @@ class CandidatureController extends Controller
     public function destroy($id): RedirectResponse
     {
         $stagiaire = Auth::user()->stagiaire;
-
         $candidature = Candidature::where('id', $id)
-            ->where('idUtilisateur_Stagiaire', $stagiaire->user_id)
+            ->where(
+                'idUtilisateur_Stagiaire',
+                $stagiaire->user_id
+            )
             ->firstOrFail();
 
         $candidature->delete();
-
-        return back()->with('message', 'Application withdrawn successfully.');
+        return back()->with(
+            'message',
+            'Application withdrawn successfully.'
+        );
     }
 }

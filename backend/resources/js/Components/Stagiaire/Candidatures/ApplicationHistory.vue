@@ -7,35 +7,20 @@ defineProps({
         default: () => [],
     },
 })
-
-const exportCsv = () => {
-    window.location.href = route('stagiaire.candidatures.export')
-}
 </script>
 
 <template>
-    <section class="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <!-- Header -->
-        <div
-            class="flex items-center justify-between border-b border-slate-100
-                   px-4 py-4 sm:px-5"
-        >
-            <h2 class="text-sm font-bold text-slate-800">
+    <section class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-100 px-5 py-4 sm:px-6">
+            <h2 class="text-sm font-bold text-[#16425B]">
                 Application History
             </h2>
 
-            <button
-                type="button"
-                @click="exportCsv"
-                class="text-[11px] font-medium text-[#16425B]
-                       transition hover:text-[#2F6690]"
-            >
-                Export CSV
-            </button>
+            <p class="mt-0.5 text-xs text-slate-400">
+                Track the status and details of your applications.
+            </p>
         </div>
 
-        <ApplicationTable
-            :candidatures="candidatures"
-        />
+        <ApplicationTable :candidatures="candidatures" />
     </section>
 </template>

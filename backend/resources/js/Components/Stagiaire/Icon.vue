@@ -43,6 +43,20 @@ defineProps({
             <path d="M3 12h18" />
         </template>
 
+        <!-- MY INTERNSHIP -->
+        <template v-else-if="name === 'graduation'">
+            <path d="M3 9.5 12 5l9 4.5-9 4.5-9-4.5Z" />
+            <path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5" />
+            <path d="M21 10v6" />
+        </template>
+
+        <!-- MY TASKS -->
+        <template v-else-if="name === 'tasks'">
+            <rect x="4" y="4" width="16" height="16" rx="2" />
+            <path d="m8 12 2 2 4-4" />
+            <path d="M8 8h8" />
+        </template>
+
         <!-- MY APPLICATIONS -->
         <template v-else-if="name === 'check'">
             <path d="M9 11l3 3L22 4" />

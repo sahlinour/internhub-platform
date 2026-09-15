@@ -42,6 +42,9 @@ Route::middleware(['auth', 'role:Stagiaire'])
         Route::get('/candidatures', [StagiaireCandidatureController::class, 'index'])
             ->name('candidatures.index');
 
+        Route::get('/candidatures/{id}', [StagiaireCandidatureController::class, 'show'])
+            ->name('candidatures.show');
+
         Route::get('/offres/{offreId}/apply', [StagiaireCandidatureController::class, 'create'])
             ->name('candidatures.create');
 

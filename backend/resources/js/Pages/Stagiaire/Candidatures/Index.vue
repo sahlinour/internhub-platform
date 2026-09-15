@@ -3,7 +3,6 @@ import { ref, watch } from 'vue'
 import { router } from '@inertiajs/vue3'
 
 import StagiaireLayout from '@/Components/Stagiaire/StagiaireLayout.vue'
-
 import ApplicationHeader from '@/Components/Stagiaire/Candidatures/ApplicationHeader.vue'
 import ApplicationHistory from '@/Components/Stagiaire/Candidatures/ApplicationHistory.vue'
 import ApplicationPagination from '@/Components/Stagiaire/Candidatures/ApplicationPagination.vue'
@@ -36,9 +35,7 @@ const sortBy = ref(props.sortBy)
 watch(sortBy, (value) => {
     router.get(
         route('stagiaire.candidatures.index'),
-        {
-            sort: value,
-        },
+        { sort: value },
         {
             preserveState: true,
             preserveScroll: true,
@@ -50,12 +47,11 @@ watch(sortBy, (value) => {
 
 <template>
     <StagiaireLayout>
-        <div class="min-h-screen bg-[#F4F7F9]">
+        <main class="min-h-screen bg-[#F4F7F9]">
             <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-
                 <ApplicationHeader
-                    :stats="stats"
                     v-model:sort-by="sortBy"
+                    :stats="stats"
                 />
 
                 <ApplicationHistory
@@ -65,8 +61,7 @@ watch(sortBy, (value) => {
                 <ApplicationPagination
                     :links="candidatures.links"
                 />
-
             </div>
-        </div>
+        </main>
     </StagiaireLayout>
 </template>

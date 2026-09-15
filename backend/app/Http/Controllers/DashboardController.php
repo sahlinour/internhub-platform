@@ -30,11 +30,6 @@ class DashboardController extends Controller
             default      => abort(403, 'Rôle non autorisé.'),
         };
     }
-
-    // ==========================================
-    // STATIC ROLE DATA BUILDERS
-    // ==========================================
-
     /**
      * Build static metrics for Admin.
      */
@@ -42,9 +37,7 @@ class DashboardController extends Controller
     {
         $stats = [
             'total_users'     => User::count(),
-            'users_by_role'   => User::select('role', DB::raw('count(*) as total'))
-                                     ->groupBy('role')
-                                     ->pluck('total', 'role'),
+            'users_by_role'   => User::select('role', DB::raw('count(*) as total'))->groupBy('role')->pluck('total', 'role'),
             'total_offres'    => OffreDeStage::count(),
             'total_stages'    => Stage::count(),
             'total_documents' => Document::count(),
@@ -54,14 +47,12 @@ class DashboardController extends Controller
 
         return Inertia::render('Admin/Dashboard', ['stats' => $stats]);
     }
-
     /**
      * Build static metrics for Entreprise.
      */
     public static function entrepriseView(int $entrepriseId): Response
     {
         $offresIds = OffreDeStage::where('idUtilisateur_Entreprise', $entrepriseId)->pluck('id');
-
         $stats = [
             'total_offres'     => $offresIds->count(),
             'offres_actives'   => OffreDeStage::where('idUtilisateur_Entreprise', $entrepriseId)->where('statut', 'Ouverte')->count(),
@@ -71,7 +62,6 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard/Entreprise/Index', ['stats' => $stats]);
     }
-
     /**
      * Build static metrics for Encadrant.
      */
@@ -91,17 +81,115 @@ class DashboardController extends Controller
     /**
      * Build static metrics for Stagiaire.
      */
-    public static function stagiaireView(int $stagiaireId): Response
+    public static function stagiaireView(int $userId): Response
     {
-        $activeStage = Stage::whereHas('candidature', fn($q) => $q->where('idUtilisateur_Stagiaire', $stagiaireId))->first();
-
-        $stats = [
-            'has_stage'    => (bool) $activeStage,
-            'stage'        => $activeStage ? $activeStage->load(['candidature.offreDeStage.entreprise.user', 'encadrant.user']) : null,
-            'taches_count' => $activeStage ? Tache::where('id_Stage', $activeStage->id)->count() : 0,
-            'docs_count'   => $activeStage ? Document::where('id_Stage', $activeStage->id)->count() : 0,
+        $user = User::findOrFail($userId);
+        $stagiaire = \App\Models\Stagiaire::where('user_id',$userId)->first();
+        $profileFields = [
+            'Full name' => !empty($user->nom_complet),
+            'Email' => !empty($user->email),
+            'Phone number' => !empty($user->telephone),
+            'Profile photo' => !empty($user->photo),
+            'University' => !empty($stagiaire?->universite),
+            'Field of study' => !empty($stagiaire?->filiere),
+            'Education level' => !empty($stagiaire?->niveau),
+            'Date of birth' => !empty($stagiaire?->date_naissance),
+            'CV' => !empty($stagiaire?->cv_url),
+            'LinkedIn' => !empty($stagiaire?->linkedin_url),
+            'Portfolio' => !empty($stagiaire?->portfolio_url),
         ];
 
-        return Inertia::render('Stagiaire/Dashboard', ['stats' => $stats]);
+        $completedProfileFields = collect($profileFields)
+            ->filter()
+            ->count();
+        $totalProfileFields = count($profileFields);
+        $profileCompletion = $totalProfileFields > 0
+            ? (int) round(
+                ($completedProfileFields / $totalProfileFields) * 100
+            )
+            : 0;
+        $profileItems = collect($profileFields)
+            ->map(
+                fn ($completed, $label) => [
+                    'label' => $label,
+                    'completed' => $completed,
+                ]
+            )
+            ->values()
+            ->all();
+
+        $applications = \App\Models\Candidature::with([
+            'offreDeStage.entreprise.user',
+        ])
+            ->where('idUtilisateur_Stagiaire', $userId)
+            ->latest('date_postulation')
+            ->take(5)
+            ->get();
+
+        $applicationsCount = \App\Models\Candidature::where(
+            'idUtilisateur_Stagiaire',
+            $userId
+        )->count();
+
+        $activeStage = Stage::whereHas(
+            'candidature',
+            fn ($query) => $query->where(
+                'idUtilisateur_Stagiaire',
+                $userId
+            )
+        )
+            ->latest()
+            ->first();
+
+        $tasksCount = 0;
+        $documentsCount = 0;
+
+        if ($activeStage) {
+            $tasksCount = Tache::where(
+                'id_Stage',
+                $activeStage->id
+            )->count();
+
+            $documentsCount = Document::where(
+                'id_Stage',
+                $activeStage->id
+            )->count();
+        }
+
+        $recommendedOffers = OffreDeStage::with([
+            'entreprise.user.ville',
+        ])
+            ->whereIn('statut', ['Ouverte', 'ouverte'])
+            ->latest()
+            ->take(4)
+            ->get();
+
+        $stats = [
+            'has_stage' => (bool) $activeStage,
+            'stage' => $activeStage
+                ? $activeStage->load([
+                    'candidature.offreDeStage.entreprise.user',
+                    'encadrant.user',
+                ]): null,
+            'taches_count' => $tasksCount,
+            'docs_count' => $documentsCount,
+            'applications_count' => $applicationsCount,
+            'applications' => $applications,
+            'recommended_offers' => $recommendedOffers,
+            'notifications' => [],
+            'profile_completion' => $profileCompletion,
+            'profile_items' => $profileItems,
+        ];
+
+        return Inertia::render('Stagiaire/Dashboard', [
+            'user' => $user->only([
+                'id',
+                'nom_complet',
+                'email',
+                'telephone',
+                'photo',
+            ]),
+            'stats' => $stats,
+        ]);
     }
 }

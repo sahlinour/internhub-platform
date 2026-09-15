@@ -6,14 +6,14 @@ const actions = [
     {
         label: 'Browse Internship Offers',
         description: 'Find an internship that matches your profile',
-        href: '#',
+        routeName: 'offres.index',
         icon: 'briefcase',
     },
     {
         label: 'My Applications',
         description: 'Track your submitted applications',
         routeName: 'stagiaire.candidatures.index',
-        icon: 'document',
+        icon: 'documents',
     },
     {
         label: 'My Documents',
@@ -35,7 +35,7 @@ const actions = [
         <Link
             v-for="action in actions"
             :key="action.label"
-            :href="action.routeName ? route(action.routeName) : action.href"
+            :href="route(action.routeName)"
             class="group flex items-center gap-3 rounded-[9px] border border-[#e1e7ec] bg-white p-3 no-underline transition duration-[180ms] hover:border-[#286d93] hover:bg-[#f8fbfd]"
         >
             <span

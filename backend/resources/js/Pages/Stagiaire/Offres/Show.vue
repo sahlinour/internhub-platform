@@ -2,7 +2,6 @@
 import StagiaireLayout from '@/Components/Stagiaire/StagiaireLayout.vue'
 import OfferHeader from '@/Components/Stagiaire/Offres/OfferHeader.vue'
 import OfferDetails from '@/Components/Stagiaire/Offres/OfferAbout.vue'
-import OfferRequirements from '@/Components/Stagiaire/Offres/OfferRequirements.vue'
 import OfferSidebar from '@/Components/Stagiaire/Offres/OfferSidebar.vue'
 import CompanyCard from '@/Components/Stagiaire/Offres/CompanyCard.vue'
 
@@ -30,15 +29,6 @@ defineProps({
 
                         <OfferDetails :offre="offre" />
 
-                        <OfferRequirements
-                            v-if="
-                                offre.competences ||
-                                offre.competences_requises ||
-                                offre.requirements ||
-                                offre.prerequis
-                            "
-                            :offre="offre"
-                        />
 
                         <CompanyCard :offre="offre" />
 
@@ -46,7 +36,7 @@ defineProps({
 
                     <!-- Right -->
                     <aside>
-                        <OfferSidebar :offre="offre" />
+                        <OfferSidebar :offre="offre" :profile-match="profileMatch" :profile="profile" />
                     </aside>
 
                 </div>

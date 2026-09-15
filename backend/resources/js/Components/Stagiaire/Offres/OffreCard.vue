@@ -14,6 +14,8 @@ const props = defineProps({
 })
 
 const saveOffer = () => {
+    if (!props.offre?.id) return
+
     router.post(
         route('stagiaire.favoris.toggle', props.offre.id),
         {},
@@ -22,6 +24,40 @@ const saveOffer = () => {
             preserveState: true,
         }
     )
+}
+
+const formatDate = (date) => {
+    if (!date) return ''
+
+    return new Intl.DateTimeFormat('en-US', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+    }).format(new Date(date))
+}
+
+const formatStatus = (status) => {
+    const statuses = {
+        active: 'Active',
+        Active: 'Active',
+
+        ouverte: 'Open',
+        Ouverte: 'Open',
+        open: 'Open',
+        Open: 'Open',
+
+        fermée: 'Closed',
+        Fermée: 'Closed',
+        closed: 'Closed',
+        Closed: 'Closed',
+
+        'en attente': 'Pending',
+        'En attente': 'Pending',
+        pending: 'Pending',
+        Pending: 'Pending',
+    }
+
+    return statuses[status] ?? status
 }
 </script>
 
@@ -34,7 +70,11 @@ const saveOffer = () => {
         <!-- SAVED BUTTON -->
         <button
             type="button"
-            :title="isSaved ? 'Remove from saved opportunities' : 'Save opportunity'"
+            :title="
+                isSaved
+                    ? 'Remove from saved opportunities'
+                    : 'Save opportunity'
+            "
             class="absolute right-4 top-4 flex h-9 w-9 items-center
                    justify-center rounded-lg transition"
             :class="
@@ -63,6 +103,7 @@ const saveOffer = () => {
 
         <!-- HEADER -->
         <div class="flex items-start gap-3 pr-10">
+
             <!-- COMPANY AVATAR -->
             <div
                 class="flex h-11 w-11 shrink-0 items-center justify-center
@@ -99,6 +140,14 @@ const saveOffer = () => {
             </div>
         </div>
 
+        <!-- DESCRIPTION -->
+        <p
+            v-if="offre.description"
+            class="mt-4 line-clamp-2 text-xs leading-5 text-slate-500"
+        >
+            {{ offre.description }}
+        </p>
+
         <!-- INFO -->
         <div
             class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2
@@ -122,6 +171,7 @@ const saveOffer = () => {
                         stroke-linejoin="round"
                         d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"
                     />
+
                     <circle
                         cx="12"
                         cy="9"
@@ -166,28 +216,83 @@ const saveOffer = () => {
             </div>
         </div>
 
-        <!-- STATUS -->
-        <div class="mt-3 flex items-center justify-end">
+        <!-- DEADLINE + STATUS -->
+        <div
+            v-if="offre.date_limite || offre.statut"
+            class="mt-4 flex items-center justify-between gap-3
+                   border-t border-slate-100 pt-3"
+        >
+            <!-- DEADLINE -->
+            <div
+                v-if="offre.date_limite"
+                class="flex items-center gap-1.5 text-xs text-[#64748B]"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-3.5 w-3.5 text-[#3A7CA5]"
+                >
+                    <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="17"
+                        rx="2"
+                    />
+
+                    <path d="M16 2v4" />
+                    <path d="M8 2v4" />
+                    <path d="M3 10h18" />
+                </svg>
+
+                <span>
+                    {{ formatDate(offre.date_limite) }}
+                </span>
+            </div>
+
+            <!-- STATUS -->
             <span
                 v-if="offre.statut"
-                class="rounded-full px-3 py-1 text-[11px] font-semibold"
+                class="shrink-0 rounded-full px-3 py-1
+                       text-[11px] font-semibold"
                 :class="{
                     'bg-emerald-50 text-emerald-600':
-                        ['active', 'Ouverte', 'ouverte'].includes(offre.statut),
+                        [
+                            'active',
+                            'Active',
+                            'ouverte',
+                            'Ouverte',
+                            'open',
+                            'Open',
+                        ].includes(offre.statut),
 
                     'bg-slate-100 text-slate-500':
-                        ['Fermée', 'fermée', 'closed'].includes(offre.statut),
+                        [
+                            'fermée',
+                            'Fermée',
+                            'closed',
+                            'Closed',
+                        ].includes(offre.statut),
 
                     'bg-amber-50 text-amber-600':
-                        ['En attente', 'en attente', 'pending'].includes(offre.statut),
+                        [
+                            'en attente',
+                            'En attente',
+                            'pending',
+                            'Pending',
+                        ].includes(offre.statut),
                 }"
             >
-                {{ offre.statut }}
+                {{ formatStatus(offre.statut) }}
             </span>
         </div>
 
         <!-- ACTIONS -->
         <div class="mt-4 grid grid-cols-2 gap-2">
+
             <!-- VIEW DETAILS -->
             <Link
                 :href="route('offres.show', offre.id)"
@@ -204,7 +309,12 @@ const saveOffer = () => {
 
             <!-- APPLY -->
             <Link
-                :href="route('stagiaire.candidatures.create', offre.id)"
+                :href="
+                    route(
+                        'stagiaire.candidatures.create',
+                        offre.id
+                    )
+                "
                 class="flex items-center justify-center
                        rounded-lg bg-[#16425B]
                        px-4 py-2.5

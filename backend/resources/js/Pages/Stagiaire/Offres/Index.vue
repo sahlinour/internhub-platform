@@ -1,9 +1,7 @@
 <script setup>
 import { Head, router } from '@inertiajs/vue3'
 import { reactive } from 'vue'
-
 import StagiaireLayout from '@/Components/Stagiaire/StagiaireLayout.vue'
-
 import OffreCard from '@/Components/Stagiaire/Offres/OffreCard.vue'
 import OffreFilters from '@/Components/Stagiaire/Offres/OffreFilters.vue'
 import OffreSearch from '@/Components/Stagiaire/Offres/OffreSearch.vue'
@@ -31,8 +29,8 @@ const props = defineProps({
             search: '',
             location: 'all',
             duration: 'all',
-            workType: [],
-            skills: '',
+            status: 'all',
+            deadline: 'all',
         }),
     },
 })
@@ -45,11 +43,11 @@ const applyFilters = (filters) => {
     router.get(
         route('offres.index'),
         {
-            location: filters.location,
-            duration: filters.duration,
-            workType: filters.workType,
-            skills: filters.skills,
             search: search.value,
+            location: filters.location ?? 'all',
+            duration: filters.duration ?? 'all',
+            status: filters.status ?? 'all',
+            deadline: filters.deadline ?? 'all',
         },
         {
             preserveState: true,
@@ -68,8 +66,8 @@ const applySearch = (value) => {
             search: search.value,
             location: props.filters.location ?? 'all',
             duration: props.filters.duration ?? 'all',
-            workType: props.filters.workType ?? [],
-            skills: props.filters.skills ?? '',
+            status: props.filters.status ?? 'all',
+            deadline: props.filters.deadline ?? 'all',
         },
         {
             preserveState: true,

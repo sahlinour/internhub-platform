@@ -36,10 +36,10 @@ defineProps({
             class="grid gap-4 md:grid-cols-2"
         >
             <OfferCard
-                v-for="offer in offers"
-                :key="offer.id"
-                :offer="offer"
-            />
+                    v-for="offer in offers"
+                    :key="offer.id"
+                    :offre="offer"
+                />
         </div>
 
         <div

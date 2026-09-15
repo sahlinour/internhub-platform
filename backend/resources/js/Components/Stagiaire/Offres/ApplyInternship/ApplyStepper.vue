@@ -31,23 +31,30 @@ const steps = [
 </script>
 
 <template>
-    <div class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-        <div class="flex items-start justify-between">
+    <div class="mb-6 rounded-2xl border border-slate-200 bg-white px-4 py-5 shadow-sm sm:px-6">
+        <div class="flex items-start">
+
             <template
                 v-for="(step, index) in steps"
                 :key="step.number"
             >
-                <div class="flex min-w-0 flex-1 items-center">
-                    <div class="flex min-w-0 flex-col items-center">
-                        <!-- Circle -->
+                <!-- Step -->
+                <div class="flex min-w-0 flex-1 items-start">
+
+                    <div class="flex w-full flex-col items-center">
+
+                        <!-- Number -->
                         <div
-                            class="flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-semibold transition"
+                            class="flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold transition-all duration-200 sm:h-9 sm:w-9 sm:text-sm"
                             :class="[
-                                currentStep >= step.number
+                                currentStep > step.number
                                     ? 'border-[#2F6690] bg-[#2F6690] text-white'
-                                    : 'border-slate-300 bg-white text-slate-400'
+                                    : currentStep === step.number
+                                        ? 'border-[#2F6690] bg-white text-[#2F6690] ring-4 ring-[#E8F1F5]'
+                                        : 'border-slate-200 bg-white text-slate-400'
                             ]"
                         >
+                            <!-- Completed -->
                             <svg
                                 v-if="currentStep > step.number"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -64,47 +71,55 @@ const steps = [
                                 />
                             </svg>
 
+                            <!-- Number -->
                             <span v-else>
                                 {{ step.number }}
                             </span>
                         </div>
 
-                        <!-- Title -->
+                        <!-- Desktop title -->
                         <span
-                            class="mt-2 hidden text-center text-xs font-medium sm:block"
-                            :class="
+                            class="mt-2 hidden text-center text-[11px] font-semibold leading-tight sm:block"
+                            :class="[
                                 currentStep >= step.number
-                                    ? 'text-[#2F6690]'
+                                    ? 'text-[#16425B]'
                                     : 'text-slate-400'
-                            "
+                            ]"
                         >
                             {{ step.title }}
                         </span>
 
+                        <!-- Mobile title -->
                         <span
-                            class="mt-2 text-center text-[10px] font-medium sm:hidden"
-                            :class="
+                            class="mt-2 max-w-[70px] text-center text-[9px] font-semibold leading-tight sm:hidden"
+                            :class="[
                                 currentStep >= step.number
                                     ? 'text-[#2F6690]'
                                     : 'text-slate-400'
-                            "
+                            ]"
                         >
                             {{ step.shortTitle }}
                         </span>
                     </div>
 
-                    <!-- Line -->
+                    <!-- Progress line -->
                     <div
                         v-if="index < steps.length - 1"
-                        class="mx-2 mt-[-18px] h-0.5 flex-1 sm:mx-4"
-                        :class="
-                            currentStep > step.number
-                                ? 'bg-[#2F6690]'
-                                : 'bg-slate-200'
-                        "
-                    ></div>
+                        class="mx-1.5 mt-4 h-0.5 flex-1 overflow-hidden rounded-full bg-slate-200 sm:mx-3 sm:mt-[18px]"
+                    >
+                        <div
+                            class="h-full rounded-full transition-all duration-300"
+                            :class="
+                                currentStep > step.number
+                                    ? 'w-full bg-[#2F6690]'
+                                    : 'w-0'
+                            "
+                        ></div>
+                    </div>
+
                 </div>
             </template>
+
         </div>
     </div>
 </template>

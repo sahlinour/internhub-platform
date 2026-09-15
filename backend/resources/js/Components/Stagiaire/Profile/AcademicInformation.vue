@@ -12,9 +12,12 @@ defineProps({
         class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
     >
         <!-- Header -->
-        <div class="mb-5 flex items-center gap-3">
+        <div
+            class="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4"
+        >
+            <!-- Icon -->
             <div
-                class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8F1F5] text-[#2F6690]"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E8F1F5] text-[#2F6690]"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -38,52 +41,65 @@ defineProps({
                 </svg>
             </div>
 
+            <!-- Title -->
             <div>
-                <h3 class="font-semibold text-[#16425B]">
+                <h3
+                    class="text-sm font-semibold text-[#16425B] sm:text-base"
+                >
                     Academic Information
                 </h3>
 
-                <p class="text-xs text-[#64748B]">
+                <p class="mt-0.5 text-xs text-slate-500">
                     Your education and academic background
                 </p>
             </div>
         </div>
 
         <!-- Information -->
-        <div class="space-y-4">
-
-            <div>
+        <div
+            class="grid grid-cols-1 divide-y divide-slate-100 sm:grid-cols-3 sm:divide-x sm:divide-y-0"
+        >
+            <!-- University -->
+            <div class="py-3 sm:px-5 sm:py-1 first:sm:pl-0">
                 <p
-                    class="text-xs font-medium uppercase tracking-wide text-[#64748B]"
+                    class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"
                 >
                     University
                 </p>
 
-                <p class="mt-1 text-sm font-medium text-slate-800">
+                <p
+                    class="mt-1.5 text-sm font-semibold text-slate-800"
+                >
                     {{ stagiaire.stagiaire?.universite || 'Not provided' }}
                 </p>
             </div>
 
-            <div>
+            <!-- Field of study -->
+            <div class="py-3 sm:px-5 sm:py-1">
                 <p
-                    class="text-xs font-medium uppercase tracking-wide text-[#64748B]"
+                    class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"
                 >
                     Field of study
                 </p>
 
-                <p class="mt-1 text-sm font-medium text-slate-800">
+                <p
+                    class="mt-1.5 text-sm font-semibold text-slate-800"
+                >
                     {{ stagiaire.stagiaire?.filiere || 'Not provided' }}
                 </p>
             </div>
 
-            <div>
+            <!-- Academic level -->
+            <div class="py-3 sm:pl-5 sm:py-1">
                 <p
-                    class="text-xs font-medium uppercase tracking-wide text-[#64748B]"
+                    class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"
                 >
                     Academic level
                 </p>
 
-                <p class="mt-1 text-sm font-medium text-slate-800">
+                <p
+                    class="mt-1.5 text-sm font-semibold text-slate-800"
+                >
                     {{ stagiaire.stagiaire?.niveau || 'Not provided' }}
                 </p>
             </div>

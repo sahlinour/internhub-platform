@@ -23,13 +23,6 @@ const props = defineProps({
 })
 
 const currentStep = ref(1)
-
-/*
-|--------------------------------------------------------------------------
-| Application form
-|--------------------------------------------------------------------------
-*/
-
 const form = useForm({
     personalInfo: {
         nom_complet: props.stagiaire?.nom_complet || '',
@@ -49,54 +42,29 @@ const form = useForm({
     piece_jointe: null,
 })
 
-/*
-|--------------------------------------------------------------------------
-| Steps
-|--------------------------------------------------------------------------
-*/
-
 const isFirstStep = computed(() => currentStep.value === 1)
-
 const isLastStep = computed(() => currentStep.value === 4)
-
 const nextStep = () => {
     if (currentStep.value < 4) {
         currentStep.value++
-
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
         })
     }
 }
-
 const previousStep = () => {
     if (currentStep.value > 1) {
         currentStep.value--
-
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
         })
     }
 }
-
-/*
-|--------------------------------------------------------------------------
-| CV
-|--------------------------------------------------------------------------
-*/
-
 const updateCv = (file) => {
     form.cv = file
 }
-
-/*
-|--------------------------------------------------------------------------
-| Submit
-|--------------------------------------------------------------------------
-*/
-
 const submitApplication = () => {
     form.post(
         route(
