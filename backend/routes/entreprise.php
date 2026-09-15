@@ -17,11 +17,7 @@ Route::middleware(['auth', 'role:Entreprise'])
     ->name('entreprise.')
     ->group(function () {
 
-        /*
-        |--------------------------------------------------------------------------
-        | Notifications
-        |--------------------------------------------------------------------------
-        */
+       
 
         Route::post(
             '/notifications/send-encadrant',

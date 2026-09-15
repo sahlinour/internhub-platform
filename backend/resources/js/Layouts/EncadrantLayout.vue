@@ -1,17 +1,32 @@
 <script setup>
-import ApplicationLogo from '@/Components/Shared/ApplicationLogo.vue'
+import EncadrantSidebar from '@/Components/Encadrant/EncadrantSidebar.vue'
+import DashboardHeader from '@/Components/Encadrant/DashboardHeader.vue'
+import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
+
+const page = usePage()
+
+const user = computed(() => page.props.auth?.user ?? {})
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
-    <div>
-      <a href="/">
-        <ApplicationLogo class="h-16 w-16" />
-      </a>
-    </div>
+    <div class="flex min-h-screen bg-[#f5f7fb]">
 
-    <div class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg">
-      <slot />
+        <!-- Sidebar -->
+        <EncadrantSidebar />
+
+        <!-- Main area -->
+        <div class="flex min-w-0 flex-1 flex-col">
+
+            <!-- Top header -->
+            <DashboardHeader :user="user" />
+
+            <!-- Page -->
+            <main class="flex-1 overflow-x-hidden p-6">
+                <slot />
+            </main>
+
+        </div>
+
     </div>
-  </div>
 </template>

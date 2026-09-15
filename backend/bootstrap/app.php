@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         Route::middleware('web')->group(base_path('routes/admin.php'));
         Route::middleware('web')->group(base_path('routes/stagiaire.php'));
         Route::middleware('web')->group(base_path('routes/entreprise.php'));
+        Route::middleware('web')->group(base_path('routes/encadrant.php'));
+
     },
     )
 
