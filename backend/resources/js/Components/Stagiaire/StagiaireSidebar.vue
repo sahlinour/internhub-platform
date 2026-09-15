@@ -208,15 +208,19 @@ const initials = () => {
 
                 <!-- MY CV -->
                 <Link
-                    href="#"
+                    :href="route('stagiaire.cv.index')"
                     class="relative flex min-h-[39px]
                            items-center gap-[11px]
                            rounded-lg px-[11px] py-[9px]
                            text-[10.5px] font-medium
                            no-underline transition
                            hover:bg-white/[0.07]
-                           hover:text-white
-                           text-white/65"
+                           hover:text-white"
+                    :class="
+                        isActive('/stagiaire/cv')
+                            ? 'bg-[#449dc6]/[0.27] text-white before:absolute before:bottom-[9px] before:left-0 before:top-[9px] before:w-[3px] before:rounded-r-[3px] before:bg-[#78c0dc]'
+                            : 'text-white/65'
+                    "
                 >
                     <span
                         class="flex h-[19px] w-[19px]

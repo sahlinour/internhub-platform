@@ -8,6 +8,7 @@ use App\Http\Controllers\Stagiaire\CompetenceController as StagiaireCompetenceCo
 use App\Http\Controllers\Stagiaire\FavorisController;
 use App\Http\Controllers\Stagiaire\CandidatureController as StagiaireCandidatureController;
 use App\Http\Controllers\Stagiaire\DocumentController as StagiaireDocumentController;
+use App\Http\Controllers\Stagiaire\CVController as StagiaireCVController;
 use App\Http\Controllers\Stagiaire\TacheController as StagiaireTacheController;
 
 
@@ -50,6 +51,13 @@ Route::middleware(['auth', 'role:Stagiaire'])
 
         Route::delete('/candidatures/{id}', [StagiaireCandidatureController::class, 'destroy'])
             ->name('candidatures.destroy');
+
+        // Stagiaire CV CRUD
+        Route::get('/cv', [StagiaireCVController::class, 'index'])->name('cv.index');
+        Route::get('/cv/create', [StagiaireCVController::class, 'create'])->name('cv.create');
+        Route::post('/cv', [StagiaireCVController::class, 'store'])->name('cv.store');
+        Route::delete('/cv/{id}', [StagiaireCVController::class, 'destroy'])->name('cv.destroy');
+
         //Stagiaire Document
         Route::get('/documents', [StagiaireDocumentController::class, 'index'])->name('documents.index');
         Route::post('/documents', [StagiaireDocumentController::class, 'store'])->name('documents.store');

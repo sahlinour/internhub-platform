@@ -16,10 +16,12 @@ class Document extends Model
     protected $fillable = [
         'nom',
         'version',
+        'type',
         'statut',
         'fichier_url',
         'idUtilisateur_Encadrant',
         'id_Stage',
+        'id_Utilisateur_stagiaire',
     ];
 
     public function encadrant(): BelongsTo
