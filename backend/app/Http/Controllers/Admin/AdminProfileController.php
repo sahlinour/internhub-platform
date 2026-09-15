@@ -17,7 +17,8 @@ class AdminProfileController extends Controller
 {
     public function show()
     {
-          $user = User::with(['ville'])->findOrFail(Auth::id());
+        $user = User::with(['admin', 'ville'])->findOrFail(Auth::id());
+
         return Inertia::render('Admin/Profile/Show', [
             'admin' => $user,
         ]);
@@ -25,7 +26,7 @@ class AdminProfileController extends Controller
 
     public function edit()
     {
-        $user = User::with(['ville'])->findOrFail(Auth::id());
+        $user = User::with(['admin', 'ville'])->findOrFail(Auth::id());
         $villes = Ville::select('id', 'nom')->get();
 
         return Inertia::render('Admin/Profile/Edit', [
@@ -60,7 +61,7 @@ class AdminProfileController extends Controller
             'ville_id'    => $request->ville_id,
         ]);
 
-        // Admin::firstOrCreate(['idUtilisateur' => $user->id]);
+        Admin::firstOrCreate(['idUtilisateur' => $user->id]);
 
         return back()->with('message', 'Administrator profile updated.');
     }

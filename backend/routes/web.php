@@ -4,16 +4,14 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VilleController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\OffreDeStageController as GuestOffreController;
 use App\Http\Controllers\SignalementController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
 
 Route::get('/', function () {
-    return Inertia::render('Home', [
+    return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -21,15 +19,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function (Request $request) {
-    return match ($request->user()->role) {
-        'Admin' => Inertia::render('Dashboard/Admin/Index'),
-        'Encadrant' => Inertia::render('Dashboard/Encadrant/Index'),
-        'Entreprise' => Inertia::render('Dashboard/Entreprise/Index'),
-        'Stagiaire' => Inertia::render('Dashboard/Stagiaire/Index'),
-        default => abort(403, 'Unauthorized role'),
-    };
-})->middleware('auth')->name('dashboard');
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -66,29 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/offres/{id}', [GuestOffreController::class, 'show'])->name('villes.show');
 
 
-   //admin related
 
-   
-
-    Route::middleware('guest')->group(function () {
-    Route::get('/admin/login', [AdminAuthenticatedSessionController::class, 'create'])
-        ->name('admin.login');
-
-    Route::post('/admin/login', [AdminAuthenticatedSessionController::class, 'store'])
-        ->name('admin.login.store');
-});
-
-Route::get('/admin/dashboard', function (Request $request) {
-    abort_unless($request->user()?->role === 'Admin', 403);
-
-    return Inertia::render('Admin/Dashboard');
-})
-    ->middleware('auth')
-    ->name('admin.dashboard');
-
-Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('admin.logout');
 
     
 
