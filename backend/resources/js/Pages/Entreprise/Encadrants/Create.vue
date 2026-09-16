@@ -38,7 +38,7 @@ const submit = () => {
     <EntrepriseLayout>
         <Head title="Add Company Supervisor" />
 
-        <div class="space-y-6">
+        <div class="mx-auto max-w-5xl">
 
             <!-- HEADER -->
             <div

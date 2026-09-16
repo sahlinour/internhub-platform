@@ -225,14 +225,59 @@ const deleteAccount = () => {
                  PAGE HEADER
             ======================================================= -->
 
-            <div class="mb-7">
-                <h1 class="text-2xl font-bold text-gray-900">
-                    Settings
-                </h1>
+            <!-- PAGE HEADER -->
+            <div
+                class="mb-5 overflow-hidden rounded-2xl
+                       bg-gradient-to-r from-[#16425B]
+                       via-[#2F6690] to-[#3A7CA5]
+                       shadow-sm"
+            >
+                <div class="px-6 py-5 sm:px-7">
+                    <div class="flex items-center gap-4">
 
-                <p class="mt-1 text-sm text-gray-500">
-                    Manage your company information, password and account.
-                </p>
+                        <!-- ICON -->
+                        <div
+                            class="flex h-11 w-11 shrink-0
+                                   items-center justify-center
+                                   rounded-xl bg-white/10
+                                   ring-1 ring-white/20"
+                        >
+                            <svg
+                                class="h-5.5 w-5.5 text-white"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="12" cy="8" r="3" />
+                                <path
+                                    d="M5.5 20a6.5 6.5 0 0 1 13 0"
+                                />
+                            </svg>
+                        </div>
+
+                        <!-- TITLE -->
+                        <div>
+                            <h1
+                                class="text-xl font-bold
+                                       tracking-tight text-white
+                                       sm:text-2xl"
+                            >
+                                Settings
+                            </h1>
+
+                            <p
+                                class="mt-1 text-sm text-white/70"
+                            >
+                                Manage your account information,
+                                password and security settings.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
             </div>
 
             <!-- ======================================================

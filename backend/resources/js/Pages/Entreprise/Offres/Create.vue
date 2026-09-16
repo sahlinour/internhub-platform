@@ -28,7 +28,7 @@ const submit = () => {
     <Head title="Post Internship" />
 
     <EntrepriseLayout>
-        <div class="mx-auto max-w-4xl">
+        <div class="mx-auto max-w-5xl">
 
             <!-- HEADER -->
             <div

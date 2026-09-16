@@ -14,7 +14,8 @@ class OffreDeStageController extends Controller
     {
         $entrepriseId = Auth::id();
 
-        $offres = Offredestage::where('idUtilisateur_Entreprise', $entrepriseId)
+        $offres = Offredestage::with(['entreprise.user.ville',])
+            ->where('idUtilisateur_Entreprise', $entrepriseId)
             ->orderBy('created_at', 'desc')
             ->get();
 

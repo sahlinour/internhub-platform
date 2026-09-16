@@ -6,74 +6,65 @@ defineProps({
         type: String,
         required: true,
     },
-
     value: {
         type: [String, Number],
         required: true,
     },
-
     detail: {
         type: String,
         default: '',
     },
-
     icon: {
         type: String,
         required: true,
+    },
+    iconClass: {
+        type: String,
+        default: 'bg-blue-50 text-[#2d7da0]',
+    },
+    detailClass: {
+        type: String,
+        default: 'text-gray-400',
     },
 })
 </script>
 
 <template>
     <article
-        class="rounded-[11px]
-               border border-[#e1e7ec]
-               bg-white p-4
-               shadow-[0_2px_8px_rgba(35,63,85,0.04)]
+        class="rounded-xl border border-gray-100
+               bg-white p-5 shadow-sm
                transition duration-200
-               hover:-translate-y-0.5
-               hover:shadow-[0_4px_12px_rgba(35,63,85,0.08)]"
+               hover:-translate-y-0.5 hover:shadow-md"
     >
-        <!-- ICON -->
-        <div
-            class="mb-3 flex h-9 w-9
-                   items-center justify-center
-                   rounded-[9px]
-                   bg-[#286d93]
-                   text-white"
-        >
-            <Icon
-                :name="icon"
-                :size="18"
-            />
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-[10px] font-medium text-gray-400">
+                    {{ label }}
+                </p>
+
+                <p class="mt-2 text-[25px] font-bold text-gray-800">
+                    {{ value }}
+                </p>
+
+                <p
+                    v-if="detail"
+                    class="mt-1 text-[9px]"
+                    :class="detailClass"
+                >
+                    {{ detail }}
+                </p>
+            </div>
+
+            <div
+                class="flex h-10 w-10 items-center justify-center
+                       rounded-xl"
+                :class="iconClass"
+            >
+                <Icon
+                    :name="icon"
+                    :size="20"
+                />
+            </div>
         </div>
-
-        <!-- VALUE -->
-        <strong
-            class="mb-1 block
-                   text-[20px] font-bold
-                   text-[#1f3547]"
-        >
-            {{ value }}
-        </strong>
-
-        <!-- LABEL -->
-        <span
-            class="mb-1.5 block
-                   text-[11px]
-                   font-medium
-                   text-[#778b99]"
-        >
-            {{ label }}
-        </span>
-
-        <!-- DETAIL -->
-        <small
-            v-if="detail"
-            class="block text-[9px]
-                   text-[#4baa70]"
-        >
-            {{ detail }}
-        </small>
     </article>
 </template>
