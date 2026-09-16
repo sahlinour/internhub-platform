@@ -1,17 +1,24 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import HeroSection from '@/Components/home/HeroSection.vue';
-import StatsSection from '@/Components/home/StatsSection.vue';
-import FeaturesSection from '@/Components/home/FeaturesSection.vue';
-import OffresRecentes from '@/Components/home/OffresRecentes.vue';
-import HowItWorks from '@/Components/home/HowItWorks.vue';
-import Testimonials from '@/Components/home/Testimonials.vue';
-import CtaBanner from '@/Components/home/CtaBanner.vue';
+import GuestLayout from '@/Layouts/GuestLayout.vue'
+import HeroSection from '@/Components/home/HeroSection.vue'
+import StatsSection from '@/Components/home/StatsSection.vue'
+import FeaturesSection from '@/Components/home/FeaturesSection.vue'
+import OffresRecentes from '@/Components/home/OffresRecentes.vue'
+import HowItWorks from '@/Components/home/HowItWorks.vue'
+import Testimonials from '@/Components/home/Testimonials.vue'
+import CtaBanner from '@/Components/home/CtaBanner.vue'
+
+defineProps({
+    offres: {
+        type: Array,
+        default: () => [],
+    },
+})
 </script>
 
 <template>
     <GuestLayout>
-        
+
         <!-- Home -->
         <section id="home">
             <HeroSection />
@@ -29,7 +36,7 @@ import CtaBanner from '@/Components/home/CtaBanner.vue';
 
         <!-- Explore / Offers -->
         <section id="explore">
-            <OffresRecentes />
+            <OffresRecentes :offres="offres" />
         </section>
 
         <!-- How it works -->
