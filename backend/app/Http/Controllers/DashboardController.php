@@ -165,21 +165,46 @@ class DashboardController extends Controller
      * Build static metrics for Encadrant.
      */
     public static function encadrantView(int $encadrantId): Response
-    {
-        $stats = [
-            'total_stages'        => Stage::where('idUtilisateur_Encadrant', $encadrantId)->count(),
-            'taches_totales'      => Tache::where('idUtilisateur_Encadrant', $encadrantId)->count(),
-            'taches_a_faire'      => Tache::where('idUtilisateur_Encadrant', $encadrantId)->where('statut', 'À faire')->count(),
-            'documents_a_valider' => Document::where('idUtilisateur_Encadrant', $encadrantId)->where('statut', 'En attente')->count(),
-            'recent_documents'    => Document::where('idUtilisateur_Encadrant', $encadrantId)->with('stage.candidature.stagiaire.user')->latest()->take(5)->get(),
-        ];
+{
+    $stats = [
+        'total_stages' => Stage::where(
+            'idUtilisateur_Encadrant',
+            $encadrantId
+        )->count(),
 
-        return Inertia::render('Dashboard/Encadrant/Index', ['stats' => $stats]);
-    }
+        'taches_totales' => Tache::where(
+            'idUtilisateur_Encadrant',
+            $encadrantId
+        )->count(),
 
-    /**
-     * Build static metrics for Stagiaire.
-     */
+        'taches_a_faire' => Tache::where(
+            'idUtilisateur_Encadrant',
+            $encadrantId
+        )
+            ->where('statut', 'À faire')
+            ->count(),
+
+        'documents_a_valider' => Document::where(
+            'idUtilisateur_Encadrant',
+            $encadrantId
+        )
+            ->where('statut', 'En attente')
+            ->count(),
+
+        'recent_documents' => Document::where(
+            'idUtilisateur_Encadrant',
+            $encadrantId
+        )
+            ->with('stage.candidature.stagiaire.user')
+            ->latest()
+            ->take(5)
+            ->get(),
+    ];
+
+    return Inertia::render('Encadrant/Dashboard', [
+        'stats' => $stats,
+    ]);
+}
     public static function stagiaireView(int $stagiaireId): Response
     {
         $activeStage = Stage::whereHas('candidature', fn($q) => $q->where('idUtilisateur_Stagiaire', $stagiaireId))->first();

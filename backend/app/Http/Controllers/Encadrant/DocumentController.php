@@ -6,22 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
 
 class DocumentController extends Controller
 {
-    /**
-     * List documents supervised by the logged-in Encadrant.
-     */
+
     public function index(): Response
     {
-        $encadrantId = Auth::id();
-
-        $documents = Document::where('idUtilisateur_Encadrant', $encadrantId)
-            ->with(['stage.candidature.stagiaire.user', 'stage.candidature.offreDeStage'])
-            ->orderBy('created_at', 'desc')
+        $documents = Document::where(
+            'idUtilisateur_Encadrant',
+            Auth::id()
+        )
+            ->with([
+                'stage.candidature.stagiaire.user',
+                'stage.candidature.offreDeStage',
+            ])
+            ->orderByDesc('created_at')
             ->paginate(12);
 
         return Inertia::render('Encadrant/Documents/Index', [
@@ -29,33 +31,106 @@ class DocumentController extends Controller
         ]);
     }
 
-    /**
-     * Update document status (e.g., Validé or Rejeté).
-     */
-    public function updateStatus(Request $request, $id): RedirectResponse
+
+    public function download($id)
     {
-        $request->validate([
-            'statut' => 'required|in:En attente,Validé,Rejeté',
-        ]);
+        $document = Document::where(
+            'idUtilisateur_Encadrant',
+            Auth::id()
+        )->findOrFail($id);
 
-        $encadrantId = Auth::id();
+        $path = storage_path(
+            'app/public/' . $document->fichier_url
+        );
 
-        $document = Document::where('idUtilisateur_Encadrant', $encadrantId)->findOrFail($id);
-        $document->update(['statut' => $request->statut]);
+        if (! file_exists($path)) {
+            abort(404, 'File not found.');
+        }
 
-        return back()->with('message', 'Statut du document mis à jour.');
+        return response()->download(
+            $path,
+            $document->nom
+        );
     }
 
-    /**
-     * Delete a document.
-     */
+
+    public function updateStatus(
+        Request $request,
+        $id
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'statut' => [
+                'required',
+                'in:En attente,Validé,Rejeté',
+            ],
+        ]);
+
+        $document = Document::where(
+            'idUtilisateur_Encadrant',
+            Auth::id()
+        )->findOrFail($id);
+
+        $document->update([
+            'statut' => $validated['statut'],
+        ]);
+
+        return back()->with(
+            'message',
+            'Statut du document mis à jour.'
+        );
+    }
+    public function show($id): Response
+    {
+        $document = Document::where(
+            'idUtilisateur_Encadrant',
+            Auth::id()
+        )
+            ->with([
+                'stage.candidature.stagiaire.user',
+                'stage.candidature.offreDeStage',
+            ])
+            ->findOrFail($id);
+
+        return Inertia::render('Encadrant/Documents/Show', [
+            'document' => $document,
+        ]);
+    }
+
     public function destroy($id): RedirectResponse
     {
-        $encadrantId = Auth::id();
+        $document = Document::where(
+            'idUtilisateur_Encadrant',
+            Auth::id()
+        )->findOrFail($id);
 
-        $document = Document::where('idUtilisateur_Encadrant', $encadrantId)->findOrFail($id);
         $document->delete();
 
-        return back()->with('message', 'Document supprimé.');
+        return back()->with(
+            'message',
+            'Document supprimé.'
+        );
+    }
+
+
+    public function reviews(): Response
+    {
+        $documents = Document::where(
+            'idUtilisateur_Encadrant',
+            Auth::id()
+        )
+            ->with([
+                'stage.candidature.stagiaire.user',
+                'stage.candidature.offreDeStage',
+                'stage.taches',
+            ])
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        return Inertia::render(
+            'Encadrant/TaskReviews/Index',
+            [
+                'documents' => $documents,
+            ]
+        );
     }
 }

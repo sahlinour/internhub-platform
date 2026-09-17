@@ -181,17 +181,52 @@ const initials = () => {
 
 
             <!-- Notifications -->
-            <!-- <div
-                class="relative flex min-h-[39px] cursor-default items-center gap-[11px] rounded-lg px-[11px] py-[9px] text-[10.5px] font-medium text-white/65 transition hover:bg-white/[0.07] hover:text-white"
-            >
-                <span class="flex h-[19px] w-[19px] shrink-0 items-center justify-center">
-                    <Icon name="chart" :size="18" />
-                </span>
+                    <Link
+                        :href="entrepriseRoute('entreprise.notifications.index')"
+                        class="relative flex min-h-[39px] items-center gap-[11px]
+                            rounded-lg px-[11px] py-[9px]
+                            text-[10.5px] font-medium no-underline
+                            transition hover:bg-white/[0.07] hover:text-white"
+                        :class="
+                            isActive('/entreprise/notifications')
+                                ? 'bg-[#449dc6]/[0.27] text-white before:absolute before:bottom-[9px] before:left-0 before:top-[9px] before:w-[3px] before:rounded-r-[3px] before:bg-[#78c0dc]'
+                                : 'text-white/65'
+                        "
+                    >
+                        <span
+                            class="flex h-[19px] w-[19px]
+                                shrink-0 items-center justify-center"
+                        >
+                            <!-- Bell icon -->
+                            <svg
+                                viewBox="0 0 24 24"
+                                width="18"
+                                height="18"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    d="M18 8a6 6 0 00-12 0
+                                    c0 7-3 7-3 9h18
+                                    c0-2-3-2-3-9"
+                                />
 
-                <span>Notifications</span>
-            </div> -->
+                                <path
+                                    d="M13.73 21
+                                    a2 2 0 01-3.46 0"
+                                />
+                            </svg>
+                        </span>
 
-            <div class="my-[10px] border-t border-white/[0.08]"></div>
+                        <span class="flex-1">
+                            Notifications
+                        </span>
+                    </Link>
+
+                    <div class="my-[10px] border-t border-white/[0.08]"></div>
 
             <!-- Settings -->
             <Link

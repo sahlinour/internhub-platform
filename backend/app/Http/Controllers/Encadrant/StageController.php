@@ -12,48 +12,55 @@ use Illuminate\Http\RedirectResponse;
 
 class StageController extends Controller
 {
-    /**
-     * Display a list of internships supervised by the logged-in Encadrant.
-     */
+
     public function index(Request $request): Response
-    {
-        $encadrantId = Auth::id();
+{
+    $encadrantId = Auth::id();
 
-        $query = Stage::where('idUtilisateur_Encadrant', $encadrantId)
-            ->with([
-                'candidature.stagiaire.user',
-                'candidature.offreDeStage.entreprise.user',
-                'taches',
-                'documents',
-            ]);
-
-        if ($request->filled('statut')) {
-            $query->where('statut', $request->statut);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('sujet', 'like', "%{$search}%")
-                  ->orWhereHas('candidature.stagiaire.user', function ($sq) use ($search) {
-                      $sq->where('nom_complet', 'like', "%{$search}%");
-                  });
-            });
-        }
-
-        $stages = $query->orderBy('date_debut', 'desc')
-                        ->paginate(10)
-                        ->withQueryString();
-
-        return Inertia::render('Encadrant/Stages/Index', [
-            'stages'  => $stages,
-            'filters' => $request->only(['statut', 'search']),
+    $query = Stage::where('idUtilisateur_Encadrant', $encadrantId)
+        ->with([
+            'candidature.stagiaire.user',
+            'candidature.offreDeStage.entreprise.user',
+            'taches',
+            'documents',
         ]);
+
+    if ($request->filled('statut')) {
+        $query->where('statut', $request->statut);
     }
 
-    /**
-     * Display details of a specific supervised internship.
-     */
+    if ($request->filled('search')) {
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+            $q->where('sujet', 'like', "%{$search}%")
+                ->orWhereHas(
+                    'candidature.stagiaire.user',
+                    function ($sq) use ($search) {
+                        $sq->where(
+                            'nom_complet',
+                            'like',
+                            "%{$search}%"
+                        );
+                    }
+                );
+        });
+    }
+
+    $stages = $query
+        ->orderBy('date_debut', 'desc')
+        ->paginate(10)
+        ->withQueryString();
+
+    return Inertia::render('Encadrant/Stagiaires/Index', [
+        'stages' => $stages,
+        'filters' => $request->only([
+            'statut',
+            'search',
+        ]),
+    ]);
+}
+
     public function show($id): Response
     {
         $encadrantId = Auth::id();
@@ -98,9 +105,29 @@ class StageController extends Controller
         return back()->with('message', 'Le stage a été mis à jour avec succès.');
     }
 
-    /**
-     * Quickly update the internship status (e.g., mark as Terminé).
-     */
+    public function showIntern($id): Response
+{
+    $encadrantId = Auth::id();
+
+    $stage = Stage::where(
+        'idUtilisateur_Encadrant',
+        $encadrantId
+    )
+        ->with([
+            'candidature.stagiaire.user.ville',
+            'candidature.offreDeStage.entreprise.user',
+            'taches',
+            'documents',
+        ])
+        ->findOrFail($id);
+
+    return Inertia::render(
+        'Encadrant/Stagiaires/Show',
+        [
+            'stage' => $stage,
+        ]
+    );
+}
     public function updateStatus(Request $request, $id): RedirectResponse
     {
         $request->validate([

@@ -18,11 +18,7 @@ const emit = defineEmits([
     'assign-task',
 ])
 
-/*
-|--------------------------------------------------------------------------
-| Status
-|--------------------------------------------------------------------------
-*/
+
 const statusLabel = computed(() => {
     if (props.intern.status === 'on_track') {
         return 'On Track'

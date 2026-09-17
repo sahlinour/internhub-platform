@@ -47,43 +47,77 @@ class TacheController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created task.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'id_Stage'           => 'required|exists:stages,id',
-            'titre'              => 'required|string|max:255',
-            'description'        => 'nullable|string',
-            'priorite'           => 'required|in:Basse,Moyenne,Haute,Urgente',
-            'date_echeance'      => 'required|date|after_or_equal:today',
-        ]);
 
-        $encadrantId = Auth::id();
+   public function store(Request $request): RedirectResponse
+{
+    $validated = $request->validate([
+        'titre' => [
+            'required',
+            'string',
+            'max:255',
+        ],
 
-        // Ensure the stage belongs to this encadrant
-        $stage = Stage::where('id', $request->id_Stage)
-            ->where('idUtilisateur_Encadrant', $encadrantId)
-            ->findOrFail();
+        'description' => [
+            'nullable',
+            'string',
+        ],
 
-        Tache::create([
-            'titre'                    => $request->titre,
-            'description'              => $request->description,
-            'priorite'                 => $request->priorite,
-            'date_creation'            => now()->toDateString(),
-            'date_echeance'            => $request->date_echeance,
-            'statut'                   => 'À faire',
-            'idUtilisateur_Encadrant' => $encadrantId,
-            'id_Stage'                 => $stage->id,
-        ]);
+       'priorite' => [
+           'required',
+           'in:Basse,Moyenne,Haute,Urgente',
+        ],
 
-        return back()->with('message', 'Tâche créée avec succès.');
-    }
+        'date_echeance' => [
+            'required',
+            'date',
+            'after_or_equal:today',
+        ],
 
-    /**
-     * Update an existing task.
-     */
+        'id_Stage' => [
+            'required',
+            'exists:stages,id',
+        ],
+    ]);
+
+    $stage = Stage::where(
+        'id',
+        $validated['id_Stage']
+    )
+        ->where(
+            'idUtilisateur_Encadrant',
+            Auth::id()
+        )
+        ->firstOrFail();
+
+    Tache::create([
+        'titre' => $validated['titre'],
+
+        'description' =>
+            $validated['description'] ?? null,
+
+        'priorite' => $validated['priorite'],
+
+        'date_creation' => now()->toDateString(),
+
+        'date_echeance' =>
+            $validated['date_echeance'],
+
+        'statut' => 'À faire',
+
+        'idUtilisateur_Encadrant' =>
+            Auth::id(),
+
+        'id_Stage' => $stage->id,
+    ]);
+
+    return redirect()
+        ->route('encadrant.taches.index')
+        ->with(
+            'message',
+            'Task assigned successfully.'
+        );
+}
+
     public function update(Request $request, $id): RedirectResponse
     {
         $request->validate([
@@ -97,8 +131,8 @@ class TacheController extends Controller
         $encadrantId = Auth::id();
         $tache = Tache::where('idUtilisateur_Encadrant', $encadrantId)->findOrFail($id);
 
-        $dateFinEffective = $request->statut === 'Terminée' && $tache->statut !== 'Terminée' 
-            ? now()->toDateString() 
+        $dateFinEffective = $request->statut === 'Terminée' && $tache->statut !== 'Terminée'
+            ? now()->toDateString()
             : $tache->date_fin_effective;
 
         if ($request->statut !== 'Terminée') {
@@ -128,4 +162,40 @@ class TacheController extends Controller
 
         return back()->with('message', 'Tâche supprimée avec succès.');
     }
+
+    public function create(Request $request): Response
+{
+    $encadrantId = Auth::id();
+
+    $stages = Stage::where(
+        'idUtilisateur_Encadrant',
+        $encadrantId
+    )
+        ->with([
+            'candidature.stagiaire.user',
+            'candidature.offreDeStage',
+        ])
+        ->orderBy('date_debut', 'desc')
+        ->get();
+
+    $selectedStageId = $request->query('stage');
+
+    // Security:
+    // selected stage must belong to logged-in Encadrant.
+    if ($selectedStageId) {
+        $belongsToEncadrant = $stages->contains(
+            fn ($stage) =>
+                (string) $stage->id === (string) $selectedStageId
+        );
+
+        if (!$belongsToEncadrant) {
+            abort(403);
+        }
+    }
+
+    return Inertia::render('Encadrant/Taches/Create', [
+        'stages' => $stages,
+        'selectedStageId' => $selectedStageId,
+    ]);
+}
 }
