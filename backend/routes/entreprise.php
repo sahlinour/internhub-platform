@@ -17,34 +17,50 @@ Route::middleware(['auth', 'role:Entreprise'])
     ->name('entreprise.')
     ->group(function () {
 
-        /*
-        |--------------------------------------------------------------------------
-        | Notifications
-        |--------------------------------------------------------------------------
-        */
-
-        Route::post(
-            '/notifications/send-encadrant',
-            [NotificationController::class, 'sendToEncadrant']
-        )->name('notifications.sendToEncadrant');
-
-        Route::post(
-            '/notifications/broadcast-encadrants',
-            [NotificationController::class, 'broadcastToEncadrants']
-        )->name('notifications.broadcastToEncadrants');
-
-        Route::delete(
-            '/notifications/{id}',
-            [NotificationController::class, 'destroy']
-        )->name('notifications.destroy');
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Entreprise Profile
-        |--------------------------------------------------------------------------
-        */
 
+            Route::get(
+                '/notifications',
+                [NotificationController::class, 'index']
+            )->name('notifications.index');
+
+
+
+            Route::patch(
+                '/notifications/read-all',
+                [NotificationController::class, 'markAllAsRead']
+            )->name('notifications.readAll');
+
+
+
+            Route::patch(
+                '/notifications/{id}/read',
+                [NotificationController::class, 'markAsRead']
+            )->name('notifications.read');
+
+
+
+            Route::post(
+                '/notifications/send-encadrant',
+                [NotificationController::class, 'sendToEncadrant']
+            )->name('notifications.sendToEncadrant');
+
+
+
+            Route::post(
+                '/notifications/broadcast-encadrants',
+                [NotificationController::class, 'broadcastToEncadrants']
+            )->name('notifications.broadcastToEncadrants');
+
+
+
+            Route::delete(
+                '/notifications/{id}',
+                [NotificationController::class, 'destroy']
+            )->name('notifications.destroy');
+
+       
         Route::get(
             '/profile',
             [EntrepriseController::class, 'show']

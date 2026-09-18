@@ -22,12 +22,13 @@ class DashboardController extends Controller
     public function __invoke(Request $request): Response
     {
         $user = Auth::user();
+
         return match ($user->role) {
-            'Admin'      => self::adminView(),
+            'Admin' => self::adminView(),
             'Entreprise' => self::entrepriseView($user->id),
-            'Encadrant'  => self::encadrantView($user->id),
-            'Stagiaire'  => self::stagiaireView($user->id),
-            default      => abort(403, 'Rôle non autorisé.'),
+            'Encadrant' => self::encadrantView($user->id),
+            'Stagiaire' => self::stagiaireView($user->id),
+            default => abort(403, 'Rôle non autorisé.'),
         };
     }
 
@@ -49,6 +50,7 @@ class DashboardController extends Controller
             'total_stages' => Stage::count(),
             'total_documents' => Document::count(),
             'total_taches' => Tache::count(),
+
             'recent_users' => User::latest()
                 ->take(5)
                 ->get([
@@ -73,22 +75,26 @@ class DashboardController extends Controller
             'idUtilisateur_Entreprise',
             $entrepriseId
         )->pluck('id');
+
         $openOffers = OffreDeStage::where(
             'idUtilisateur_Entreprise',
             $entrepriseId
         )
             ->where('statut', 'active')
             ->count();
+
         $applicants = Candidature::whereIn(
             'id_Offre_De_Stage',
             $offresIds
         )->count();
+
         $accepted = Candidature::whereIn(
             'id_Offre_De_Stage',
             $offresIds
         )
             ->where('statut', 'acceptee')
             ->count();
+
         $activeInterns = Stage::where(
             'statut',
             'en_cours'
@@ -103,6 +109,7 @@ class DashboardController extends Controller
                 }
             )
             ->count();
+
         $recentApplicants = Candidature::whereIn(
             'id_Offre_De_Stage',
             $offresIds
@@ -125,8 +132,7 @@ class DashboardController extends Controller
                     ->filter()
                     ->take(2)
                     ->map(
-                        fn ($word) =>
-                        strtoupper(substr($word, 0, 1))
+                        fn ($word) => strtoupper(substr($word, 0, 1))
                     )
                     ->implode('');
 
@@ -137,6 +143,7 @@ class DashboardController extends Controller
                     'offer' =>
                         $candidature->offreDeStage?->titre
                         ?? 'Internship',
+
                     'status' => match ($candidature->statut) {
                         'en_attente' => 'Pending',
                         'acceptee' => 'Accepted',
@@ -155,7 +162,6 @@ class DashboardController extends Controller
                     'accepted' => $accepted,
                     'active_interns' => $activeInterns,
                 ],
-
                 'recentApplicants' => $recentApplicants,
                 'upcomingInterviews' => [],
             ]
@@ -163,7 +169,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Build static metrics for Encadrant.
+     * Build metrics for Encadrant.
      */
     public static function encadrantView(int $encadrantId): Response
     {
@@ -172,22 +178,26 @@ class DashboardController extends Controller
                 'idUtilisateur_Encadrant',
                 $encadrantId
             )->count(),
+
             'taches_totales' => Tache::where(
                 'idUtilisateur_Encadrant',
                 $encadrantId
             )->count(),
+
             'taches_a_faire' => Tache::where(
                 'idUtilisateur_Encadrant',
                 $encadrantId
             )
                 ->where('statut', 'À faire')
                 ->count(),
+
             'documents_a_valider' => Document::where(
                 'idUtilisateur_Encadrant',
                 $encadrantId
             )
                 ->where('statut', 'En attente')
                 ->count(),
+
             'recent_documents' => Document::where(
                 'idUtilisateur_Encadrant',
                 $encadrantId
@@ -198,20 +208,18 @@ class DashboardController extends Controller
                 ->get(),
         ];
 
-        return Inertia::render(
-            'Dashboard/Encadrant/Index',
-            [
-                'stats' => $stats,
-            ]
-        );
+        return Inertia::render('Encadrant/Dashboard', [
+            'stats' => $stats,
+        ]);
     }
 
     /**
-     * Build static metrics for Stagiaire.
+     * Build metrics for Stagiaire.
      */
     public static function stagiaireView(int $userId): Response
     {
         $user = User::findOrFail($userId);
+
         $stagiaire = \App\Models\Stagiaire::where(
             'user_id',
             $userId
@@ -234,12 +242,15 @@ class DashboardController extends Controller
         $completedProfileFields = collect($profileFields)
             ->filter()
             ->count();
+
         $totalProfileFields = count($profileFields);
+
         $profileCompletion = $totalProfileFields > 0
             ? (int) round(
                 ($completedProfileFields / $totalProfileFields) * 100
             )
             : 0;
+
         $profileItems = collect($profileFields)
             ->map(
                 fn ($completed, $label) => [
@@ -250,7 +261,7 @@ class DashboardController extends Controller
             ->values()
             ->all();
 
-        $applications = \App\Models\Candidature::with([
+        $applications = Candidature::with([
             'offreDeStage.entreprise.user',
         ])
             ->where(
@@ -260,7 +271,8 @@ class DashboardController extends Controller
             ->latest('date_postulation')
             ->take(5)
             ->get();
-        $applicationsCount = \App\Models\Candidature::where(
+
+        $applicationsCount = Candidature::where(
             'idUtilisateur_Stagiaire',
             $userId
         )->count();
@@ -277,16 +289,19 @@ class DashboardController extends Controller
 
         $tasksCount = 0;
         $documentsCount = 0;
+
         if ($activeStage) {
             $tasksCount = Tache::where(
                 'id_Stage',
                 $activeStage->id
             )->count();
+
             $documentsCount = Document::where(
                 'id_Stage',
                 $activeStage->id
             )->count();
         }
+
         $recommendedOffers = OffreDeStage::with([
             'entreprise.user.ville',
         ])
@@ -303,18 +318,23 @@ class DashboardController extends Controller
 
         $stats = [
             'has_stage' => (bool) $activeStage,
+
             'stage' => $activeStage
                 ? $activeStage->load([
                     'candidature.offreDeStage.entreprise.user',
                     'encadrant.user',
                 ])
                 : null,
+
             'taches_count' => $tasksCount,
             'docs_count' => $documentsCount,
+
             'applications_count' => $applicationsCount,
             'applications' => $applications,
             'recommended_offers' => $recommendedOffers,
+
             'notifications' => [],
+
             'profile_completion' => $profileCompletion,
             'profile_items' => $profileItems,
         ];

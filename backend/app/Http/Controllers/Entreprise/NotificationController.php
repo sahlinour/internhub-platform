@@ -6,90 +6,201 @@ use App\Http\Controllers\Controller;
 use App\Models\Encadrant;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class NotificationController extends Controller
 {
     /**
-     * Send a notification to a single Encadrant assigned to this Entreprise.
+     * Display notifications of the authenticated Entreprise.
      */
-    public function sendToEncadrant(Request $request)
+    public function index(): Response
     {
-        $request->validate([
-            'id_Utilisateur' => 'required|exists:users,id',
-            'titre'          => 'required|string|max:255',
-            'message'        => 'required|string',
+        $notifications = Notification::where('id_Utilisateur', Auth::id())
+            ->orderByDesc('date_envoi')
+            ->get();
+
+        $unreadCount = Notification::where('id_Utilisateur', Auth::id())
+            ->where('lu', false)
+            ->count();
+
+        return Inertia::render('Entreprise/Notifications/Index', [
+            'notifications' => $notifications,
+            'unreadCount' => $unreadCount,
+        ]);
+    }
+
+
+    /**
+     * Mark one notification as read.
+     */
+    public function markAsRead(int $id): RedirectResponse
+    {
+        $notification = Notification::where('id', $id)
+            ->where('id_Utilisateur', Auth::id())
+            ->firstOrFail();
+
+        $notification->update([
+            'lu' => true,
+        ]);
+
+        return back();
+    }
+
+
+    /**
+     * Mark all notifications of the authenticated Entreprise as read.
+     */
+    public function markAllAsRead(): RedirectResponse
+    {
+        Notification::where('id_Utilisateur', Auth::id())
+            ->where('lu', false)
+            ->update([
+                'lu' => true,
+            ]);
+
+        return back();
+    }
+
+
+    /**
+     * Send a notification to a single Encadrant
+     * assigned to this Entreprise.
+     */
+    public function sendToEncadrant(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'id_Utilisateur' => [
+                'required',
+                'integer',
+                'exists:users,id',
+            ],
+            'titre' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'message' => [
+                'required',
+                'string',
+            ],
         ]);
 
         $authUserId = Auth::id();
 
-        // Verify the recipient encadrant belongs to this entreprise
-        $isMyEncadrant = Encadrant::where('user_id', $request->id_Utilisateur)
+        /*
+         * Verify that the selected Encadrant
+         * belongs to the authenticated Entreprise.
+         */
+        $isMyEncadrant = Encadrant::where(
+                'user_id',
+                $validated['id_Utilisateur']
+            )
             ->where('entreprise_id', $authUserId)
             ->exists();
 
         if (!$isMyEncadrant) {
             return back()->withErrors([
-                'id_Utilisateur' => 'You can only send notifications to encadrants attached to your enterprise.',
+                'id_Utilisateur' =>
+                    'You can only send notifications to encadrants attached to your enterprise.',
             ]);
         }
 
         Notification::create([
-            'titre'          => $request->titre,
-            'message'        => $request->message,
-            'lu'             => false,
-            'date_envoi'     => now(),
-            'id_Utilisateur' => $request->id_Utilisateur,
+            'titre' => $validated['titre'],
+            'message' => $validated['message'],
+            'lu' => false,
+            'date_envoi' => now(),
+            'id_Utilisateur' => $validated['id_Utilisateur'],
         ]);
 
-        return back()->with('message', 'Notification sent to the framework successfully.');
+        return back()->with(
+            'message',
+            'Notification sent to the encadrant successfully.'
+        );
     }
 
+
     /**
-     * Broadcast a notification to ALL encadrants belonging to this Entreprise.
+     * Broadcast a notification to all Encadrants
+     * belonging to the authenticated Entreprise.
      */
-    public function broadcastToEncadrants(Request $request)
-    {
-        $request->validate([
-            'titre'   => 'required|string|max:255',
-            'message' => 'required|string',
+    public function broadcastToEncadrants(
+        Request $request
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'titre' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'message' => [
+                'required',
+                'string',
+            ],
         ]);
 
         $authUserId = Auth::id();
 
-        // Fetch all user_ids of encadrants assigned to this company
-        $encadrantUserIds = Encadrant::where('entreprise_id', $authUserId)->pluck('user_id');
+        /*
+         * Get all Encadrant user IDs attached
+         * to the authenticated Entreprise.
+         */
+        $encadrantUserIds = Encadrant::where(
+                'entreprise_id',
+                $authUserId
+            )
+            ->pluck('user_id');
 
         if ($encadrantUserIds->isEmpty()) {
             return back()->withErrors([
-                'broadcast' => 'No encadrants are currently attached to your enterprise.',
+                'broadcast' =>
+                    'No encadrants are currently attached to your enterprise.',
             ]);
         }
 
         $now = now();
 
-        $notifications = $encadrantUserIds->map(fn ($userId) => [
-            'titre'          => $request->titre,
-            'message'        => $request->message,
-            'lu'             => false,
-            'date_envoi'     => $now,
-            'id_Utilisateur' => $userId,
-        ])->toArray();
+        $notifications = $encadrantUserIds
+            ->map(function ($userId) use ($validated, $now) {
+                return [
+                    'titre' => $validated['titre'],
+                    'message' => $validated['message'],
+                    'lu' => false,
+                    'date_envoi' => $now,
+                    'id_Utilisateur' => $userId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            })
+            ->toArray();
 
-        // Bulk insert notifications for all company encadrants
         Notification::insert($notifications);
 
-        return back()->with('message', 'Notification broadcast to all your encadrants.');
+        return back()->with(
+            'message',
+            'Notification broadcast to all your encadrants.'
+        );
     }
 
+
     /**
-     * Delete a notification.
+     * Delete one notification belonging
+     * to the authenticated Entreprise.
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
-        $notification = Notification::findOrFail($id);
+        $notification = Notification::where('id', $id)
+            ->where('id_Utilisateur', Auth::id())
+            ->firstOrFail();
+
         $notification->delete();
 
-        return back()->with('message', 'Notification deleted successfully.');
+        return back()->with(
+            'message',
+            'Notification deleted successfully.'
+        );
     }
 }

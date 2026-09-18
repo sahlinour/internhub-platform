@@ -86,3 +86,5 @@ Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'destr
     ->name('admin.logout');
 
 require __DIR__.'/auth.php';
+require __DIR__.'/entreprise.php'; 
+require __DIR__.'/encadrant.php';

@@ -30,7 +30,7 @@ class TacheSeeder extends Seeder
                     'date_echeance'            => $dateEcheance->format('Y-m-d'),
                     'date_fin_effective'       => $statut === 'Terminée' ? (clone $dateCreation)->modify('+5 days')->format('Y-m-d') : null,
                     'statut'                   => $statut,
-                    'idUtilisateur_Encadrant' => $stage->idUtilisateur_Encadrant ?? 1,
+                    'idUtilisateur_Encadrant' => $stage->idUtilisateur_Encadrant ,
                     'id_Stage'                 => $stage->id,
                 ]);
             }
