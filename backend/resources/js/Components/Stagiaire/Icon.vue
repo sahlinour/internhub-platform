@@ -1,14 +1,15 @@
 <script setup>
+
 defineProps({
     name: {
         type: String,
         required: true,
     },
-
     size: {
         type: [String, Number],
         default: 18,
     },
+
 })
 </script>
 
@@ -98,7 +99,7 @@ defineProps({
         <template v-else-if="name === 'heart'">
             <path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4V4Z" />
         </template>
-        
+
         <!-- PROFILE -->
         <template v-else-if="name === 'user'">
             <circle cx="12" cy="7" r="4" />
@@ -132,5 +133,36 @@ defineProps({
                    a1.7 1.7 0 0 0-1.5 1Z"
             />
         </template>
+                    
+            <!-- PROGRESS -->
+            <template v-else-if="name === 'progress'">
+                <path d="M4 19V5" />
+                <path d="M4 19h16" />
+                <path d="m7 15 4-4 3 2 6-7" />
+            </template>
+
+            <!-- LOGBOOK -->
+            <template v-else-if="name === 'book'">
+                <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22V4.5Z" />
+                <path d="M4 4.5V22" />
+                <path d="M8 6h8" />
+                <path d="M8 10h8" />
+            </template>
+
+            <!-- DOCUMENTS -->
+            <template v-else-if="name === 'folder'">
+                <path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Z" />
+                <path d="M3 9h18" />
+            </template>
+
+            <!-- MY CV -->
+            <template v-else-if="name === 'cv'">
+                <path d="M6 3h8l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+                <path d="M14 3v5h5" />
+                <circle cx="10" cy="13" r="1.5" />
+                <path d="M8 18c.7-2 3.3-2 4 0" />
+                <path d="M14 13h2" />
+                <path d="M14 17h2" />
+            </template>
     </svg>
 </template>

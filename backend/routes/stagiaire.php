@@ -9,6 +9,9 @@ use App\Http\Controllers\Stagiaire\FavorisController;
 use App\Http\Controllers\Stagiaire\CandidatureController as StagiaireCandidatureController;
 use App\Http\Controllers\Stagiaire\DocumentController as StagiaireDocumentController;
 use App\Http\Controllers\Stagiaire\TacheController as StagiaireTacheController;
+use App\Http\Controllers\Stagiaire\InternshipJourneyController;
+use App\Http\Controllers\Stagiaire\LogbookController;
+use App\Http\Controllers\Stagiaire\ProgressController;
 
 
 Route::middleware(['auth', 'role:Stagiaire'])
@@ -60,4 +63,13 @@ Route::middleware(['auth', 'role:Stagiaire'])
         // Stagiaire Tache
         Route::get('/taches', [StagiaireTacheController::class, 'index'])->name('taches.index');
         Route::patch('/taches/{id}/status', [StagiaireTacheController::class, 'updateStatus'])->name('taches.updateStatus');
+
+        // Internship Journey
+        Route::get('internship-journey',[InternshipJourneyController::class, 'index'])->name('internship-journey');
+
+        // LogBook 
+        Route::get('logbook',[LogbookController::class, 'index'])->name('logbook');
+
+        // Progress
+        Route::get('progress', [ProgressController::class, 'index'])->name('progress');
 });
