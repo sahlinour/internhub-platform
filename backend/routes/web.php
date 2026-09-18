@@ -94,6 +94,6 @@ Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'destr
 Route::get('/ai/chatbot', function () {
     return Inertia::render('AI/chatbot/index');
 })->name('ai.chatbot');
-    
+
 
 require __DIR__.'/auth.php';

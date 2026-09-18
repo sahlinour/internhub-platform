@@ -124,7 +124,12 @@ async function sendMessage() {
       },
 
       body: JSON.stringify({
-        prompt: text
+        messages: [ 
+          {
+             role: 'user' ,
+            content: text 
+          } 
+      ]
       }),
 
       signal: controller.signal
