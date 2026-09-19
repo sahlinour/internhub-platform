@@ -1,121 +1,164 @@
 <script setup>
-import { ref } from 'vue'
-import UploadZone from './components/UploadZone.vue'
-import JobCard from './components/JobCard.vue'
-import { matchCv } from './services/api'
+import { computed, ref } from 'vue'
+import CvUploadZone from '../../../Components/Ai/CvUploadZone.vue'
+import AnalyzingProgress from '../../../Components/Ai/AnalyzingProgress.vue'
+import SkillsChips from '../../../Components/Ai/SkillsChips.vue'
+import JobOfferList from '../../../Components/Ai/JobOfferList.vue'
+import { mockOffers, mockExtractedSkills } from './data/mockOffers.js'
 
-const status = ref('idle') // idle | loading | done | error
-const fileName = ref('')
-const skills = ref([])
-const results = ref([])
-const error = ref('')
+// status : 'idle' | 'analyzing' | 'results'
+const status = ref('idle')
+const extractedSkills = ref([])
+const offers = ref([])
 
-async function analyze(file) {
-  status.value = 'loading'
-  error.value = ''
-  try {
-    const { skills: found, offers } = await matchCv(file)
-    skills.value = found
-    results.value = [...offers].sort((a, b) => b.score - a.score).slice(0, 10)
-    fileName.value = file.name
-    status.value = 'done'
-  } catch (e) {
-    error.value = e.message || 'Something went wrong while reading your CV.'
-    status.value = 'error'
-  }
+const topMatch = computed(() =>
+  offers.value.length ? Math.max(...offers.value.map((o) => o.matchPercent)) : 0
+)
+
+const topMatchBadge = computed(() =>
+  topMatch.value >= 85 ? 'bg-emerald-50 text-emerald-700' : 'bg-accent/25 text-primary'
+)
+
+function handleAnalyze(file) {
+  status.value = 'analyzing'
+  // TODO: replace with the real call to your matching API, sending `file`.
+  // Example:
+  // const formData = new FormData()
+  // formData.append('cv', file)
+  // const res = await fetch('/api/match', { method: 'POST', body: formData })
+  // const data = await res.json()
+  // extractedSkills.value = data.skills
+  // offers.value = data.offers
+}
+
+function handleComplete() {
+  extractedSkills.value = mockExtractedSkills
+  offers.value = mockOffers
+  status.value = 'results'
+}
+
+// Jumps straight to the 10 offers (skips upload) — handy for testing the layout.
+function showOffers() {
+  extractedSkills.value = mockExtractedSkills
+  offers.value = mockOffers
+  status.value = 'results'
 }
 
 function reset() {
   status.value = 'idle'
-  fileName.value = ''
-  skills.value = []
-  results.value = []
-  error.value = ''
+  extractedSkills.value = []
+  offers.value = []
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-white">
-    <header class="border-b border-mist">
-      <div class="mx-auto flex max-w-6xl items-center gap-3 px-4 py-4 sm:px-6">
-        <svg class="h-8 w-8" viewBox="0 0 32 32" aria-hidden="true">
-          <rect width="32" height="32" rx="8" fill="#16425B" />
-          <path d="M9 8h9l5 5v11H9z" fill="none" stroke="#81C3D7" stroke-width="2" stroke-linejoin="round" />
-          <path d="m12.5 18 2.5 2.5 5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <span class="font-display text-xl font-bold">CVmatch</span>
+  <div class="min-h-screen bg-surface font-sans">
+    <header class="border-b border-secondary/10 bg-white">
+      <div class="mx-auto flex max-w-3xl items-center gap-2.5 px-4 py-5 sm:px-6">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+          <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </span>
+        <p class="font-display text-lg font-semibold text-primary">CV Match</p>
       </div>
     </header>
 
-    <!-- Upload state -->
-    <main v-if="status !== 'done'" class="bg-mist">
-      <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-20">
-        <h3 class="font-display text-3xl font-bold leading-tight sm:text-5xl">
-          Upload your CV. See the offers that fit your skills.
-        </h3>
-        <p class="mt-4 max-w-xl text-base text-navy/80 sm:text-lg">
-          We read your CV, pick out your skills and rank open positions by how well they match.
-        </p>
-
-        <div class="mt-8">
-          <div v-if="status === 'loading'" class="flex flex-col items-center gap-4 rounded-2xl bg-white px-6 py-16 text-center" role="status" aria-live="polite">
-            <svg class="h-10 w-10 animate-spin text-steel" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity=".25" stroke-width="3" />
-              <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+    <main class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
+      <div v-if="status === 'idle'" class="rounded-3xl border border-secondary/10 bg-white px-6 py-12 shadow-sm sm:px-12 sm:py-16">
+        <div class="text-center">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-accent/25 px-3 py-1 text-xs font-medium text-primary">
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
             </svg>
-            <p class="font-display text-lg font-semibold">Reading your CV</p>
+            Skill-based matching
+          </span>
+          <h1 class="mt-4 font-display text-3xl font-semibold text-primary sm:text-4xl">
+            Your CV, your top 10 matches
+          </h1>
+          <p class="mt-3 text-primary/60">
+            Upload your CV to find the offers that best match your skills.
+          </p>
+        </div>
+        <div class="mt-10">
+          <CvUploadZone @analyze="handleAnalyze" />
+        </div>
+        <div class="mt-4 text-center">
+          <button
+             type="button"
+               class="text-sm font-medium text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700"
+             @click="showOffers"
+              >
+               View the matching offers
+             </button>
+        </div>
+
+        <div class="mt-10 grid grid-cols-1 gap-4 border-t border-secondary/10 pt-8 sm:grid-cols-3">
+          <div class="flex items-center gap-3">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary/10">
+              <svg class="h-4 w-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </span>
+            <span class="text-sm text-primary">Instant analysis</span>
           </div>
-
-          <UploadZone v-else @file="analyze" />
-
-          <div v-if="status === 'error'" class="mt-4 rounded-xl border border-steel bg-white p-4 text-sm" role="alert">
-            <p class="font-semibold">We could not analyze this file</p>
-            <p class="mt-1 text-navy/80">{{ error }}</p>
+          <div class="flex items-center gap-3">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50">
+              <svg class="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </span>
+            <span class="text-sm text-primary">Ranked by fit</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-50">
+              <svg class="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+              </svg>
+            </span>
+            <span class="text-sm text-primary">One-click apply</span>
           </div>
         </div>
       </div>
-    </main>
 
-    <!-- Results state -->
-    <main v-else class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
-      <div class="grid gap-8 lg:grid-cols-[320px_1fr]">
-        <aside class="h-fit rounded-2xl bg-mist p-5 sm:p-6 lg:sticky lg:top-6">
-          <p class="text-sm font-medium text-navy/70">Analyzed file</p>
-          <p class="mt-0.5 break-all font-display text-lg font-semibold">{{ fileName }}</p>
+      <div v-else-if="status === 'analyzing'">
+        <AnalyzingProgress @complete="handleComplete" />
+      </div>
 
-          <h2 class="mt-6 font-display text-base font-semibold">
-            {{ skills.length }} skills detected
-          </h2>
-          <ul class="mt-3 flex flex-wrap gap-2">
-            <li v-for="s in skills" :key="s" class="rounded-full bg-sky px-3 py-1 text-xs font-semibold text-navy">
-              {{ s }}
-            </li>
-          </ul>
-
+      <div v-else class="space-y-6">
+        <div class="flex items-start justify-between gap-4 rounded-2xl border border-secondary/10 bg-white p-6 shadow-sm">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-secondary">Analysis</p>
+            <h2 class="mt-1 font-display text-xl font-semibold text-primary">Skills detected</h2>
+            <div class="mt-3">
+              <SkillsChips :skills="extractedSkills" />
+            </div>
+          </div>
           <button
             type="button"
-            class="mt-6 w-full rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-steel"
+            class="shrink-0 whitespace-nowrap rounded-xl border border-secondary/30 px-3 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-secondary hover:text-white"
             @click="reset"
           >
-            Upload another CV
+            New CV
           </button>
-        </aside>
+        </div>
 
-        <section aria-labelledby="results-title">
-          <h1 id="results-title" class="font-display text-2xl font-bold sm:text-3xl">
-            Your top {{ results.length }} matching offers
-          </h1>
-
-          <p v-if="!results.length" class="mt-6 rounded-2xl bg-mist p-6">
-            No offer matches your skills yet. Add more skills to your CV and upload it again.
-          </p>
-
-          <ol v-else class="mt-6 space-y-4">
-            <li v-for="(job, i) in results" :key="job.id">
-              <JobCard :job="job" :rank="i + 1" />
-            </li>
-          </ol>
-        </section>
+        <div class="rounded-2xl border border-secondary/10 bg-white p-6 shadow-sm">
+          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-secondary">Results</p>
+              <h2 class="mt-1 font-display text-xl font-semibold text-primary">Top 10 matching offers</h2>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-medium text-primary/60">
+              <span class="rounded-full border border-secondary/15 px-2.5 py-1">{{ offers.length }} offers</span>
+              <span class="rounded-full px-2.5 py-1" :class="topMatchBadge">Top match {{ topMatch }}%</span>
+            </div>
+          </div>
+          <div class="mt-5">
+            <JobOfferList :offers="offers" />
+          </div>
+        </div>
       </div>
     </main>
   </div>
