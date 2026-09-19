@@ -95,5 +95,10 @@ Route::get('/ai/chatbot', function () {
     return Inertia::render('AI/chatbot/index');
 })->name('ai.chatbot');
 
+#ai route chatbot
+Route::get('/ai/cv', function () {
+    return Inertia::render('AI/cv/App');
+})->name('ai.cv');
+
 
 require __DIR__.'/auth.php';
