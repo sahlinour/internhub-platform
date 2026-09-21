@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Stagiaire;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class OffreDeStageController extends Controller
 {
@@ -150,93 +151,19 @@ class OffreDeStageController extends Controller
             'competences',
         ])->where('user_id', Auth::id())->first();
 
-        $user = Auth::user();
-        $profile = [
-            'university' => $stagiaire?->universite,
-            'field' => $stagiaire?->filiere,
-            'level' => $stagiaire?->niveau,
-            'has_cv' => !empty($stagiaire?->cv_url),
-            'has_linkedin' => !empty($stagiaire?->linkedin_url),
-            'has_portfolio' => !empty($stagiaire?->portfolio_url),
-            'skills' => $stagiaire?->competences
-                ? $stagiaire->competences
-                    ->pluck('nom_competence')
-                    ->filter()
-                    ->values()
-                    ->all()
-                : [],
-        ];
-
-        $offerText = strtolower(
-            trim(
-                ($offre->titre ?? '') . ' ' .
-                ($offre->description ?? '')
-            )
-        );
-
-        $score = 0;
-        $maxScore = 0;
-        if (!empty($profile['field'])) {
-            $maxScore += 40;
-            $fieldWords = preg_split(
-                '/\s+/',
-                strtolower(trim($profile['field']))
-            );
-            $fieldWords = array_filter(
-                $fieldWords,
-                fn ($word) => strlen($word) >= 3
-            );
-            foreach ($fieldWords as $word) {
-                if (str_contains($offerText, $word)) {
-                    $score += 40;
-                    break;
-                }
-            }
-        }
-
-        if (!empty($profile['skills'])) {
-            $skillScore = 0;
-            foreach ($profile['skills'] as $skill) {
-                $skill = strtolower(trim($skill));
-                if (
-                    $skill !== '' &&
-                    str_contains($offerText, $skill)
-                ) {
-                    $skillScore++;
-                }
-            }
-            $skillCount = count($profile['skills']);
-            if ($skillCount > 0) {
-                $maxScore += 40;
-                $score += min(
-                    40,
-                    (int) round(($skillScore / $skillCount) * 40)
-                );
-            }
-        }
-        $maxScore += 10;
-        if ($profile['has_cv']) {
-            $score += 10;
-        }
-        $maxScore += 10;
-        if (
-            $profile['has_linkedin'] ||
-            $profile['has_portfolio']
-        ) {
-            $score += 10;
-        }
-        $profileMatch = $maxScore > 0
-            ? (int) round(($score / $maxScore) * 100)
-            : 0;
-
         return Inertia::render('Stagiaire/Offres/Show', [
             'offre' => $offre,
-            'profileMatch' => $profileMatch,
+
             'profile' => [
-                'university' => $profile['university'],
-                'field' => $profile['field'],
-                'level' => $profile['level'],
-                'has_cv' => $profile['has_cv'],
+                'university' => $stagiaire?->universite,
+                'field' => $stagiaire?->filiere,
+                'level' => $stagiaire?->niveau,
+
+                'has_cv' => !empty($stagiaire?->cv_url),
+
+                'cv_url' => $stagiaire?->cv_url
+                    ? Storage::disk('public')->url($stagiaire->cv_url)
+                    : null,
             ],
         ]);
     }

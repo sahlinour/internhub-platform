@@ -1,6 +1,7 @@
 <script setup>
 import StagiaireSidebar from '@/Components/Stagiaire/StagiaireSidebar.vue'
 import StagiaireTopbar from '@/Components/Stagiaire/StagiaireTopbar.vue'
+import ChatbotWidget from './AI/Chatboot/ChatbotWidget.vue';
 </script>
 
 <template>
@@ -27,6 +28,9 @@ import StagiaireTopbar from '@/Components/Stagiaire/StagiaireTopbar.vue'
             </main>
 
         </div>
+
+        <!-- ROSE AI ASSISTANT -->
+        <ChatbotWidget />
 
     </div>
 </template>
