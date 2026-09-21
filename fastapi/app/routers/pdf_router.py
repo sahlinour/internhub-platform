@@ -1,7 +1,7 @@
 import os
 import json
 import re
-import fitz  # PyMuPDF
+import pymupdf
 from fastapi import APIRouter, File, Form, UploadFile, HTTPException
 from typing import Optional
 from google import genai

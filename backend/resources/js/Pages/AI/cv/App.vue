@@ -1,165 +1,198 @@
 <script setup>
-import { computed, ref } from 'vue'
-import CvUploadZone from '../../../Components/Ai/CvUploadZone.vue'
-import AnalyzingProgress from '../../../Components/Ai/AnalyzingProgress.vue'
-import SkillsChips from '../../../Components/Ai/SkillsChips.vue'
-import JobOfferList from '../../../Components/Ai/JobOfferList.vue'
-import { mockOffers, mockExtractedSkills } from './data/mockOffers.js'
+import { ref } from 'vue'
+import UploadZone from './components/UploadZone.vue'
+import JobCard from './components/JobCard.vue'
+import { matchCv } from './services/api'
 
-// status : 'idle' | 'analyzing' | 'results'
 const status = ref('idle')
-const extractedSkills = ref([])
-const offers = ref([])
+const fileName = ref('')
+const selectedFile = ref(null)
+const skills = ref([])
+const results = ref([])
+const error = ref('')
 
-const topMatch = computed(() =>
-  offers.value.length ? Math.max(...offers.value.map((o) => o.matchPercent)) : 0
-)
+async function analyze(file) {
+  if (!file) {
+    return
+  }
 
-const topMatchBadge = computed(() =>
-  topMatch.value >= 85 ? 'bg-emerald-50 text-emerald-700' : 'bg-accent/25 text-primary'
-)
+  selectedFile.value = file
+  fileName.value = file.name
 
-function handleAnalyze(file) {
-  status.value = 'analyzing'
-  // TODO: replace with the real call to your matching API, sending `file`.
-  // Example:
-  // const formData = new FormData()
-  // formData.append('cv', file)
-  // const res = await fetch('/api/match', { method: 'POST', body: formData })
-  // const data = await res.json()
-  // extractedSkills.value = data.skills
-  // offers.value = data.offers
-}
+  status.value = 'loading'
+  error.value = ''
+  results.value = []
+  skills.value = []
 
-function handleComplete() {
-  extractedSkills.value = mockExtractedSkills
-  offers.value = mockOffers
-  status.value = 'results'
-}
+  try {
+    const data = await matchCv(file)
 
-// Jumps straight to the 10 offers (skips upload) — handy for testing the layout.
-function showOffers() {
-  extractedSkills.value = mockExtractedSkills
-  offers.value = mockOffers
-  status.value = 'results'
+    skills.value = data.skills ?? []
+
+    results.value = [...(data.offers ?? [])]
+      .sort((a, b) => Number(b.score || 0) - Number(a.score || 0))
+      .slice(0, 10)
+
+    status.value = 'done'
+  } catch (e) {
+    console.error('CV matching error:', e)
+
+    error.value =
+      e?.message ||
+      'Something went wrong while analyzing your CV.'
+
+    status.value = 'error'
+  }
 }
 
 function reset() {
   status.value = 'idle'
-  extractedSkills.value = []
-  offers.value = []
+  fileName.value = ''
+  selectedFile.value = null
+  skills.value = []
+  results.value = []
+  error.value = ''
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-surface font-sans">
-    <header class="border-b border-secondary/10 bg-white">
-      <div class="mx-auto flex max-w-3xl items-center gap-2.5 px-4 py-5 sm:px-6">
-        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-          <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-          </svg>
-        </span>
-        <p class="font-display text-lg font-semibold text-primary">CV Match</p>
-      </div>
-    </header>
+  <main class="min-h-screen bg-white px-4 py-10">
+    <div class="mx-auto max-w-6xl">
 
-    <main class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
-      <div v-if="status === 'idle'" class="rounded-3xl border border-secondary/10 bg-white px-6 py-12 shadow-sm sm:px-12 sm:py-16">
-        <div class="text-center">
-          <span class="inline-flex items-center gap-1.5 rounded-full bg-accent/25 px-3 py-1 text-xs font-medium text-primary">
-            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
-            </svg>
-            Skill-based matching
-          </span>
-          <h1 class="mt-4 font-display text-3xl font-semibold text-primary sm:text-4xl">
-            Your CV, your top 10 matches
-          </h1>
-          <p class="mt-3 text-primary/60">
-            Upload your CV to find the offers that best match your skills.
+      <!-- Header -->
+      <div class="mb-8">
+        <p class="text-sm font-semibold uppercase tracking-wide text-steel">
+          AI Matching
+        </p>
+
+        <h1 class="mt-2 font-display text-3xl font-bold text-navy sm:text-4xl">
+          Find your internship match
+        </h1>
+
+        <p class="mt-3 max-w-2xl text-navy/70">
+          Upload your CV and our matching engine will compare your profile
+          with available internship offers.
+        </p>
+      </div>
+
+      <!-- Upload -->
+      <section
+        v-if="status === 'idle' || status === 'error'"
+        class="max-w-3xl"
+      >
+        <UploadZone @file="analyze" />
+
+        <!-- Error from API -->
+        <div
+          v-if="status === 'error' && error"
+          class="mt-4 rounded-xl border border-red-200 bg-red-50 p-4"
+        >
+          <p class="font-semibold text-red-700">
+            Analysis failed
+          </p>
+
+          <p class="mt-1 text-sm text-red-600">
+            {{ error }}
           </p>
         </div>
-        <div class="mt-10">
-          <CvUploadZone @analyze="handleAnalyze" />
-        </div>
-        <div class="mt-4 text-center">
-          <button
-             type="button"
-               class="text-sm font-medium text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700"
-             @click="showOffers"
-              >
-               View the matching offers
-             </button>
-        </div>
+      </section>
 
-        <div class="mt-10 grid grid-cols-1 gap-4 border-t border-secondary/10 pt-8 sm:grid-cols-3">
-          <div class="flex items-center gap-3">
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary/10">
-              <svg class="h-4 w-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-              </svg>
-            </span>
-            <span class="text-sm text-primary">Instant analysis</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50">
-              <svg class="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-              </svg>
-            </span>
-            <span class="text-sm text-primary">Ranked by fit</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-50">
-              <svg class="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-              </svg>
-            </span>
-            <span class="text-sm text-primary">One-click apply</span>
-          </div>
-        </div>
-      </div>
+      <!-- Loading -->
+      <section
+        v-if="status === 'loading'"
+        class="rounded-2xl bg-mist p-10 text-center"
+      >
+        <div
+          class="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-steel/20 border-t-steel"
+        ></div>
 
-      <div v-else-if="status === 'analyzing'">
-        <AnalyzingProgress @complete="handleComplete" />
-      </div>
+        <h2 class="mt-5 font-display text-xl font-bold text-navy">
+          Analyzing your CV...
+        </h2>
 
-      <div v-else class="space-y-6">
-        <div class="flex items-start justify-between gap-4 rounded-2xl border border-secondary/10 bg-white p-6 shadow-sm">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-wide text-secondary">Analysis</p>
-            <h2 class="mt-1 font-display text-xl font-semibold text-primary">Skills detected</h2>
-            <div class="mt-3">
-              <SkillsChips :skills="extractedSkills" />
-            </div>
-          </div>
-          <button
-            type="button"
-            class="shrink-0 whitespace-nowrap rounded-xl border border-secondary/30 px-3 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-secondary hover:text-white"
-            @click="reset"
+        <p class="mt-2 text-sm text-navy/65">
+          We're comparing your skills with available internship offers.
+        </p>
+
+        <p class="mt-4 text-xs text-navy/50">
+          {{ fileName }}
+        </p>
+      </section>
+
+      <!-- Results -->
+      <section v-if="status === 'done'">
+
+        <!-- Top information -->
+        <div class="mb-6 rounded-2xl bg-mist p-6">
+          <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
           >
-            New CV
-          </button>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-steel">
+                CV analyzed
+              </p>
+
+              <h2 class="mt-1 font-display text-xl font-bold text-navy">
+                {{ fileName }}
+              </h2>
+
+              <p class="mt-1 text-sm text-navy/60">
+                {{ results.length }} internship offer(s) found
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="rounded-lg bg-navy px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-steel"
+              @click="reset"
+            >
+              Upload another CV
+            </button>
+          </div>
+
+          <!-- Skills -->
+          <div v-if="skills.length" class="mt-6">
+            <p class="mb-2 text-sm font-semibold text-navy">
+              Detected skills
+            </p>
+
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="skill in skills"
+                :key="skill"
+                class="rounded-full bg-sky px-3 py-1 text-xs font-semibold text-navy"
+              >
+                {{ skill }}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div class="rounded-2xl border border-secondary/10 bg-white p-6 shadow-sm">
-          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-            <div>
-              <p class="text-xs font-semibold uppercase tracking-wide text-secondary">Results</p>
-              <h2 class="mt-1 font-display text-xl font-semibold text-primary">Top 10 matching offers</h2>
-            </div>
-            <div class="flex items-center gap-2 text-xs font-medium text-primary/60">
-              <span class="rounded-full border border-secondary/15 px-2.5 py-1">{{ offers.length }} offers</span>
-              <span class="rounded-full px-2.5 py-1" :class="topMatchBadge">Top match {{ topMatch }}%</span>
-            </div>
-          </div>
-          <div class="mt-5">
-            <JobOfferList :offers="offers" />
-          </div>
+        <!-- Offers -->
+        <div v-if="results.length" class="space-y-4">
+          <JobCard
+            v-for="(job, index) in results"
+            :key="job.id ?? index"
+            :job="job"
+            :rank="index + 1"
+          />
         </div>
-      </div>
-    </main>
-  </div>
+
+        <!-- No offers -->
+        <div
+          v-else
+          class="rounded-2xl bg-mist p-10 text-center"
+        >
+          <h3 class="font-display text-lg font-bold text-navy">
+            No matching offers found
+          </h3>
+
+          <p class="mt-2 text-sm text-navy/65">
+            There are currently no internship offers matching your CV.
+          </p>
+        </div>
+
+      </section>
+    </div>
+  </main>
 </template>

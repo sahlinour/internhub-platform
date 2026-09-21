@@ -95,7 +95,7 @@ Route::get('/ai/chatbot', function () {
     return Inertia::render('AI/chatbot/index');
 })->name('ai.chatbot');
 
-#ai route chatbot
+#ai 
 Route::get('/ai/cv', function () {
     return Inertia::render('AI/cv/App');
 })->name('ai.cv');
