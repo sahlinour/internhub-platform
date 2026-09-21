@@ -26,7 +26,9 @@ class Offredestage extends Model
 
     protected $casts = [
         'date_limite' => 'date',
+        'required_skills' => 'array',
     ];
+    
 
     public function entreprise(): BelongsTo
     {

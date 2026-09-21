@@ -85,6 +85,15 @@ Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'destr
     ->middleware('auth')
     ->name('admin.logout');
 
+// AI routes
+Route::get('/ai/chatbot', function () {
+    return Inertia::render('AI/chatbot/index');
+})->name('ai.chatbot');
+
+Route::get('/ai/cv', function () {
+    return Inertia::render('AI/cv/App');
+})->name('ai.cv');
+
 require __DIR__.'/auth.php';
 require __DIR__.'/entreprise.php'; 
 require __DIR__.'/encadrant.php';
