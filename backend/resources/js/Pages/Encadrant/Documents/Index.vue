@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3'
+
 import EncadrantLayout from '@/Layouts/EncadrantLayout.vue'
 
 defineProps({
@@ -11,19 +12,41 @@ defineProps({
 
 const internName = (document) => {
     return (
-        document.stage?.candidature?.stagiaire?.user?.nom_complet
-        ?? 'Unknown intern'
+        document.stage?.candidature?.stagiaire?.user?.nom_complet ??
+        'Unknown intern'
     )
+}
+
+const statusLabel = (status) => {
+    const labels = {
+        Validé: 'Approved',
+        Rejeté: 'Rejected',
+        'En attente': 'Pending Review',
+    }
+
+    return labels[status] ?? status ?? 'Unknown'
 }
 
 const statusClass = (status) => {
     switch (status) {
+<<<<<<< HEAD
         case 'valide':
             return 'bg-green-50 text-green-700'
         case 'rejete':
             return 'bg-red-50 text-red-700'
+=======
+        case 'Validé':
+            return 'border-emerald-200 bg-emerald-50 text-emerald-700'
+
+        case 'Rejeté':
+            return 'border-red-200 bg-red-50 text-red-700'
+
+        case 'En attente':
+            return 'border-amber-200 bg-amber-50 text-amber-700'
+
+>>>>>>> 3b91466 (Add task  supervisor palette)
         default:
-            return 'bg-amber-50 text-amber-700'
+            return 'border-[#A9CEDB] bg-[#F2F8FA] text-[#39719F]'
     }
 }
 const statusLabel = (status) => {
@@ -44,136 +67,197 @@ const statusLabel = (status) => {
     <Head title="Documents" />
 
     <EncadrantLayout>
-        <div class="p-6">
-
+        <div class="mx-auto max-w-[1500px] p-6">
             <!-- Header -->
             <div class="mb-6">
-                <h1 class="text-2xl font-bold text-gray-900">
+                <h1 class="text-2xl font-bold text-[#072B4E]">
                     Documents
                 </h1>
 
-                <p class="mt-1 text-sm text-gray-500">
+                <p class="mt-1 text-sm text-[#507291]">
                     Review documents submitted by your interns.
                 </p>
             </div>
 
-            <!-- Table -->
+            <!-- Documents table -->
             <div
-                class="overflow-hidden rounded-xl
-                       border border-gray-200 bg-white shadow-sm"
+                class="overflow-hidden rounded-xl border border-[#A9CEDB]/80 bg-white shadow-sm"
             >
-                <table class="w-full text-left">
+                <div
+                    class="h-1 bg-gradient-to-r from-[#072B4E] via-[#39719F] to-[#60ADC6]"
+                ></div>
 
-                    <thead class="border-b border-gray-200 bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-4 text-xs font-semibold uppercase text-gray-500">
-                                Document
-                            </th>
-
-                            <th class="px-6 py-4 text-xs font-semibold uppercase text-gray-500">
-                                Intern
-                            </th>
-
-                            <th class="px-6 py-4 text-xs font-semibold uppercase text-gray-500">
-                                Status
-                            </th>
-
-                            <th class="px-6 py-4 text-xs font-semibold uppercase text-gray-500">
-                                Action
-                            </th>
-                        </tr>
-                    </thead>
-
-                    <tbody class="divide-y divide-gray-100">
-
-                        <tr
-                            v-for="document in documents.data"
-                            :key="document.id"
-                            class="hover:bg-gray-50"
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[720px] text-left">
+                        <thead
+                            class="border-b border-[#A9CEDB]/70 bg-[#F2F8FA]"
                         >
-                            <!-- Document -->
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="flex h-9 w-9 items-center
-                                               justify-center rounded-lg
-                                               bg-blue-50 text-[#17629b]"
-                                    >
-                                        📄
-                                    </div>
-
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-900">
-                                            {{ document.nom }}
-                                        </p>
-
-                                        <p class="text-xs text-gray-400">
-                                            {{ document.version }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </td>
-
-                            <!-- Intern -->
-                            <td class="px-6 py-4 text-sm text-gray-700">
-                                {{ internName(document) }}
-                            </td>
-
-                            <!-- Status -->
-                            <td class="px-6 py-4">
-                                <span
-                                    class="rounded-full px-3 py-1
-                                           text-xs font-medium"
-                                    :class="statusClass(document.statut)"
+                            <tr>
+                                <th
+                                    class="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-[#39719F]"
                                 >
+                                    Document
+                                </th>
+
+                                <th
+                                    class="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-[#39719F]"
+                                >
+                                    Intern
+                                </th>
+
+                                <th
+                                    class="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-[#39719F]"
+                                >
+                                    Status
+                                </th>
+
+                                <th
+                                    class="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wide text-[#39719F]"
+                                >
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody
+                            class="divide-y divide-[#A9CEDB]/40"
+                        >
+                            <tr
+                                v-for="document in documents.data"
+                                :key="document.id"
+                                class="transition hover:bg-[#F2F8FA]/70"
+                            >
+                                <!-- Document -->
+                                <td class="px-6 py-4">
+                                    <p
+                                        class="text-sm font-semibold text-[#072B4E]"
+                                    >
+                                        {{ document.nom }}
+                                    </p>
+
+                                    <p
+                                        class="mt-1 text-xs text-[#6695AF]"
+                                    >
+                                        {{
+                                            document.version
+                                                ? `v${document.version}`
+                                                : 'No version'
+                                        }}
+                                    </p>
+                                </td>
+
+                                <!-- Intern -->
+                                <td
+                                    class="px-6 py-4 text-sm text-[#507291]"
+                                >
+<<<<<<< HEAD
                                     {{ statusLabel(document.statut) }}
                                 </span>
                             </td>
+=======
+                                    {{ internName(document) }}
+                                </td>
+>>>>>>> 3b91466 (Add task  supervisor palette)
 
-                            <!-- Action -->
-                            <td class="px-6 py-4">
-                               <Link
-                                :href="`/encadrant/documents/${document.id}/review`"
-                                class="inline-flex items-center gap-2
-                                    rounded-lg border border-gray-200
-                                    px-4 py-2 text-sm font-medium
-                                    text-gray-700 transition
-                                    hover:border-[#17629b]
-                                    hover:text-[#17629b]"
-                            >
-                                Review
+                                <!-- Status -->
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="inline-flex rounded-full border px-3 py-1 text-xs font-semibold"
+                                        :class="
+                                            statusClass(
+                                                document.statut
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            statusLabel(
+                                                document.statut
+                                            )
+                                        }}
+                                    </span>
+                                </td>
 
-                                <svg
-                                    class="h-4 w-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                                <!-- Action -->
+                                <td class="px-6 py-4 text-right">
+                                    <Link
+                                        :href="
+                                            route(
+                                                'encadrant.documents.show',
+                                                {
+                                                    id: document.id,
+                                                }
+                                            )
+                                        "
+                                        class="inline-flex items-center gap-2 rounded-lg border border-[#A9CEDB] bg-white px-4 py-2 text-sm font-semibold text-[#39719F] transition hover:border-[#39719F] hover:bg-[#39719F] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#60ADC6]/40"
+                                    >
+                                        Review
+
+                                        <svg
+                                            class="h-4 w-4"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M9 18l6-6-6-6"
+                                            />
+                                        </svg>
+                                    </Link>
+                                </td>
+                            </tr>
+
+                            <!-- Empty state -->
+                            <tr v-if="!documents.data?.length">
+                                <td
+                                    colspan="4"
+                                    class="px-6 py-16 text-center"
                                 >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 18l6-6-6-6"
-                                    />
-                                </svg>
-                            </Link>
-                            </td>
-                        </tr>
+                                    <p
+                                        class="text-sm font-semibold text-[#072B4E]"
+                                    >
+                                        No documents submitted yet
+                                    </p>
 
-                        <!-- Empty -->
-                        <tr v-if="!documents.data?.length">
-                            <td
-                                colspan="4"
-                                class="px-6 py-12 text-center text-sm text-gray-500"
-                            >
-                                No documents submitted yet.
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
+                                    <p
+                                        class="mt-1 text-xs text-[#507291]"
+                                    >
+                                        Documents submitted by your
+                                        interns will appear here.
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
+            <!-- Pagination -->
+            <div
+                v-if="documents.links?.length > 3"
+                class="mt-6 flex flex-wrap justify-center gap-1.5"
+            >
+                <Link
+                    v-for="(link, index) in documents.links"
+                    :key="`${link.label}-${index}`"
+                    :href="link.url || '#'"
+                    preserve-scroll
+                    class="inline-flex min-h-9 min-w-9 items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium transition"
+                    :class="[
+                        link.active
+                            ? 'border-[#39719F] bg-[#39719F] text-white'
+                            : 'border-[#A9CEDB] bg-white text-[#39719F] hover:border-[#60ADC6] hover:bg-[#F2F8FA] hover:text-[#072B4E]',
+
+                        !link.url
+                            ? 'pointer-events-none opacity-40'
+                            : '',
+                    ]"
+                    v-html="link.label"
+                />
+            </div>
         </div>
     </EncadrantLayout>
 </template>

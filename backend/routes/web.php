@@ -85,6 +85,19 @@ Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'destr
     ->middleware('auth')
     ->name('admin.logout');
 
+
+
+Route::middleware(['auth'])
+    ->prefix('encadrant')
+    ->name('encadrant.')
+    ->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
+
+    
+
 require __DIR__.'/auth.php';
-require __DIR__.'/entreprise.php'; 
+require __DIR__.'/entreprise.php';
 require __DIR__.'/encadrant.php';
