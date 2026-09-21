@@ -4,9 +4,7 @@ import { computed } from 'vue'
 
 const page = usePage()
 
-/* =========================
-   AUTHENTICATED USER
-========================= */
+
 
 const user = computed(() => page.props.auth?.user ?? {})
 

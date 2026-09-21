@@ -94,6 +94,14 @@ Route::get('/ai/cv', function () {
     return Inertia::render('AI/cv/App');
 })->name('ai.cv');
 
+Route::middleware(['auth'])
+    ->prefix('encadrant')
+    ->name('encadrant.')
+    ->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
 require __DIR__.'/auth.php';
-require __DIR__.'/entreprise.php'; 
+require __DIR__.'/entreprise.php';
 require __DIR__.'/encadrant.php';
