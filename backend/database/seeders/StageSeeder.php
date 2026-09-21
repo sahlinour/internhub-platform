@@ -49,7 +49,7 @@ class StageSeeder extends Seeder
         foreach ($candidatures as $index => $candidature) {
 
             $candidature->update([
-                'statut' => 'Acceptée',
+                'statut' => 'acceptee',
             ]);
 
             $dateDebut = fake()->dateTimeBetween('-2 months', 'now');
@@ -68,7 +68,7 @@ class StageSeeder extends Seeder
 
                 'date_fin' => $dateFin->format('Y-m-d'),
 
-                'statut' => 'En cours',
+                'statut' => 'en_cours',
 
                 'idUtilisateur_Encadrant' => $encadrantId,
 

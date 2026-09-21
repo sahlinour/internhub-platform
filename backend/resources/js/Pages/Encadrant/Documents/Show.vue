@@ -25,14 +25,13 @@ const formatDate = (date) => {
         year: 'numeric',
     }).format(new Date(date))
 }
-
 const statusLabel = (status) => {
     switch (status) {
-        case 'Validé':
+        case 'valide':
             return 'Approved'
-        case 'Rejeté':
+        case 'rejete':
             return 'Rejected'
-        case 'En attente':
+        case 'en_attente':
             return 'Pending Review'
         default:
             return status
@@ -41,9 +40,9 @@ const statusLabel = (status) => {
 
 const statusClass = (status) => {
     switch (status) {
-        case 'Validé':
+        case 'valide':
             return 'bg-green-50 text-green-700 border-green-200'
-        case 'Rejeté':
+        case 'rejete':
             return 'bg-red-50 text-red-700 border-red-200'
         default:
             return 'bg-amber-50 text-amber-700 border-amber-200'
@@ -292,12 +291,12 @@ const updateStatus = (status) => {
                         </p>
 
                         <div
-                            v-if="document.statut === 'En attente'"
+                            v-if="document.statut === 'en_attente'"
                             class="mt-5 flex flex-wrap gap-3"
                         >
                             <button
                                 type="button"
-                                @click="updateStatus('Validé')"
+                                @click="updateStatus('valide')"
                                 class="inline-flex items-center gap-2
                                        rounded-lg bg-green-600
                                        px-5 py-2.5
@@ -323,7 +322,7 @@ const updateStatus = (status) => {
 
                             <button
                                 type="button"
-                                @click="updateStatus('Rejeté')"
+                                @click="updateStatus('rejete')"
                                 class="inline-flex items-center gap-2
                                        rounded-lg border border-red-200
                                        bg-white px-5 py-2.5

@@ -15,6 +15,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Ville;
 use App\Models\Entreprise;
+use App\Models\Stagiaire;
 
 class RegisteredUserController extends Controller
 {
@@ -87,6 +88,11 @@ class RegisteredUserController extends Controller
         ]);
     }
 
+    if ($validated['role'] === 'Stagiaire') {
+        Stagiaire::create([
+            'user_id' => $user->id,
+        ]);
+    }
     event(new Registered($user));
 
     Auth::login($user);

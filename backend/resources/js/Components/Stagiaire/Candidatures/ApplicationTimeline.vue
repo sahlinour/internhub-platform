@@ -20,17 +20,14 @@ const formatDate = (date) => {
 
 const currentStep = computed(() => {
     switch (props.candidature.statut) {
-        case 'En attente':
+        case 'en_attente':
             return 1
 
-        case 'En cours d’examen':
-        case "En cours d'examen":
+        case 'en_cours_examen':
             return 2
 
-        case 'Acceptée':
-            return 3
-
-        case 'Refusée':
+        case 'acceptee':
+        case 'refusee':
             return 3
 
         default:
@@ -54,12 +51,13 @@ const steps = computed(() => [
         completed: currentStep.value >= 2,
     },
     {
-        title: props.candidature.statut === 'Refusée'
+        title: props.candidature.statut === 'refusee'
             ? 'Application rejected'
             : 'Application decision',
-        description: props.candidature.statut === 'Acceptée'
+
+        description: props.candidature.statut === 'acceptee'
             ? 'Your application has been accepted.'
-            : props.candidature.statut === 'Refusée'
+            : props.candidature.statut === 'refusee'
                 ? 'Your application has been rejected.'
                 : 'Waiting for the company decision.',
         date: currentStep.value >= 3

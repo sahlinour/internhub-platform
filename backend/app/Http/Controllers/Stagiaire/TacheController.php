@@ -43,7 +43,7 @@ class TacheController extends Controller
     public function updateStatus(Request $request, $id): RedirectResponse
     {
         $request->validate([
-            'statut' => 'required|in:À faire,En cours,Terminée',
+            'statut' => 'required|in:a_faire,en_cours,terminee,annulee',
         ]);
 
         $stagiaireId = Auth::id();
@@ -52,7 +52,7 @@ class TacheController extends Controller
             $q->where('idUtilisateur_Stagiaire', $stagiaireId);
         })->findOrFail($id);
 
-        $dateFinEffective = $request->statut === 'Terminée' ? now()->toDateString() : null;
+        $dateFinEffective = $request->statut === 'terminee' ? now()->toDateString() : null;
 
         $tache->update([
             'statut'             => $request->statut,

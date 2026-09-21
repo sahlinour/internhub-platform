@@ -80,7 +80,7 @@ class DashboardController extends Controller
             'idUtilisateur_Entreprise',
             $entrepriseId
         )
-            ->where('statut', 'active')
+            ->where('statut', 'ouverte')
             ->count();
 
         $applicants = Candidature::whereIn(
@@ -188,14 +188,14 @@ class DashboardController extends Controller
                 'idUtilisateur_Encadrant',
                 $encadrantId
             )
-                ->where('statut', 'À faire')
+                ->where('statut', 'a_faire')
                 ->count(),
 
             'documents_a_valider' => Document::where(
                 'idUtilisateur_Encadrant',
                 $encadrantId
             )
-                ->where('statut', 'En attente')
+                ->where('statut', 'en_attente')
                 ->count(),
 
             'recent_documents' => Document::where(
@@ -305,13 +305,7 @@ class DashboardController extends Controller
         $recommendedOffers = OffreDeStage::with([
             'entreprise.user.ville',
         ])
-            ->whereIn(
-                'statut',
-                [
-                    'Ouverte',
-                    'ouverte',
-                ]
-            )
+            ->where('statut', 'ouverte')
             ->latest()
             ->take(4)
             ->get();

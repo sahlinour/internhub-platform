@@ -87,13 +87,13 @@ class ProgressController extends Controller
         $tasksTotal = $tasks->count();
 
         $tasksCompleted = $tasks
-            ->where('statut', 'Terminée')
+            ->where('statut', 'terminee')
             ->count();
         $tasksInProgress = $tasks
-            ->where('statut', 'En cours')
+            ->where('statut', 'en_cours')
             ->count();
         $tasksTodo = $tasks
-            ->where('statut', 'À faire')
+            ->where('statut', 'a_faire')
             ->count();
 
         $tasksProgress = $tasksTotal > 0
@@ -133,22 +133,15 @@ class ProgressController extends Controller
         $documentsTotal = $documents->count();
 
         $documentsPending = $documents
-            ->where('statut', 'En attente')
+            ->where('statut', 'en_attente')
             ->count();
 
         $documentsApproved = $documents
-            ->whereIn('statut', [
-                'Validé',
-                'Approuvé',
-                'Accepté',
-            ])
+            ->where('statut', 'valide')
             ->count();
 
         $documentsRejected = $documents
-            ->whereIn('statut', [
-                'Rejeté',
-                'Refusé',
-            ])
+            ->where('statut', 'rejete')
             ->count();
 
         $weeklyProgress = collect();
@@ -185,7 +178,7 @@ class ProgressController extends Controller
             $totalWeekTasks = $weekTasks->count();
 
             $completedWeekTasks = $weekTasks
-                ->where('statut', 'Terminée')
+                ->where('statut', 'terminee')
                 ->count();
 
             $weekProgress = $totalWeekTasks > 0

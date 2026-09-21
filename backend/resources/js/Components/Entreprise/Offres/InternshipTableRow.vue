@@ -29,16 +29,16 @@ const locationName = (offre) =>
 
 const statusLabel = (status) =>
     ({
-        active: 'Ouverte',
-        inactive: 'Inactive',
-        closed: 'Closed',
+        ouverte: 'Open',
+        en_attente: 'Pending',
+        fermee: 'Closed',
     })[status] || status || 'Unknown'
 
 const statusClass = (status) =>
     ({
-        active: 'bg-emerald-50 text-emerald-600',
-        inactive: 'bg-amber-50 text-amber-600',
-        closed: 'bg-red-50 text-red-500',
+        ouverte: 'bg-emerald-50 text-emerald-600',
+        en_attente: 'bg-amber-50 text-amber-600',
+        fermee: 'bg-red-50 text-red-500',
     })[status] || 'bg-slate-100 text-slate-500'
 </script>
 

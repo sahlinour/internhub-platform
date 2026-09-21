@@ -61,7 +61,7 @@ class DocumentController extends Controller
         $validated = $request->validate([
             'statut' => [
                 'required',
-                'in:En attente,Validé,Rejeté',
+                'in:en_attente,valide,rejete',
             ],
         ]);
 

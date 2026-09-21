@@ -24,20 +24,21 @@ const form = useForm({
     description: '',
     duree: '',
     date_limite: '',
-    statut: 'active',
+    statut: 'ouverte',
 })
 const stats = computed(() => {
     const offres = props.offres || []
+
     return {
         total: offres.length,
-        active: offres.filter(
-            (offre) => offre.statut === 'active'
+        ouverte: offres.filter(
+            (offre) => offre.statut === 'ouverte'
         ).length,
-        inactive: offres.filter(
-            (offre) => offre.statut === 'inactive'
+        en_attente: offres.filter(
+            (offre) => offre.statut === 'en_attente'
         ).length,
-        closed: offres.filter(
-            (offre) => offre.statut === 'closed'
+        fermee: offres.filter(
+            (offre) => offre.statut === 'fermee'
         ).length,
     }
 })
@@ -48,7 +49,7 @@ const openEditModal = (offre) => {
     form.description = offre.description ?? ''
     form.duree = offre.duree ?? ''
     form.date_limite = offre.date_limite ?? ''
-    form.statut = offre.statut ?? 'active'
+    form.statut = offre.statut ?? 'ouverte'
 
     form.clearErrors()
     showEditModal.value = true

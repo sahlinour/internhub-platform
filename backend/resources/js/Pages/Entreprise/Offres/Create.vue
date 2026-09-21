@@ -11,7 +11,7 @@ const form = useForm({
     description: '',
     duree: '',
     date_limite: '',
-    statut: 'active',
+    statut: 'ouverte',
 })
 
 const submit = () => {
@@ -294,15 +294,13 @@ const submit = () => {
                                    focus:ring-2
                                    focus:ring-[#63A9C6]/10"
                         >
-                            <option value="active">
-                                Active
+                            <option value="ouverte">
+                                Open
                             </option>
-
-                            <option value="inactive">
-                                Inactive
+                            <option value="en_attente">
+                                Pending
                             </option>
-
-                            <option value="closed">
+                            <option value="fermee">
                                 Closed
                             </option>
                         </select>

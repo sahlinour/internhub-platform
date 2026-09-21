@@ -116,9 +116,9 @@ const fields = [
                                focus:border-[#3A7CA5]
                                focus:ring-2 focus:ring-[#3A7CA5]/10"
                     >
-                        <option value="active">Ouverte</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="closed">Closed</option>
+                        <option value="ouverte">Open</option>
+                        <option value="en_attente">Pending</option>
+                        <option value="fermee">Closed</option>
                     </select>
 
                     <p v-if="form.errors.statut" class="mt-1 text-[10px] text-red-500">

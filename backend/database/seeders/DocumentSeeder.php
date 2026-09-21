@@ -24,7 +24,7 @@ class DocumentSeeder extends Seeder
                 Document::create([
                     'nom'                      => $fileName,
                     'version'                  => "v{$index}.0",
-                    'statut'                   => fake()->randomElement(['En attente', 'Validé', 'Rejeté']),
+                    'statut' => fake()->randomElement(['en_attente', 'valide', 'rejete']),
                     'fichier_url'              => "documents/{$fileName}",
                     'idUtilisateur_Encadrant' => $stage->idUtilisateur_Encadrant ?? 1,
                     'id_Stage'                 => $stage->id,

@@ -147,7 +147,7 @@ const toggleSave = () => {
 
                     <!-- APPLY NOW -->
                     <Link
-                        v-if="offre.statut === 'Ouverte'"
+                        v-if="offre.statut === 'ouverte'"
                         :href="
                             route(
                                 'stagiaire.candidatures.create',
@@ -186,7 +186,7 @@ const toggleSave = () => {
                                text-sm font-semibold text-slate-400"
                     >
                         {{
-                            offre.statut === 'Fermée'
+                            offre.statut === 'fermee'
                                 ? 'Applications Closed'
                                 : 'Applications Unavailable'
                         }}
@@ -372,17 +372,17 @@ const toggleSave = () => {
                             class="inline-flex rounded-full px-2.5 py-1
                                    text-xs font-semibold"
                             :class="
-                                offre.statut === 'Ouverte'
+                                offre.statut === 'ouverte'
                                     ? 'bg-emerald-50 text-emerald-700'
-                                    : offre.statut === 'Fermée'
+                                    : offre.statut === 'fermee'
                                         ? 'bg-slate-100 text-slate-500'
                                         : 'bg-amber-50 text-amber-700'
                             "
                         >
                             {{
-                                offre.statut === 'Ouverte'
+                                offre.statut === 'ouverte'
                                     ? 'Open'
-                                    : offre.statut === 'Fermée'
+                                    : offre.statut === 'fermee'
                                         ? 'Closed'
                                         : 'Pending'
                             }}

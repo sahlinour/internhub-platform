@@ -269,7 +269,7 @@ const matchStroke = computed(() => {
             </p>
 
             <Link
-                v-if="offre.statut === 'Ouverte'"
+                v-if="offre.statut === 'ouverte'"
                 :href="
                     route(
                         'stagiaire.candidatures.create',

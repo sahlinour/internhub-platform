@@ -20,7 +20,7 @@ class TacheSeeder extends Seeder
             foreach (range(1, rand(2, 5)) as $index) {
                 $dateCreation = fake()->dateTimeBetween('-1 month', 'now');
                 $dateEcheance = (clone $dateCreation)->modify('+10 days');
-                $statut = fake()->randomElement(['À faire', 'En cours', 'Terminée']);
+                $statut = fake()->randomElement(['a_faire', 'en_cours', 'terminee']);
 
                 Tache::create([
                     'titre'                    => "Tâche {$index}: " . fake()->sentence(3),
@@ -28,7 +28,7 @@ class TacheSeeder extends Seeder
                     'priorite'                 => fake()->randomElement(['Basse', 'Moyenne', 'Haute']),
                     'date_creation'            => $dateCreation->format('Y-m-d'),
                     'date_echeance'            => $dateEcheance->format('Y-m-d'),
-                    'date_fin_effective'       => $statut === 'Terminée' ? (clone $dateCreation)->modify('+5 days')->format('Y-m-d') : null,
+                    'date_fin_effective'       => $statut === 'terminee' ? (clone $dateCreation)->modify('+5 days')->format('Y-m-d') : null,
                     'statut'                   => $statut,
                     'idUtilisateur_Encadrant' => $stage->idUtilisateur_Encadrant ,
                     'id_Stage'                 => $stage->id,

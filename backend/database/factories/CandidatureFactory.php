@@ -11,7 +11,7 @@ class CandidatureFactory extends Factory
     public function definition(): array
     {
         return [
-            'statut' => fake()->randomElement(['En attente', 'En cours d\'examen', 'Acceptée', 'Refusée']),
+            'statut' => fake()->randomElement(['en_attente','en_cours_examen','acceptee','refusee',]),
             'date_postulation' => fake()->dateTimeBetween('-2 months', 'now')->format('Y-m-d'),
             'lettre_de_motivation' => fake()->paragraphs(2, true),
             'piece_jointe' => 'documents/attachments/' . fake()->uuid() . '.pdf',

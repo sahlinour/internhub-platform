@@ -86,14 +86,14 @@ class CandidatureController extends Controller
         $stats = [
             'applied' => (clone $statsQuery)->count(),
             'under_review' => (clone $statsQuery)
-                ->where('statut', 'En cours d\'examen')
+                ->where('statut', 'en_cours_examen')
                 ->count(),
             'interview' => 0,
             'offer' => (clone $statsQuery)
-                ->where('statut', 'Acceptée')
+                ->where('statut', 'acceptee')
                 ->count(),
             'rejected' => (clone $statsQuery)
-                ->where('statut', 'Refusée')
+                ->where('statut', 'refusee')
                 ->count(),
         ];
 
@@ -109,7 +109,7 @@ class CandidatureController extends Controller
      */
     public function create($offreId): Response
     {
-        $offre = Offredestage::where('statut', 'Ouverte')
+        $offre = Offredestage::where('statut', 'ouverte')
             ->with([
                 'entreprise.user',
                 'entreprise.user.ville',
@@ -169,7 +169,7 @@ class CandidatureController extends Controller
                 ->store('candidatures/attachments', 'public');
         }
         $candidature = Candidature::create([
-            'statut'                  => 'En attente',
+            'statut'                  => 'en_attente',
             'date_postulation'        => now(),
             'lettre_de_motivation'    => $request->lettre_de_motivation,
             'piece_jointe'            => $pieceJointeUrl,

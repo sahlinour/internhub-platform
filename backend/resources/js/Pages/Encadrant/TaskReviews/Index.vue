@@ -23,11 +23,11 @@ const updateStatus = (document, status) => {
 
 const statusLabel = (status) => {
     switch (status) {
-        case 'Validé':
+        case 'valide':
             return 'Approved'
-        case 'Rejeté':
+        case 'rejete':
             return 'Rejected'
-        case 'En attente':
+        case 'en_attente':
             return 'Awaiting Review'
         default:
             return status
@@ -36,9 +36,9 @@ const statusLabel = (status) => {
 
 const statusClass = (status) => {
     switch (status) {
-        case 'Validé':
+        case 'valide':
             return 'bg-green-50 text-green-700'
-        case 'Rejeté':
+        case 'rejete':
             return 'bg-red-50 text-red-700'
         default:
             return 'bg-amber-50 text-amber-700'
@@ -234,7 +234,7 @@ const formatDate = (date) => {
 
                     <!-- Actions -->
                     <div
-                        v-if="document.statut === 'En attente'"
+                        v-if="document.statut === 'en_attente'"
                         class="mt-4 flex items-center gap-2"
                     >
                         <button
@@ -242,7 +242,7 @@ const formatDate = (date) => {
                             class="rounded-lg bg-green-600
                                    px-4 py-2 text-xs font-medium
                                    text-white hover:bg-green-700"
-                            @click="updateStatus(document, 'Validé')"
+                            @click="updateStatus(document, 'valide')"
                         >
                             ✓ Approve
                         </button>
@@ -253,7 +253,7 @@ const formatDate = (date) => {
                                    border-red-200 bg-white
                                    px-4 py-2 text-xs font-medium
                                    text-red-600 hover:bg-red-50"
-                            @click="updateStatus(document, 'Rejeté')"
+                            @click="updateStatus(document, 'rejete')"
                         >
                             × Reject
                         </button>

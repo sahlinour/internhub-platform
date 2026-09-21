@@ -14,6 +14,24 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
+const statusLabel = (status) => {
+    switch (status) {
+        case 'acceptee':
+            return 'Accepted'
+
+        case 'refusee':
+            return 'Rejected'
+
+        case 'en_cours_examen':
+            return 'Under review'
+
+        case 'en_attente':
+            return 'Pending'
+
+        default:
+            return '-'
+    }
+}
 const offer = computed(() => props.candidature?.offre_de_stage)
 const roleName = computed(
     () => offer.value?.titre || 'Internship'
@@ -112,7 +130,7 @@ const hasCv = computed(
                             </p>
 
                             <p class="mt-1 text-xs font-semibold text-[#16425B]">
-                                {{ candidature.statut || '-' }}
+                                {{ statusLabel(candidature.statut) }}
                             </p>
                         </div>
                     </div>

@@ -111,7 +111,7 @@ class StageController extends Controller
 
             'statut' => [
                 'required',
-                'in:En cours,Terminée,Annulée',
+                'in:en_cours,termine,annule',
             ],
 
             'idUtilisateur_Encadrant' => [
@@ -203,7 +203,7 @@ class StageController extends Controller
 
             'statut' => [
                 'required',
-                'in:En cours,Terminée,Annulée',
+                'in:en_cours,termine,annule',
             ],
 
             'idUtilisateur_Encadrant' => [
@@ -239,7 +239,7 @@ class StageController extends Controller
         $validated = $request->validate([
             'statut' => [
                 'required',
-                'in:En cours,Terminée,Annulée',
+                'in:en_cours,termine,annule',
             ],
         ]);
 

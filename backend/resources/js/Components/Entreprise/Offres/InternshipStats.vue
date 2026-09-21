@@ -25,22 +25,22 @@ defineProps({
         />
 
         <InternshipStatCard
-            title="Active"
-            :value="stats.active"
+            title="Open"
+            :value="stats.ouverte"
             icon="check"
             color="green"
         />
 
         <InternshipStatCard
-            title="Inactive"
-            :value="stats.inactive"
+            title="Pending"
+            :value="stats.en_attente"
             icon="briefcase"
             color="amber"
         />
 
         <InternshipStatCard
             title="Closed"
-            :value="stats.closed"
+            :value="stats.fermee"
             icon="briefcase"
             color="red"
         />

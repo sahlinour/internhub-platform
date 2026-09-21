@@ -88,7 +88,7 @@ class StageController extends Controller
             'sujet'      => 'required|string|max:255',
             'date_debut' => 'required|date',
             'date_fin'   => 'required|date|after:date_debut',
-            'statut'     => 'required|in:En cours,Terminé,Annulé,En attente',
+            'statut' => 'required|in:en_cours,termine,annule',
         ]);
 
         $encadrantId = Auth::id();
@@ -131,7 +131,7 @@ class StageController extends Controller
     public function updateStatus(Request $request, $id): RedirectResponse
     {
         $request->validate([
-            'statut' => 'required|in:En cours,Terminé,Annulé,En attente',
+            'statut' => 'required|in:en_cours,termine,annule',
         ]);
 
         $encadrantId = Auth::id();

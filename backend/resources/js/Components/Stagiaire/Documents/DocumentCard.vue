@@ -20,11 +20,11 @@ const formatDate = (date) => {
 
 const displayStatus = (status) => {
     switch (status) {
-        case 'En attente':
+        case 'en_attente':
             return 'Pending'
-        case 'Validé':
+        case 'valide':
             return 'Validated'
-        case 'Rejeté':
+        case 'rejete':
             return 'Rejected'
         default:
             return status
@@ -33,11 +33,11 @@ const displayStatus = (status) => {
 
 const statusClass = (status) => {
     switch (status) {
-        case 'Validé':
+        case 'valide':
             return 'bg-[#e9f7ef] text-[#459d69]'
-        case 'Rejeté':
+        case 'rejete':
             return 'bg-[#fdecef] text-[#d80536]'
-        case 'En attente':
+        case 'en_attente':
             return 'bg-[#fff6e5] text-[#c79030]'
         default:
             return 'bg-[#eef5f8] text-[#64748b]'

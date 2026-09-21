@@ -51,7 +51,7 @@ class EvaluationController extends Controller
             $totalTasks = $stage->taches->count();
 
             $completedTasks = $stage->taches
-                ->where('statut', 'Terminée')
+                ->where('statut', 'terminee')
                 ->count();
 
             $progress = $totalTasks > 0
@@ -143,7 +143,7 @@ class EvaluationController extends Controller
         $totalTasks = $stage->taches->count();
 
         $completedTasks = $stage->taches
-            ->where('statut', 'Terminée')
+            ->where('statut', 'terminee')
             ->count();
 
         if (

@@ -18,12 +18,24 @@ const internName = (document) => {
 
 const statusClass = (status) => {
     switch (status) {
-        case 'Validé':
+        case 'valide':
             return 'bg-green-50 text-green-700'
-        case 'Rejeté':
+        case 'rejete':
             return 'bg-red-50 text-red-700'
         default:
             return 'bg-amber-50 text-amber-700'
+    }
+}
+const statusLabel = (status) => {
+    switch (status) {
+        case 'valide':
+            return 'Approved'
+        case 'rejete':
+            return 'Rejected'
+        case 'en_attente':
+            return 'Pending Review'
+        default:
+            return status
     }
 }
 </script>
@@ -114,7 +126,7 @@ const statusClass = (status) => {
                                            text-xs font-medium"
                                     :class="statusClass(document.statut)"
                                 >
-                                    {{ document.statut }}
+                                    {{ statusLabel(document.statut) }}
                                 </span>
                             </td>
 

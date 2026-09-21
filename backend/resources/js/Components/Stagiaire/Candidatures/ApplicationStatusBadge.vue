@@ -10,26 +10,25 @@ const props = defineProps({
 
 const statusConfig = computed(() => {
     switch (props.status) {
-        case 'En attente':
+        case 'en_attente':
             return {
-                label: 'Applied',
+                label: 'Pending',
                 classes: 'bg-slate-100 text-slate-600',
             }
 
-        case 'En cours d’examen':
-        case "En cours d'examen":
+        case 'en_cours_examen':
             return {
                 label: 'Under Review',
                 classes: 'bg-amber-50 text-amber-700',
             }
 
-        case 'Acceptée':
+        case 'acceptee':
             return {
-                label: 'Offer',
+                label: 'Accepted',
                 classes: 'bg-emerald-50 text-emerald-700',
             }
 
-        case 'Refusée':
+        case 'refusee':
             return {
                 label: 'Rejected',
                 classes: 'bg-red-50 text-red-600',
@@ -37,7 +36,7 @@ const statusConfig = computed(() => {
 
         default:
             return {
-                label: props.status || 'Unknown',
+                label: 'Unknown',
                 classes: 'bg-slate-100 text-slate-600',
             }
     }

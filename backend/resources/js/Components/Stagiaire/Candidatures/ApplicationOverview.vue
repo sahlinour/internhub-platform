@@ -46,16 +46,36 @@ const appliedDate = computed(() =>
 )
 const statusClass = (status) => {
     switch (status) {
-        case 'Acceptée':
+        case 'acceptee':
             return 'bg-emerald-50 text-emerald-700 border-emerald-100'
-        case 'Refusée':
+
+        case 'refusee':
             return 'bg-red-50 text-red-700 border-red-100'
-        case 'En cours d’examen':
-        case "En cours d'examen":
+
+        case 'en_cours_examen':
             return 'bg-[#E8F1F5] text-[#16425B] border-[#D5E5EC]'
-        case 'En attente':
+
+        case 'en_attente':
         default:
             return 'bg-amber-50 text-[#B7791F] border-amber-100'
+    }
+}
+const statusLabel = (status) => {
+    switch (status) {
+        case 'acceptee':
+            return 'Accepted'
+
+        case 'refusee':
+            return 'Rejected'
+
+        case 'en_cours_examen':
+            return 'Under review'
+
+        case 'en_attente':
+            return 'Pending'
+
+        default:
+            return '-'
     }
 }
 const withdrawApplication = () => {
@@ -106,7 +126,7 @@ const withdrawApplication = () => {
                             class="rounded-full border px-2 py-0.5 text-[10px] font-semibold"
                             :class="statusClass(candidature.statut)"
                         >
-                            {{ candidature.statut }}
+                            {{ statusLabel(candidature.statut) }}
                         </span>
                     </div>
                     <p
@@ -169,7 +189,7 @@ const withdrawApplication = () => {
 
                 <!-- Withdraw -->
                 <button
-                    v-if="candidature.statut === 'En attente'"
+                    v-if="candidature.statut === 'en_attente'"
                     type="button"
                     @click="withdrawApplication"
                     class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3.5 py-2 text-[11px] font-semibold text-[#D80536] transition hover:bg-red-50"

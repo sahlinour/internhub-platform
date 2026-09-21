@@ -36,7 +36,7 @@ class OffreDeStageController extends Controller
             'description' => 'required|string',
             'duree'       => 'required|string|max:255',
             'date_limite'  => 'required|date|after_or_equal:today',
-            'statut'      => 'required|in:active,inactive,closed',
+            'statut'      => 'required|in:ouverte,en_attente,fermee',
         ]);
 
         Offredestage::create([

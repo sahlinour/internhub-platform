@@ -14,7 +14,7 @@ class OffredestageFactory extends Factory
             'description' => fake()->paragraphs(2, true),
             'duree' => fake()->randomElement(['2 mois', '3 mois', '4 mois', '6 mois']),
             'date_limite' => fake()->dateTimeBetween('now', '+3 months')->format('Y-m-d'),
-            'statut' => fake()->randomElement(['Ouverte', 'Fermée', 'En attente']),
+            'statut' => fake()->randomElement(['ouverte', 'en_attente', 'fermee']),
             
             // Associe aléatoirement l'offre à un user_id d'une entreprise existante
             'idUtilisateur_Entreprise' => Entreprise::inRandomOrder()->value('user_id'),

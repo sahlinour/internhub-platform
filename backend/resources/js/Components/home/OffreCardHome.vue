@@ -20,36 +20,19 @@ const formatDate = (date) => {
 
 const formatStatus = (status) => {
     const statuses = {
-        active: 'Active',
-        Active: 'Active',
         ouverte: 'Open',
-        Ouverte: 'Open',
-        open: 'Open',
-        Open: 'Open',
-        fermée: 'Closed',
-        Fermée: 'Closed',
-        closed: 'Closed',
-        Closed: 'Closed',
-        'en attente': 'Pending',
-        'En attente': 'Pending',
-        pending: 'Pending',
-        Pending: 'Pending',
+        en_attente: 'Pending',
+        fermee: 'Closed',
     }
 
     return statuses[status] ?? status
 }
 
-const isActive = (status) => [
-    'active', 'Active', 'ouverte', 'Ouverte', 'open', 'Open',
-].includes(status)
+const isActive = (status) => status === 'ouverte'
 
-const isClosed = (status) => [
-    'fermée', 'Fermée', 'closed', 'Closed',
-].includes(status)
+const isClosed = (status) => status === 'fermee'
 
-const isPending = (status) => [
-    'en attente', 'En attente', 'pending', 'Pending',
-].includes(status)
+const isPending = (status) => status === 'en_attente'
 </script>
 
 <template>

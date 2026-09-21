@@ -33,6 +33,9 @@ function statusClass(status) {
         return 'bg-violet-50 text-violet-700 border border-violet-100'
     }
 
+    if (value.includes('en_cours_examen')) {
+        return 'bg-[#E8F1F5] text-[#16425B] border border-[#D5E5EC]'
+    }
     return 'bg-amber-50 text-amber-700 border border-amber-100'
 }
 
@@ -59,6 +62,9 @@ function formatStatus(status) {
         value.includes('entretien')
     ) {
         return 'Interview'
+    }
+    if (value.includes('en_cours_examen')) {
+        return 'Under review'
     }
 
     return 'Pending'

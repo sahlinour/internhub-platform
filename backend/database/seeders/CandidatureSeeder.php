@@ -29,7 +29,7 @@ class CandidatureSeeder extends Seeder
                         'id_Offre_De_Stage' => $offre->id,
                     ],
                     [
-                        'statut' => fake()->randomElement(['en_attente','acceptee','refusee',]),
+                        'statut' => fake()->randomElement(['en_attente','en_cours_examen','acceptee','refusee',]),
                         'date_postulation' => fake()->dateTimeBetween('-1 month', 'now')->format('Y-m-d'),
                         'lettre_de_motivation' => fake()->paragraphs(2, true),
                         'piece_jointe' => 'storage/candidatures/motivation.pdf',

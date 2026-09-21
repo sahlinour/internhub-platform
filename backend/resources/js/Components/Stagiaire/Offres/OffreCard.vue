@@ -38,23 +38,9 @@ const formatDate = (date) => {
 
 const formatStatus = (status) => {
     const statuses = {
-        active: 'Active',
-        Active: 'Active',
-
         ouverte: 'Open',
-        Ouverte: 'Open',
-        open: 'Open',
-        Open: 'Open',
-
-        fermée: 'Closed',
-        Fermée: 'Closed',
-        closed: 'Closed',
-        Closed: 'Closed',
-
-        'en attente': 'Pending',
-        'En attente': 'Pending',
-        pending: 'Pending',
-        Pending: 'Pending',
+        en_attente: 'Pending',
+        fermee: 'Closed',
     }
 
     return statuses[status] ?? status
@@ -258,33 +244,16 @@ const formatStatus = (status) => {
                 v-if="offre.statut"
                 class="shrink-0 rounded-full px-3 py-1
                        text-[11px] font-semibold"
-                :class="{
-                    'bg-emerald-50 text-emerald-600':
-                        [
-                            'active',
-                            'Active',
-                            'ouverte',
-                            'Ouverte',
-                            'open',
-                            'Open',
-                        ].includes(offre.statut),
+               :class="{
+                        'bg-emerald-50 text-emerald-600':
+                            offre.statut === 'ouverte',
 
-                    'bg-slate-100 text-slate-500':
-                        [
-                            'fermée',
-                            'Fermée',
-                            'closed',
-                            'Closed',
-                        ].includes(offre.statut),
+                        'bg-slate-100 text-slate-500':
+                            offre.statut === 'fermee',
 
-                    'bg-amber-50 text-amber-600':
-                        [
-                            'en attente',
-                            'En attente',
-                            'pending',
-                            'Pending',
-                        ].includes(offre.statut),
-                }"
+                        'bg-amber-50 text-amber-600':
+                            offre.statut === 'en_attente',
+                    }"
             >
                 {{ formatStatus(offre.statut) }}
             </span>

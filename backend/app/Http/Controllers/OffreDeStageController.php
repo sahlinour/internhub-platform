@@ -84,7 +84,7 @@ class OffreDeStageController extends Controller
             switch ($request->input('deadline')) {
                 case 'available':
                     $query
-                        ->where('statut', 'Ouverte')
+                        ->where('statut', 'ouverte')
                         ->whereDate(
                             'date_limite',
                             '>=',
@@ -94,7 +94,7 @@ class OffreDeStageController extends Controller
 
                 case 'soon':
                     $query
-                        ->where('statut', 'Ouverte')
+                        ->where('statut', 'ouverte')
                         ->whereBetween('date_limite', [
                             now()->startOfDay(),
                             now()->addDays(7)->endOfDay(),

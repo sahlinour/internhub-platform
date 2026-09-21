@@ -65,7 +65,7 @@ class DocumentController extends Controller
         Document::create([
             'nom'                      => $request->nom,
             'version'                  => $request->version ?? 'v1.0',
-            'statut'                   => 'En attente',
+            'statut'                   => 'en_attente',
             'fichier_url'              => $path,
             'idUtilisateur_Encadrant' => $stage->idUtilisateur_Encadrant,
             'id_Stage'                 => $stage->id,

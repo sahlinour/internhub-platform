@@ -29,10 +29,6 @@ const props = defineProps({
 
 const search = ref(props.filters?.search ?? '')
 
-/* =========================
-   STATISTICS
-========================= */
-
 const stats = computed(() => {
     const offers = props.offres?.data ?? []
 
@@ -43,28 +39,26 @@ const stats = computed(() => {
             detail: 'Published internship offers',
             icon: 'briefcase',
         },
+
         {
-            label: 'Active',
+            label: 'Open',
             value: offers.filter(
-                offer => offer.statut?.toLowerCase() === 'active'
+                offer => offer.statut === 'ouverte'
             ).length,
-            detail: 'Currently active offers',
+            detail: 'Currently open offers',
             icon: 'check',
         },
+
         {
             label: 'Other Status',
             value: offers.filter(
-                offer => offer.statut?.toLowerCase() !== 'active'
+                offer => offer.statut !== 'ouverte'
             ).length,
-            detail: 'Inactive or closed offers',
+            detail: 'Pending or closed offers',
             icon: 'alert',
         },
     ]
 })
-
-/* =========================
-   SEARCH
-========================= */
 
 const searchOffers = () => {
     router.get(
@@ -94,10 +88,6 @@ const clearSearch = () => {
     )
 }
 
-/* =========================
-   HELPERS
-========================= */
-
 const formatDate = (date) => {
     if (!date) {
         return 'Not specified'
@@ -113,10 +103,6 @@ const formatDate = (date) => {
 const companyName = (offer) => {
     return offer?.entreprise?.user?.nom_complet ?? 'Unknown company'
 }
-
-/* =========================
-   DELETE
-========================= */
 
 const deleteOffer = (offer) => {
     const title = offer?.titre ?? 'this internship offer'
@@ -136,10 +122,6 @@ const deleteOffer = (offer) => {
         }
     )
 }
-
-/* =========================
-   PAGINATION
-========================= */
 
 const goToPage = (url) => {
     if (!url) {

@@ -102,7 +102,7 @@ class TacheController extends Controller
         'date_echeance' =>
             $validated['date_echeance'],
 
-        'statut' => 'À faire',
+        'statut' => 'a_faire',
 
         'idUtilisateur_Encadrant' =>
             Auth::id(),
@@ -125,17 +125,17 @@ class TacheController extends Controller
             'description'        => 'nullable|string',
             'priorite'           => 'required|in:Basse,Moyenne,Haute,Urgente',
             'date_echeance'      => 'required|date',
-            'statut'             => 'required|in:À faire,En cours,Terminée,Annulée',
+            'statut'             => 'required|in:a_faire,en_cours,terminee,annulee'
         ]);
 
         $encadrantId = Auth::id();
         $tache = Tache::where('idUtilisateur_Encadrant', $encadrantId)->findOrFail($id);
 
-        $dateFinEffective = $request->statut === 'Terminée' && $tache->statut !== 'Terminée'
+        $dateFinEffective = $request->statut === 'terminee' && $tache->statut !== 'terminee'
             ? now()->toDateString()
             : $tache->date_fin_effective;
 
-        if ($request->statut !== 'Terminée') {
+        if ($request->statut !== 'terminee') {
             $dateFinEffective = null;
         }
 

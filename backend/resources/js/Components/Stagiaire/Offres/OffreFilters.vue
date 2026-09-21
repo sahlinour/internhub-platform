@@ -244,7 +244,7 @@ const resetFilters = () => {
                         <input
                             v-model="filters.status"
                             type="radio"
-                            value="Ouverte"
+                            value="ouverte"
                             class="h-4 w-4
                                 border-slate-300
                                 text-[#3A7CA5]
@@ -265,7 +265,7 @@ const resetFilters = () => {
                         <input
                             v-model="filters.status"
                             type="radio"
-                            value="Fermée"
+                            value="fermee"
                             class="h-4 w-4
                                 border-slate-300
                                 text-[#3A7CA5]
@@ -286,7 +286,7 @@ const resetFilters = () => {
                         <input
                             v-model="filters.status"
                             type="radio"
-                            value="En attente"
+                            value="en_attente"
                             class="h-4 w-4
                                 border-slate-300
                                 text-[#3A7CA5]
