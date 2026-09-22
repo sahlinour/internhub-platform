@@ -151,9 +151,31 @@ jobs:
 
     steps:
 
+      # ----------------------------------------------------------
+      # Checkout
+      # ----------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ----------------------------------------------------------
+      # PHP
+      # ----------------------------------------------------------
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_pgsql, bcmath
+          coverage: none
+
+      # ----------------------------------------------------------
+      # Composer
+      # ----------------------------------------------------------
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      # ----------------------------------------------------------
+      # Node.js
+      # ----------------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -164,9 +186,15 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      # ----------------------------------------------------------
+      # Vitest
+      # ----------------------------------------------------------
       - name: Run Vitest
         run: npm run test
 
+      # ----------------------------------------------------------
+      # Frontend build
+      # ----------------------------------------------------------
       - name: Build Vue/Inertia frontend
         run: npm run build
 
@@ -184,18 +212,30 @@ jobs:
 
     steps:
 
+      # ----------------------------------------------------------
+      # Checkout
+      # ----------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ----------------------------------------------------------
+      # Python
+      # ----------------------------------------------------------
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
+      # ----------------------------------------------------------
+      # Dependencies
+      # ----------------------------------------------------------
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
 
+      # ----------------------------------------------------------
+      # Tests
+      # ----------------------------------------------------------
       - name: Run pytest
         run: python -m pytest -v
 
@@ -214,8 +254,14 @@ jobs:
 
     steps:
 
+      # ----------------------------------------------------------
+      # Checkout
+      # ----------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ----------------------------------------------------------
+      # Docker build
+      # ----------------------------------------------------------
       - name: Build Docker images
         run: docker compose build
