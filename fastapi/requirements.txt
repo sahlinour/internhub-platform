@@ -12,3 +12,4 @@ pypdf
 python-multipart
 PyMuPDF
 google-genai
+pytest
