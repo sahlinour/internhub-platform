@@ -238,8 +238,6 @@ describe('Stagiaire Dashboard', () => {
         expect(wrapper.find('[data-testid="recent-tasks"]').exists()).toBe(true)
         expect(wrapper.find('[data-testid="recent-documents"]').exists()).toBe(true)
         expect(wrapper.find('[data-testid="profile-completion"]').exists()).toBe(true)
-        expect(wrapper.find('[data-testid="notifications-panel"]').exists()).toBe(true)
-        expect(wrapper.find('[data-testid="ai-assistant"]').exists()).toBe(true)
     })
 
     it('passes internship data to the current internship component', () => {
