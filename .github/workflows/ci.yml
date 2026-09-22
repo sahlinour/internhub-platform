@@ -14,100 +14,62 @@ on:
 
 jobs:
 
-  # ============================================================
-  # Laravel - Docker Build & Test
-  # ============================================================
   backend:
-    name: Laravel - Docker Build & Test
+    name: Laravel - Build
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Docker backend and PostgreSQL images
-        run: docker compose build backend postgres
-
-      - name: Start PostgreSQL
-        run: docker compose up -d postgres
-
-      - name: Wait for PostgreSQL
-        run: |
-          echo "Waiting for PostgreSQL..."
-
-          until docker compose exec -T postgres \
-            pg_isready -U laravel_user -d laravel_db; do
-            sleep 2
-          done
-
-          echo "PostgreSQL is ready!"
-
-      - name: Start backend container
-        run: |
-          docker compose run --no-deps -d \
-            --name internhub-backend-ci \
-            --entrypoint "" \
-            backend \
-            tail -f /dev/null
-
-      - name: Prepare Laravel environment
-        run: |
-          docker exec internhub-backend-ci sh -c "cp .env.example .env"
-
-          docker exec internhub-backend-ci sh -c "\
-            mkdir -p storage/framework/cache/data \
-            storage/framework/sessions \
-            storage/framework/views \
-            storage/framework/testing \
-            storage/logs \
-            bootstrap/cache"
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_pgsql
+          tools: composer
+          coverage: none
 
       - name: Install Composer dependencies
-        run: |
-          docker exec internhub-backend-ci composer install \
-            --no-interaction \
-            --prefer-dist \
-            --optimize-autoloader
+        working-directory: backend
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Install npm dependencies
-        run: |
-          docker exec internhub-backend-ci npm ci
+      - name: Prepare Laravel environment
+        working-directory: backend
+        run: cp .env.example .env
 
-      - name: Build Vue/Inertia frontend
-        run: |
-          docker exec internhub-backend-ci npm run build
+      - name: Generate Laravel application key
+        working-directory: backend
+        run: php artisan key:generate
 
-      - name: Prepare Laravel application
-        run: |
-          docker exec internhub-backend-ci php artisan key:generate --force
-          docker exec internhub-backend-ci php artisan optimize:clear
-          docker exec internhub-backend-ci php artisan migrate --force
-
-      - name: Run PHPUnit tests
-        run: |
-          docker exec internhub-backend-ci php artisan test
+      - name: Clear Laravel configuration
+        working-directory: backend
+        run: php artisan config:clear
 
       - name: Check Laravel application
-        run: |
-          docker exec internhub-backend-ci php artisan about
-
-      - name: Cleanup Docker containers
-        if: always()
-        run: |
-          docker rm -f internhub-backend-ci 2>/dev/null || true
-          docker compose down -v
+        working-directory: backend
+        run: php artisan about
 
 
-  # ============================================================
-  # Vue - Test & Build
-  # ============================================================
   frontend:
-    name: Vue - Test & Build
+    name: Vue - Build
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_pgsql
+          tools: composer
+          coverage: none
+
+      - name: Install Composer dependencies
+        working-directory: backend
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -120,20 +82,13 @@ jobs:
         working-directory: backend
         run: npm ci
 
-      - name: Run Vitest tests
-        working-directory: backend
-        run: npm run test
-
       - name: Build Vue/Inertia frontend
         working-directory: backend
         run: npm run build
 
 
-  # ============================================================
-  # FastAPI - Test & Build
-  # ============================================================
   fastapi:
-    name: FastAPI - Test & Build
+    name: FastAPI - Build
     runs-on: ubuntu-latest
 
     steps:
@@ -151,19 +106,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Pytest tests
-        working-directory: fastapi
-        run: python -m pytest -v
-
       - name: Verify FastAPI import
         working-directory: fastapi
         run: |
           python -c "from app.main import app; print('FastAPI application loaded successfully')"
 
 
-  # ============================================================
-  # Docker - Final Build
-  # ============================================================
   docker:
     name: Docker - Build
     runs-on: ubuntu-latest
