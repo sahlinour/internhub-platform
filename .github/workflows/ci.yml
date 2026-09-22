@@ -60,9 +60,26 @@ jobs:
         working-directory: backend
         run: php artisan about
 
+      # Build frontend in the SAME job as PHPUnit
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install npm dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Build Vue/Inertia frontend
+        working-directory: backend
+        run: npm run build
+
       - name: Run PHPUnit tests
         working-directory: backend
         run: php artisan test
+
 
   frontend:
     name: Vue - Build
