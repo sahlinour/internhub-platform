@@ -66,3 +66,5 @@ Thumbs.db
 # Vite
 /backend/.vite/__pycache__/
 *.pyc
+
+crowdsec-web-ui.env

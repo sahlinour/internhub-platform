@@ -32,6 +32,7 @@ services:
       DB_PASSWORD: laravel_password
       FASTAPI_URL: http://fastapi:8001
       OLLAMA_URL: http://internhub-ollama:11434
+      LOG_CHANNEL: stderr
     security_opt:
       - no-new-privileges:true
 
@@ -86,6 +87,24 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  dozzle:
+    image: amir20/dozzle:latest
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    restart: unless-stopped
+    environment:
+      COLLECTIONS: crowdsecurity/nginx
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - crowdsec_data:/var/lib/crowdsec/data
+      - crowdsec_config:/etc/crowdsec
+
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -106,6 +125,21 @@ services:
       - /var/cache/nginx
       - /var/run
 
+  crowdsec-web-ui:
+    image: ghcr.io/theduffman85/crowdsec-web-ui:latest
+    restart: unless-stopped
+    depends_on:
+      - crowdsec
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      CONFIG_INSTANCE_LAPI_URL: http://crowdsec:8080
+      CONFIG_INSTANCE_LAPI_AUTH_USERNAME: crowdsec-web-ui
+    env_file:
+      - crowdsec-web-ui.env
+    volumes:
+      - crowdsec_web_ui_data:/app/data
+
   ollama:
     image: ollama/ollama:latest
     container_name: internhub-ollama
@@ -125,3 +159,6 @@ volumes:
   backend_vendor:
   backend_node_modules:
   ollama_data:
+  crowdsec_data:
+  crowdsec_config:
+  crowdsec_web_ui_data:
