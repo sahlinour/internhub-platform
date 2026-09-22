@@ -20,6 +20,16 @@ class DocumentController extends Controller
     {
         $stagiaireId = Auth::id();
 
+        $activeStage = Stage::whereHas(
+            'candidature',
+            fn ($query) => $query->where(
+                'idUtilisateur_Stagiaire',
+                $stagiaireId
+            )
+        )
+            ->latest()
+            ->first();
+
         $documents = Document::whereHas('stage.candidature', function ($q) use ($stagiaireId) {
             $q->where('idUtilisateur_Stagiaire', $stagiaireId);
         })->with(['encadrant.user', 'stage'])
@@ -28,6 +38,7 @@ class DocumentController extends Controller
 
         return Inertia::render('Stagiaire/Documents/Index', [
             'documents' => $documents,
+            'stage'     => $activeStage,
         ]);
     }
 
@@ -54,9 +65,9 @@ class DocumentController extends Controller
         Document::create([
             'nom'                      => $request->nom,
             'version'                  => $request->version ?? 'v1.0',
-            'statut'                   => 'En attente',
+            'statut'                   => 'en_attente',
             'fichier_url'              => $path,
-            'id_Utilisateur_encadrant' => $stage->idUtilisateur_Encadrant,
+            'idUtilisateur_Encadrant' => $stage->idUtilisateur_Encadrant,
             'id_Stage'                 => $stage->id,
         ]);
 

@@ -14,7 +14,7 @@ const form = useForm({
     description: '',
     duree: '',
     date_limite: '',
-    statut: 'active',
+    statut: 'ouverte',
     idUtilisateur_Entreprise: '',
 })
 
@@ -241,15 +241,13 @@ const submit = () => {
                                        text-[11px]
                                        text-[#40596b]"
                             >
-                                <option value="active">
-                                    Active
+                                <option value="ouverte">
+                                    Open
                                 </option>
-
-                                <option value="inactive">
-                                    Inactive
+                                <option value="en_attente">
+                                    Pending
                                 </option>
-
-                                <option value="closed">
+                                <option value="fermee">
                                     Closed
                                 </option>
                             </select>

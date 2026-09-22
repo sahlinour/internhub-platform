@@ -65,5 +65,7 @@ Thumbs.db
 
 # Vite
 /backend/.vite/
+
 /fastapi/**/__pycache__/
 /fastapi/**/*.py[cod]
+*.pyc

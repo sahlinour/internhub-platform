@@ -18,6 +18,7 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+
             'email' => [
                 'required',
                 'string',
@@ -27,5 +28,22 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
         ];
+    }
+
+    /**
+     * Get the validated data and map the form name to the database field.
+     */
+    public function validated($key = null, $default = null)
+    {
+        $validated = parent::validated();
+
+        if (isset($validated['name'])) {
+            $validated['nom_complet'] = $validated['name'];
+            unset($validated['name']);
+        }
+
+        return $key === null
+            ? $validated
+            : data_get($validated, $key, $default);
     }
 }

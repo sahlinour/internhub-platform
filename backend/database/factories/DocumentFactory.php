@@ -16,7 +16,7 @@ class DocumentFactory extends Factory
         return [
             'nom'                     => $fileName,
             'version'                 => 'v' . fake()->numberBetween(1, 3) . '.' . fake()->numberBetween(0, 9),
-            'statut'                  => fake()->randomElement(['En attente', 'Validé', 'Rejeté']),
+            'statut' => fake()->randomElement(['en_attente', 'valide', 'rejete']),
             'fichier_url'             => 'documents/' . $fileName,
             'idUtilisateur_Encadrant' => Encadrant::inRandomOrder()->value('user_id') ?? Encadrant::factory(),
             'id_Stage'                => Stage::inRandomOrder()->value('id') ?? Stage::factory(),

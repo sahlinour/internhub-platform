@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
-// use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -13,14 +13,56 @@ class NotificationController extends Controller
     /**
      * Display all notifications for the logged-in user/stagiaire.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $notifications = Notification::where('id_Utilisateur', Auth::id())
+        $filter = $request->get('filter', 'all');
+
+        $query = Notification::where(
+            'id_Utilisateur',
+            Auth::id()
+        );
+
+        switch ($filter) {
+            case 'unread':
+                $query->where('lu', false);
+                break;
+
+            case 'read':
+                $query->where('lu', true);
+                break;
+
+            case 'tasks':
+                // À adapter selon la manière dont tes notifications
+                // de tâches sont identifiées.
+                $query->where(function ($q) {
+                    $q->where('titre', 'like', '%task%')
+                    ->orWhere('titre', 'like', '%tâche%')
+                    ->orWhere('message', 'like', '%task%')
+                    ->orWhere('message', 'like', '%tâche%');
+                });
+                break;
+
+            case 'all':
+            default:
+                break;
+        }
+
+        $notifications = $query
             ->orderBy('date_envoi', 'desc')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
+
+        $unreadCount = Notification::where(
+            'id_Utilisateur',
+            Auth::id()
+        )
+            ->where('lu', false)
+            ->count();
 
         return Inertia::render('Stagiaire/Notifications/Index', [
             'notifications' => $notifications,
+            'unreadCount' => $unreadCount,
+            'currentFilter' => $filter,
         ]);
     }
 

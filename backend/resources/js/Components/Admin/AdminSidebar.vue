@@ -24,6 +24,11 @@ const initials = () => {
         .slice(0, 2)
         .toUpperCase()
 }
+
+// IMPORTANT:
+// false = generate relative URLs (/admin/...)
+// instead of http://localhost/admin/...
+const adminRoute = (name) => route(name, undefined, false)
 </script>
 
 <template>
@@ -104,7 +109,7 @@ const initials = () => {
 
                 <!-- DASHBOARD -->
                 <Link
-                    :href="route('admin.dashboard')"
+                    :href="adminRoute('admin.dashboard')"
                     class="relative flex min-h-[39px]
                            items-center gap-[11px]
                            rounded-lg px-[11px] py-[9px]
@@ -118,14 +123,8 @@ const initials = () => {
                             : 'text-white/65'
                     "
                 >
-                    <span
-                        class="flex h-[19px] w-[19px]
-                               shrink-0 items-center justify-center"
-                    >
-                        <Icon
-                            name="dashboard"
-                            :size="18"
-                        />
+                    <span class="flex h-[19px] w-[19px] shrink-0 items-center justify-center">
+                        <Icon name="dashboard" :size="18" />
                     </span>
 
                     <span>Dashboard</span>
@@ -133,7 +132,7 @@ const initials = () => {
 
                 <!-- INTERNS -->
                 <Link
-                    :href="route('admin.stagiaires.index')"
+                    :href="adminRoute('admin.stagiaires.index')"
                     class="relative flex min-h-[39px]
                            items-center gap-[11px]
                            rounded-lg px-[11px] py-[9px]
@@ -147,14 +146,8 @@ const initials = () => {
                             : 'text-white/65'
                     "
                 >
-                    <span
-                        class="flex h-[19px] w-[19px]
-                               shrink-0 items-center justify-center"
-                    >
-                        <Icon
-                            name="users"
-                            :size="18"
-                        />
+                    <span class="flex h-[19px] w-[19px] shrink-0 items-center justify-center">
+                        <Icon name="users" :size="18" />
                     </span>
 
                     <span>Interns</span>
@@ -162,7 +155,7 @@ const initials = () => {
 
                 <!-- COMPANIES -->
                 <Link
-                    :href="route('admin.entreprises.index')"
+                    :href="adminRoute('admin.entreprises.index')"
                     class="relative flex min-h-[39px]
                            items-center gap-[11px]
                            rounded-lg px-[11px] py-[9px]
@@ -176,14 +169,8 @@ const initials = () => {
                             : 'text-white/65'
                     "
                 >
-                    <span
-                        class="flex h-[19px] w-[19px]
-                               shrink-0 items-center justify-center"
-                    >
-                        <Icon
-                            name="company"
-                            :size="18"
-                        />
+                    <span class="flex h-[19px] w-[19px] shrink-0 items-center justify-center">
+                        <Icon name="company" :size="18" />
                     </span>
 
                     <span>Companies</span>
@@ -191,7 +178,7 @@ const initials = () => {
 
                 <!-- SUPERVISORS -->
                 <Link
-                    :href="route('admin.encadrants.index')"
+                    :href="adminRoute('admin.encadrants.index')"
                     class="relative flex min-h-[39px]
                            items-center gap-[11px]
                            rounded-lg px-[11px] py-[9px]
@@ -205,14 +192,8 @@ const initials = () => {
                             : 'text-white/65'
                     "
                 >
-                    <span
-                        class="flex h-[19px] w-[19px]
-                               shrink-0 items-center justify-center"
-                    >
-                        <Icon
-                            name="user"
-                            :size="18"
-                        />
+                    <span class="flex h-[19px] w-[19px] shrink-0 items-center justify-center">
+                        <Icon name="user" :size="18" />
                     </span>
 
                     <span>Supervisors</span>
@@ -220,7 +201,7 @@ const initials = () => {
 
                 <!-- OFFERS -->
                 <Link
-                    :href="route('admin.offres.index')"
+                    :href="adminRoute('admin.offres.index')"
                     class="relative flex min-h-[39px]
                            items-center gap-[11px]
                            rounded-lg px-[11px] py-[9px]
@@ -234,14 +215,8 @@ const initials = () => {
                             : 'text-white/65'
                     "
                 >
-                    <span
-                        class="flex h-[19px] w-[19px]
-                               shrink-0 items-center justify-center"
-                    >
-                        <Icon
-                            name="briefcase"
-                            :size="18"
-                        />
+                    <span class="flex h-[19px] w-[19px] shrink-0 items-center justify-center">
+                        <Icon name="briefcase" :size="18" />
                     </span>
 
                     <span>Internship Offers</span>
@@ -249,7 +224,7 @@ const initials = () => {
 
                 <!-- APPLICATIONS -->
                 <Link
-                    :href="route('admin.candidatures.index')"
+                    :href="adminRoute('admin.candidatures.index')"
                     class="relative flex min-h-[39px]
                            items-center gap-[11px]
                            rounded-lg px-[11px] py-[9px]
@@ -263,14 +238,8 @@ const initials = () => {
                             : 'text-white/65'
                     "
                 >
-                    <span
-                        class="flex h-[19px] w-[19px]
-                               shrink-0 items-center justify-center"
-                    >
-                        <Icon
-                            name="check"
-                            :size="18"
-                        />
+                    <span class="flex h-[19px] w-[19px] shrink-0 items-center justify-center">
+                        <Icon name="check" :size="18" />
                     </span>
 
                     <span>Applications</span>
@@ -278,7 +247,7 @@ const initials = () => {
 
                 <!-- INTERNSHIPS -->
                 <Link
-                    :href="route('admin.stages.index')"
+                    :href="adminRoute('admin.stages.index')"
                     class="relative flex min-h-[39px]
                            items-center gap-[11px]
                            rounded-lg px-[11px] py-[9px]
@@ -292,14 +261,8 @@ const initials = () => {
                             : 'text-white/65'
                     "
                 >
-                    <span
-                        class="flex h-[19px] w-[19px]
-                               shrink-0 items-center justify-center"
-                    >
-                        <Icon
-                            name="graduation"
-                            :size="18"
-                        />
+                    <span class="flex h-[19px] w-[19px] shrink-0 items-center justify-center">
+                        <Icon name="graduation" :size="18" />
                     </span>
 
                     <span>Internships</span>
@@ -317,7 +280,7 @@ const initials = () => {
 
                 <!-- REPORTS -->
                 <Link
-                    :href="route('admin.signalements.index')"
+                    :href="adminRoute('admin.signalements.index')"
                     class="relative flex min-h-[39px]
                            items-center gap-[11px]
                            rounded-lg px-[11px] py-[9px]
@@ -331,14 +294,8 @@ const initials = () => {
                             : 'text-white/65'
                     "
                 >
-                    <span
-                        class="flex h-[19px] w-[19px]
-                               shrink-0 items-center justify-center"
-                    >
-                        <Icon
-                            name="alert"
-                            :size="18"
-                        />
+                    <span class="flex h-[19px] w-[19px] shrink-0 items-center justify-center">
+                        <Icon name="alert" :size="18" />
                     </span>
 
                     <span>Reports</span>
@@ -346,7 +303,7 @@ const initials = () => {
 
                 <!-- PROFILE -->
                 <Link
-                    :href="route('admin.profile.show')"
+                    :href="adminRoute('admin.profile.show')"
                     class="relative flex min-h-[39px]
                            items-center gap-[11px]
                            rounded-lg px-[11px] py-[9px]
@@ -360,14 +317,8 @@ const initials = () => {
                             : 'text-white/65'
                     "
                 >
-                    <span
-                        class="flex h-[19px] w-[19px]
-                               shrink-0 items-center justify-center"
-                    >
-                        <Icon
-                            name="settings"
-                            :size="18"
-                        />
+                    <span class="flex h-[19px] w-[19px] shrink-0 items-center justify-center">
+                        <Icon name="settings" :size="18" />
                     </span>
 
                     <span>Profile</span>
@@ -377,12 +328,9 @@ const initials = () => {
         </div>
 
         <!-- LOGOUT -->
-        <div
-            class="border-t border-white/[0.08]
-                   pt-[14px]"
-        >
+        <div class="border-t border-white/[0.08] pt-[14px]">
             <Link
-                :href="route('admin.logout')"
+                :href="adminRoute('admin.logout')"
                 method="post"
                 as="button"
                 class="flex w-full items-center
@@ -396,10 +344,7 @@ const initials = () => {
                        hover:bg-white/[0.06]
                        hover:text-white"
             >
-                <span
-                    class="flex h-[19px] w-[19px]
-                           items-center justify-center"
-                >
+                <span class="flex h-[19px] w-[19px] items-center justify-center">
                     <svg
                         viewBox="0 0 24 24"
                         width="18"
@@ -410,11 +355,7 @@ const initials = () => {
                         stroke-linecap="round"
                         stroke-linejoin="round"
                     >
-                        <path
-                            d="M9 21H5a2 2 0 0 1-2-2V5a2
-                               2 0 0 1 2-2h4"
-                        />
-
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                         <path d="M16 17l5-5-5-5" />
                         <path d="M21 12H9" />
                     </svg>
@@ -423,6 +364,5 @@ const initials = () => {
                 <span>Log out</span>
             </Link>
         </div>
-
     </aside>
 </template>

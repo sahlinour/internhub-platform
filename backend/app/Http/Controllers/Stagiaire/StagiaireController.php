@@ -21,7 +21,6 @@ class StagiaireController extends Controller
     public function show()
     {
         $user = User::with(['stagiaire', 'ville'])->findOrFail(Auth::id());
-
         return Inertia::render('Stagiaire/Profile/Show', [
             'stagiaire' => $user,
         ]);
@@ -47,7 +46,6 @@ class StagiaireController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-
         $request->validate([
             'nom_complet'    => 'required|string|max:255',
             'email'          => 'required|email|max:255|unique:users,email,' . $user->id,
@@ -64,7 +62,6 @@ class StagiaireController extends Controller
             'photo'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        // Handle Profile Photo Upload
         if ($request->hasFile('photo')) {
             if ($user->photo) {
                 Storage::disk('public')->delete($user->photo);
@@ -72,7 +69,6 @@ class StagiaireController extends Controller
             $user->photo = $request->file('photo')->store('profiles/stagiaires', 'public');
         }
 
-        // Update User Details
         $user->update([
             'nom_complet' => $request->nom_complet,
             'email'       => $request->email,
@@ -80,7 +76,6 @@ class StagiaireController extends Controller
             'ville_id'    => $request->ville_id,
         ]);
 
-        // Fetch existing stagiaire data to preserve old CV if not uploading a new one
         $stagiaire = Stagiaire::where('user_id', $user->id)->first();
         $cvPath = $stagiaire?->cv_url;
 
@@ -90,8 +85,6 @@ class StagiaireController extends Controller
             }
             $cvPath = $request->file('cv')->store('cvs', 'public');
         }
-
-        // Update or Create Stagiaire Details
         Stagiaire::updateOrCreate(
             ['user_id' => $user->id],
             [
@@ -102,11 +95,13 @@ class StagiaireController extends Controller
                 'cv_url'         => $cvPath,
                 'linkedin_url'   => $request->linkedin_url,
                 'portfolio_url'  => $request->portfolio_url,
-                'statut_stage'   => $request->statut_stage ?? 'en_recherche',
+                'statut_stage'   => $request->statut_stage ?? 'recherche',
             ]
         );
 
-        return back()->with('message', 'Internship profile updated successfully.');
+        return redirect()
+                    ->route('stagiaire.profile.show')
+                    ->with('message', 'Internship profile updated successfully.');
     }
 
     /**
@@ -126,9 +121,6 @@ class StagiaireController extends Controller
         return back()->with('message', 'Password updated successfully.');
     }
 
-    /**
-     * Delete the authenticated stagiaire account.
-     */
     public function destroy(Request $request)
     {
         $request->validate([
@@ -141,18 +133,14 @@ class StagiaireController extends Controller
             return back()->withErrors(['password' => 'The provided password is incorrect.']);
         }
 
-        // Delete photo & CV files if present
         if ($user->photo) {
             Storage::disk('public')->delete($user->photo);
         }
-
         if ($user->stagiaire && $user->stagiaire->cv_url) {
             Storage::disk('public')->delete($user->stagiaire->cv_url);
         }
 
         Auth::logout();
-
-        // Deleting user cascades to stagiaire record
         $user->delete();
 
         $request->session()->invalidate();

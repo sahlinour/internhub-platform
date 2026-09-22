@@ -12,9 +12,9 @@ class TacheFactory extends Factory
     {
         $dateCreation = fake()->dateTimeBetween('-2 months', 'now');
         $dateEcheance = (clone $dateCreation)->modify('+2 weeks');
-        $statut = fake()->randomElement(['À faire', 'En cours', 'Terminée', 'Annulée']);
-        $dateFin = $statut === 'Terminée' ? (clone $dateCreation)->modify('+1 week')->format('Y-m-d') : null;
-
+        $statut = fake()->randomElement(['a_faire', 'en_cours', 'terminee', 'annulee']);
+        $dateFin = $statut === 'terminee' ? (clone $dateCreation)->modify('+1 week')->format('Y-m-d') : null;
+        
         return [
             'titre'                   => fake()->sentence(4),
             'description'             => fake()->paragraph(),

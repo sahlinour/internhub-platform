@@ -14,7 +14,8 @@ class OffreDeStageController extends Controller
     {
         $entrepriseId = Auth::id();
 
-        $offres = Offredestage::where('idUtilisateur_Entreprise', $entrepriseId)
+        $offres = Offredestage::with(['entreprise.user.ville',])
+            ->where('idUtilisateur_Entreprise', $entrepriseId)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -22,6 +23,11 @@ class OffreDeStageController extends Controller
             'offres' => $offres,
         ]);
     }
+    public function create()
+    {
+            return Inertia::render('Entreprise/Offres/Create');
+    }
+
 
     public function store(Request $request)
     {
@@ -30,7 +36,7 @@ class OffreDeStageController extends Controller
             'description' => 'required|string',
             'duree'       => 'required|string|max:255',
             'date_limite'  => 'required|date|after_or_equal:today',
-            'statut'      => 'required|in:active,inactive,closed',
+            'statut'      => 'required|in:ouverte,en_attente,fermee',
         ]);
 
         Offredestage::create([

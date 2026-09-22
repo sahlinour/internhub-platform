@@ -1,2 +1,15 @@
 fastapi
 uvicorn[standard]
+httpx
+pydantic
+biopython
+numpy
+pandas
+openai
+python-dotenv
+scikit-learn
+pypdf
+python-multipart
+PyMuPDF
+google-genai
+pytest

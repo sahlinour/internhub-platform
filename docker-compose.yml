@@ -1,3 +1,9 @@
+version: '3.8'
+
+networks:
+  internhub-network:
+    driver: bridge
+
 services:
 
   backend:
@@ -14,6 +20,9 @@ services:
       - backend_node_modules:/var/www/node_modules
     depends_on:
       - postgres
+      - fastapi
+    networks:
+      - internhub-network
     environment:
       DB_CONNECTION: pgsql
       DB_HOST: postgres
@@ -21,6 +30,10 @@ services:
       DB_DATABASE: laravel_db
       DB_USERNAME: laravel_user
       DB_PASSWORD: laravel_password
+      FASTAPI_URL: http://fastapi:8001
+      OLLAMA_URL: http://internhub-ollama:11434
+    security_opt:
+      - no-new-privileges:true
 
   fastapi:
     build:
@@ -33,6 +46,11 @@ services:
       - ./fastapi:/app
     depends_on:
       - postgres
+      - ollama
+    networks:
+      - internhub-network
+    security_opt:
+      - no-new-privileges:true
 
   postgres:
     image: postgres:16
@@ -46,6 +64,10 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internhub-network
+    security_opt:
+      - no-new-privileges:true
 
   pgadmin:
     image: dpage/pgadmin4
@@ -59,6 +81,10 @@ services:
       - pgadmin_data:/var/lib/pgadmin
     depends_on:
       - postgres
+    networks:
+      - internhub-network
+    security_opt:
+      - no-new-privileges:true
 
   nginx:
     image: nginx:alpine
@@ -71,9 +97,31 @@ services:
     depends_on:
       - backend
       - fastapi
+    networks:
+      - internhub-network
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: internhub-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    networks:
+      - internhub-network
+    security_opt:
+      - no-new-privileges:true
 
 volumes:
   postgres_data:
   pgadmin_data:
   backend_vendor:
   backend_node_modules:
+  ollama_data:

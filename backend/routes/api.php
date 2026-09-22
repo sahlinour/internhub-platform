@@ -1,10 +1,20 @@
 <?php
 
-// use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Route;
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AiMatchingController;
 
 
+Route::post(
+    '/parse-cv',
+    [AiMatchingController::class, 'parseCv']
+)->name('ai.parse-cv');
+
+Route::post(
+    '/match',
+    [AiMatchingController::class, 'matchCv']
+)->name('ai.match');
+
+Route::post(
+    '/match-score',
+    [AiMatchingController::class, 'calculateMatch']
+)->name('ai.match-score');

@@ -17,7 +17,7 @@ class StageFactory extends Factory
             'sujet' => fake()->sentence(4),
             'date_debut' => $dateDebut->format('Y-m-d'),
             'date_fin' => $dateFin->format('Y-m-d'),
-            'statut' => fake()->randomElement(['En cours', 'Terminé', 'Annulé']),
+            'statut' => fake()->randomElement(['en_cours','termine','annule',]),
             'idUtilisateur_Encadrant' => Encadrant::inRandomOrder()->value('user_id'),
             'id_Candidature' => Candidature::factory(),
         ];

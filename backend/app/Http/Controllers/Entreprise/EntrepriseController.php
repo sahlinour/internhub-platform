@@ -10,132 +10,250 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Inertia\Inertia;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
+use Inertia\Response;
+use Illuminate\Http\RedirectResponse;
 
 class EntrepriseController extends Controller
 {
     /**
-     * Show the profile details for the authenticated Entreprise.
+     * Display company settings.
      */
-    public function show()
+    public function show(): Response
     {
-        $user = User::with(['entreprise', 'ville'])->findOrFail(Auth::id());
+        $user = User::with([
+            'entreprise',
+            'ville',
+        ])->findOrFail(Auth::id());
 
-        return Inertia::render('Entreprise/Profile/Show', [
-            'entreprise' => $user,
-        ]);
+        $villes = Ville::select('id', 'nom')
+            ->orderBy('nom')
+            ->get();
+
+        return Inertia::render(
+            'Entreprise/Profile/Show',
+            [
+                'entreprise' => $user,
+                'villes' => $villes,
+            ]
+        );
     }
 
     /**
-     * Show the edit form for the profile.
+     * Update company profile information.
      */
-    public function edit()
-    {
-        $user = User::with(['entreprise', 'ville'])->findOrFail(Auth::id());
-        $villes = Ville::select('id', 'nom')->get();
-
-        return Inertia::render('Entreprise/Profile/Edit', [
-            'entreprise' => $user,
-            'villes'     => $villes,
-        ]);
-    }
-
-    /**
-     * Update the authenticated Entreprise profile and user details.
-     */
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
         $user = Auth::user();
 
-        $request->validate([
-            'nom_complet' => 'required|string|max:255',
-            'email'       => 'required|email|max:255|unique:users,email,' . $user->id,
-            'telephone'   => 'nullable|string|max:20',
-            'ville_id'    => 'required|exists:villes,id',
-            'secteur'     => 'required|string|max:255',
-            'adresse'     => 'required|string|max:255',
-            'site_web'    => 'nullable|url|max:255',
-            'description' => 'nullable|string',
-            'photo'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        $validated = $request->validate([
+            'nom_complet' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                'unique:users,email,' . $user->id,
+            ],
+
+            'telephone' => [
+                'nullable',
+                'string',
+                'max:20',
+            ],
+
+            'ville_id' => [
+                'required',
+                'exists:villes,id',
+            ],
+
+            'secteur' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'adresse' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'site_web' => [
+                'nullable',
+                'url',
+                'max:255',
+            ],
+
+            'description' => [
+                'nullable',
+                'string',
+            ],
+
+            'photo' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,webp',
+                'max:2048',
+            ],
         ]);
 
-        // Handle Photo Upload
+        /*
+        |--------------------------------------------------------------------------
+        | Profile photo
+        |--------------------------------------------------------------------------
+        */
+
         if ($request->hasFile('photo')) {
+
             if ($user->photo) {
-                Storage::disk('public')->delete($user->photo);
+                Storage::disk('public')->delete(
+                    $user->photo
+                );
             }
-            $user->photo = $request->file('photo')->store('profiles/entreprises', 'public');
+
+            $photoPath = $request
+                ->file('photo')
+                ->store(
+                    'profiles/entreprises',
+                    'public'
+                );
+
+            $user->photo = $photoPath;
         }
 
-        // Update User Model Attributes
-        $user->update([
-            'nom_complet' => $request->nom_complet,
-            'email'       => $request->email,
-            'telephone'   => $request->telephone,
-            'ville_id'    => $request->ville_id,
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | User information
+        |--------------------------------------------------------------------------
+        */
 
-        // Update or Create Entreprise Model Attributes
+        $user->nom_complet = $validated['nom_complet'];
+        $user->email = $validated['email'];
+        $user->telephone = $validated['telephone'] ?? null;
+        $user->ville_id = $validated['ville_id'];
+
+        $user->save();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Company information
+        |--------------------------------------------------------------------------
+        */
+
         Entreprise::updateOrCreate(
-            ['user_id' => $user->id],
             [
-                'secteur'     => $request->secteur,
-                'adresse'     => $request->adresse,
-                'site_web'    => $request->site_web,
-                'description' => $request->description,
+                'user_id' => $user->id,
+            ],
+            [
+                'secteur' => $validated['secteur'],
+                'adresse' => $validated['adresse'],
+                'site_web' => $validated['site_web'] ?? null,
+                'description' => $validated['description'] ?? null,
             ]
         );
 
-        return back()->with('message', 'Company profile updated successfully.');
+        return back()->with(
+            'message',
+            'Company profile updated successfully.'
+        );
     }
 
     /**
-     * Update the authenticated Entreprise user's password.
-     * Requires verifying the current (old) password.
+     * Update company account password.
      */
-    public function updatePassword(Request $request)
-    {
+    public function updatePassword(
+        Request $request
+    ): RedirectResponse {
         $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
-            'password'         => ['required', Password::defaults(), 'confirmed'],
+            'current_password' => [
+                'required',
+                'current_password',
+            ],
+
+            'password' => [
+                'required',
+                Password::defaults(),
+                'confirmed',
+            ],
         ]);
 
         $request->user()->update([
-            'password' => Hash::make($validated['password']),
+            'password' => Hash::make(
+                $validated['password']
+            ),
         ]);
 
-        return back()->with('message', 'Your password has been updated successfully.');
+        return back()->with(
+            'message',
+            'Your password has been updated successfully.'
+        );
     }
 
     /**
-     * Delete the authenticated Entreprise account and associated files (when past true password !!!!!!!!).
+     * Delete company account.
      */
-    public function destroy(Request $request)
-    {
+    public function destroy(
+        Request $request
+    ): RedirectResponse {
         $request->validate([
-            'password' => 'required|string',
+            'password' => [
+                'required',
+                'string',
+            ],
         ]);
 
         $user = Auth::user();
 
-        if (!Hash::check($request->password, $user->password)) {
-            return back()->withErrors(['password' => 'The provided password is incorrect.']);
+        /*
+        |--------------------------------------------------------------------------
+        | Verify password
+        |--------------------------------------------------------------------------
+        */
+
+        if (!Hash::check(
+            $request->password,
+            $user->password
+        )) {
+            return back()->withErrors([
+                'password' =>
+                    'The provided password is incorrect.',
+            ]);
         }
 
-        // Delete profile photo if present
+        /*
+        |--------------------------------------------------------------------------
+        | Delete profile photo
+        |--------------------------------------------------------------------------
+        */
+
         if ($user->photo) {
-            Storage::disk('public')->delete($user->photo);
+            Storage::disk('public')->delete(
+                $user->photo
+            );
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Logout before deleting account
+        |--------------------------------------------------------------------------
+        */
 
         Auth::logout();
 
-        // Deleting the User record cascades/deletes the Entreprise record
         $user->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('message', 'Your enterprise account has been deleted.');
+        return redirect('/')->with(
+            'message',
+            'Your enterprise account has been deleted.'
+        );
     }
 }

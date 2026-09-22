@@ -22,7 +22,7 @@ class Competence extends Model
     {
         return $this->belongsToMany(
             Stagiaire::class,
-            'possede',
+            'possedes',
             'id_Competence',
             'idUtilisateur_Stagiaire'
         )->withPivot('niveau', 'experience', 'date_ajout');
