@@ -11,6 +11,12 @@ use Tests\TestCase;
 class CompetenceTest extends TestCase
 {
     use RefreshDatabase;
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withoutVite();
+    }
 
     public function test_stagiaire_can_view_competences(): void
     {

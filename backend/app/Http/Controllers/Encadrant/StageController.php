@@ -74,7 +74,7 @@ class StageController extends Controller
             ])
             ->findOrFail($id);
 
-        return Inertia::render('Encadrant/Stages/Show', [
+        return Inertia::render('Encadrant/Stagiaires/Show', [
             'stage' => $stage,
         ]);
     }

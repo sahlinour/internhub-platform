@@ -17,6 +17,12 @@ class DocumentTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withoutVite();
+    }
     private function createEntreprise(): User
     {
         $user = User::factory()->create([
