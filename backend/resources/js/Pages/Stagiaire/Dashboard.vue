@@ -11,8 +11,6 @@ import RecentDocuments from '@/Components/Stagiaire/RecentDocuments.vue'
 import QuickActions from '@/Components/Stagiaire/QuickActions.vue'
 import RecommendedOffers from '@/Components/Stagiaire/RecommendedOffers.vue'
 import ProfileCompletion from '@/Components/Stagiaire/ProfileCompletion.vue'
-import NotificationsPanel from '@/Components/Stagiaire/NotificationsPanel.vue'
-import AIAssistant from '@/Components/Stagiaire/AIAssistant.vue'
 
 const props = defineProps({
     user: {
@@ -184,25 +182,6 @@ const dashboardStats = [
                 class="mt-4 grid grid-cols-2 gap-4
                        max-[900px]:grid-cols-1"
             >
-
-                <!-- NOTIFICATIONS -->
-                <DashboardCard
-                    title="Notifications"
-                    subtitle="Your latest notifications"
-                >
-                    <NotificationsPanel
-                        :notifications="props.stats.notifications ?? []"
-                    />
-                </DashboardCard>
-
-                <!-- AI ASSISTANT -->
-                <DashboardCard
-                    title="AI Assistant"
-                    subtitle="Get help with your internship journey"
-                >
-                    <AIAssistant />
-                </DashboardCard>
-
             </section>
         </div>
     </StagiaireLayout>
