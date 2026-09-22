@@ -65,7 +65,12 @@ Thumbs.db
 
 # Vite
 /backend/.vite/
+/backend/.vite/__pycache__/
 
+# Python generated files
 /fastapi/**/__pycache__/
 /fastapi/**/*.py[cod]
 *.pyc
+
+# CrowdSec
+crowdsec-web-ui.env
