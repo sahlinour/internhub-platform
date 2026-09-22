@@ -49,6 +49,15 @@ jobs:
         working-directory: backend
         run: php artisan config:clear
 
+      - name: Prepare Laravel storage directories
+        working-directory: backend
+        run: |
+          mkdir -p storage/framework/cache
+          mkdir -p storage/framework/data
+          mkdir -p storage/framework/sessions
+          mkdir -p storage/framework/views
+          mkdir -p bootstrap/cache
+
       - name: Run PHPUnit tests
         working-directory: backend
         run: php artisan test
