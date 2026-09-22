@@ -14,77 +14,93 @@ on:
 
 jobs:
 
-  # ==========================================
-  # BACKEND - Laravel + PHPUnit
-  # ==========================================
+  # ============================================================
+  # Laravel - Docker Build & Test
+  # ============================================================
   backend:
-    name: Laravel - Build & Test
+    name: Laravel - Docker Build & Test
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup PHP 8.4
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, pdo_pgsql, pdo_sqlite
-          tools: composer
-          coverage: none
+      - name: Build Docker backend and PostgreSQL images
+        run: docker compose build backend postgres
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: backend/package-lock.json
+      - name: Start PostgreSQL
+        run: docker compose up -d postgres
 
-      - name: Install Composer dependencies
-        working-directory: backend
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+      - name: Wait for PostgreSQL
+        run: |
+          echo "Waiting for PostgreSQL..."
 
-      - name: Install npm dependencies
-        working-directory: backend
-        run: npm ci
+          until docker compose exec -T postgres \
+            pg_isready -U laravel_user -d laravel_db; do
+            sleep 2
+          done
 
-      - name: Build Vue/Inertia frontend
-        working-directory: backend
-        run: npm run build
+          echo "PostgreSQL is ready!"
+
+      - name: Start backend container
+        run: |
+          docker compose run --no-deps -d \
+            --name internhub-backend-ci \
+            --entrypoint "" \
+            backend \
+            tail -f /dev/null
 
       - name: Prepare Laravel environment
-        working-directory: backend
-        run: cp .env.example .env
-
-      - name: Generate Laravel application key
-        working-directory: backend
-        run: php artisan key:generate
-
-      - name: Clear Laravel configuration
-        working-directory: backend
-        run: php artisan config:clear
-
-      - name: Prepare Laravel storage directories
-        working-directory: backend
         run: |
-          mkdir -p storage/framework/cache
-          mkdir -p storage/framework/data
-          mkdir -p storage/framework/sessions
-          mkdir -p storage/framework/views
-          mkdir -p bootstrap/cache
+          docker exec internhub-backend-ci sh -c "cp .env.example .env"
+
+          docker exec internhub-backend-ci sh -c "\
+            mkdir -p storage/framework/cache/data \
+            storage/framework/sessions \
+            storage/framework/views \
+            storage/framework/testing \
+            storage/logs \
+            bootstrap/cache"
+
+      - name: Install Composer dependencies
+        run: |
+          docker exec internhub-backend-ci composer install \
+            --no-interaction \
+            --prefer-dist \
+            --optimize-autoloader
+
+      - name: Install npm dependencies
+        run: |
+          docker exec internhub-backend-ci npm ci
+
+      - name: Build Vue/Inertia frontend
+        run: |
+          docker exec internhub-backend-ci npm run build
+
+      - name: Prepare Laravel application
+        run: |
+          docker exec internhub-backend-ci php artisan key:generate --force
+          docker exec internhub-backend-ci php artisan optimize:clear
+          docker exec internhub-backend-ci php artisan migrate --force
 
       - name: Run PHPUnit tests
-        working-directory: backend
-        run: php artisan test
+        run: |
+          docker exec internhub-backend-ci php artisan test
 
       - name: Check Laravel application
-        working-directory: backend
-        run: php artisan about
+        run: |
+          docker exec internhub-backend-ci php artisan about
+
+      - name: Cleanup Docker containers
+        if: always()
+        run: |
+          docker rm -f internhub-backend-ci 2>/dev/null || true
+          docker compose down -v
 
 
-  # ==========================================
-  # FRONTEND - Vue + Vitest
-  # ==========================================
+  # ============================================================
+  # Vue - Test & Build
+  # ============================================================
   frontend:
     name: Vue - Test & Build
     runs-on: ubuntu-latest
@@ -113,9 +129,9 @@ jobs:
         run: npm run build
 
 
-  # ==========================================
-  # FASTAPI - Pytest
-  # ==========================================
+  # ============================================================
+  # FastAPI - Test & Build
+  # ============================================================
   fastapi:
     name: FastAPI - Test & Build
     runs-on: ubuntu-latest
@@ -145,9 +161,9 @@ jobs:
           python -c "from app.main import app; print('FastAPI application loaded successfully')"
 
 
-  # ==========================================
-  # DOCKER - Build
-  # ==========================================
+  # ============================================================
+  # Docker - Final Build
+  # ============================================================
   docker:
     name: Docker - Build
     runs-on: ubuntu-latest
