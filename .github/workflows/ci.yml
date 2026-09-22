@@ -14,28 +14,68 @@ on:
 
 jobs:
 
+  # ============================================================
+  # BACKEND - Laravel
+  # ============================================================
   backend:
     name: Laravel - Build & Test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: laravel_db
+          POSTGRES_USER: laravel_user
+          POSTGRES_PASSWORD: laravel_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U laravel_user -d laravel_db"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
+
+      # ----------------------------------------------------------
+      # Checkout
+      # ----------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup PHP 8.4
+      # ----------------------------------------------------------
+      # PHP
+      # ----------------------------------------------------------
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, pdo_pgsql, pdo_sqlite
-          tools: composer
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_pgsql, bcmath
           coverage: none
 
+      # ----------------------------------------------------------
+      # Composer
+      # ----------------------------------------------------------
+      - name: Setup Composer cache
+        uses: actions/cache@v4
+        with:
+          path: backend/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
       - name: Install Composer dependencies
-        working-directory: backend
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
+      # ----------------------------------------------------------
+      # Laravel directories
+      # ----------------------------------------------------------
       - name: Prepare Laravel storage directories
-        working-directory: backend
         run: |
           mkdir -p storage/framework/cache/data
           mkdir -p storage/framework/sessions
@@ -44,23 +84,17 @@ jobs:
           mkdir -p storage/logs
           mkdir -p bootstrap/cache
 
+      # ----------------------------------------------------------
+      # Laravel environment
+      # ----------------------------------------------------------
       - name: Prepare Laravel environment
-        working-directory: backend
-        run: cp .env.example .env
+        run: |
+          cp .env.example .env
+          php artisan key:generate
 
-      - name: Generate Laravel application key
-        working-directory: backend
-        run: php artisan key:generate
-
-      - name: Clear Laravel configuration
-        working-directory: backend
-        run: php artisan config:clear
-
-      - name: Check Laravel application
-        working-directory: backend
-        run: php artisan about
-
-      # Build frontend in the SAME job as PHPUnit
+      # ----------------------------------------------------------
+      # Node.js
+      # ----------------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -69,37 +103,56 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install npm dependencies
-        working-directory: backend
         run: npm ci
 
+      # ----------------------------------------------------------
+      # Frontend build
+      # ----------------------------------------------------------
       - name: Build Vue/Inertia frontend
-        working-directory: backend
         run: npm run build
 
+      # ----------------------------------------------------------
+      # Database migrations
+      # ----------------------------------------------------------
+      - name: Run database migrations
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: laravel_db
+          DB_USERNAME: laravel_user
+          DB_PASSWORD: laravel_password
+        run: php artisan migrate --force
+
+      # ----------------------------------------------------------
+      # PHPUnit
+      # ----------------------------------------------------------
       - name: Run PHPUnit tests
-        working-directory: backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: laravel_db
+          DB_USERNAME: laravel_user
+          DB_PASSWORD: laravel_password
         run: php artisan test
 
 
+  # ============================================================
+  # FRONTEND - Vitest
+  # ============================================================
   frontend:
-    name: Vue - Build
+    name: Vue - Test & Build
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup PHP 8.4
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, pdo_pgsql
-          tools: composer
-          coverage: none
-
-      - name: Install Composer dependencies
-        working-directory: backend
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -109,19 +162,28 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install npm dependencies
-        working-directory: backend
         run: npm ci
 
+      - name: Run Vitest
+        run: npm run test
+
       - name: Build Vue/Inertia frontend
-        working-directory: backend
         run: npm run build
 
 
+  # ============================================================
+  # FASTAPI
+  # ============================================================
   fastapi:
-    name: FastAPI - Build
+    name: FastAPI - Test
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: fastapi
+
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -130,18 +192,17 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install FastAPI dependencies
-        working-directory: fastapi
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Verify FastAPI import
-        working-directory: fastapi
-        run: |
-          python -c "from app.main import app; print('FastAPI application loaded successfully')"
+      - name: Run pytest
+        run: python -m pytest -v
 
 
+  # ============================================================
+  # DOCKER
+  # ============================================================
   docker:
     name: Docker - Build
     runs-on: ubuntu-latest
@@ -152,6 +213,7 @@ jobs:
       - fastapi
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
