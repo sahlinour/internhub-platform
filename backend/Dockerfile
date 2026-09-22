@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
 # Node.js + npm
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
+    && npm install -g npm@12.0.2 \
     && node --version \
     && npm --version \
     && rm -rf /var/lib/apt/lists/*
