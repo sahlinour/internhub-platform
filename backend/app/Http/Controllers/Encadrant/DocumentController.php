@@ -54,9 +54,9 @@ class DocumentController extends Controller
 
         $allowedStatuses = [
             'all',
-            'En attente',
-            'Validé',
-            'Rejeté',
+            'en_attente',
+            'valide',
+            'rejete',
         ];
 
         if (! in_array($status, $allowedStatuses, true)) {

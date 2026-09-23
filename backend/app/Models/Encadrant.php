@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Encadrant extends Model
 {
+    use SoftDeletes;
     protected $table = 'encadrants';
 
     protected $primaryKey = 'user_id';
