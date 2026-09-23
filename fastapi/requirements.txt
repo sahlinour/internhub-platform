@@ -11,4 +11,3 @@ scikit-learn
 pypdf
 python-multipart
 PyMuPDF
-google-genai

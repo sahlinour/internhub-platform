@@ -5,6 +5,7 @@
 /backend/.env
 /backend/.env.*
 !/backend/.env.example
+!/backend/.env.example.prod
 /backend/.phpunit.result.cache
 
 # Laravel storage
