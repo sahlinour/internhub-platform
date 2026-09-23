@@ -56,7 +56,7 @@ onUnmounted(() => {
                 <img
                     :src="`/images/LogoBgDarkInternHub.png`"
                     alt="InternHub"
-                    class="block h-auto w-[150px] object-contain"
+                    class="block h-auto w-[120px] object-contain"
                 />
             </button>
 

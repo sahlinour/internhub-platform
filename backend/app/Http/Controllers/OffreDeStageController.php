@@ -114,7 +114,7 @@ class OffreDeStageController extends Controller
 
         $offres = $query
             ->orderBy('created_at', 'desc')
-            ->paginate(12)
+            ->paginate(10)
             ->withQueryString();
 
         $villes = Ville::query()
