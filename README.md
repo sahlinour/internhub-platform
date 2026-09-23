@@ -36,32 +36,117 @@ InternHub est conçu comme une application **moderne, responsive, sécurisée et
   <img src="./assets/divider.svg" width="100%" height="4" alt=""/>
 </p>
 
+# 🚀 Fonctionnalités
+
+## 👨‍🎓 Espace Stagiaire
+
+- Consultation et recherche des offres
+- Candidature aux offres
+- Suivi des candidatures
+- Gestion du profil et du CV
+- Suivi du stage
+- Gestion des tâches et documents
+- Internship Journey
+- LogBook
+
+## 🏢 Espace Entreprise
+
+- Gestion du profil
+- Publication et gestion des offres
+- Consultation des candidatures
+- Suivi des candidats
+
+## 👨‍🏫 Espace Encadrant
+
+- Suivi des stagiaires
+- Gestion des tâches
+- Suivi des activités
+- Gestion des documents
+- Évaluation des stagiaires
+
+## 👨‍💼 Espace Administrateur
+
+- Gestion des utilisateurs
+- Gestion des entreprises
+- Gestion des stages
+- Gestion des offres
+- Suivi global de la plateforme
+
+<p align="center">
+  <img src="./assets/divider.svg" width="100%" height="4" alt=""/>
+</p>
+
+# 🤖 Intelligence artificielle
+
+InternHub intègre des fonctionnalités basées sur l'intelligence artificielle afin
+d'améliorer l'expérience utilisateur et la recherche d'opportunités.
+
+## 🧠 Sonic AI Assistant
+
+**Sonic** est l'assistant intelligent d'InternHub.
+
+Il permet notamment de :
+
+- Répondre aux questions des utilisateurs
+- Accompagner les étudiants dans leur recherche de stage
+- Fournir des informations sur les opportunités
+- Faciliter l'utilisation de la plateforme
+
+Le service IA est développé avec **Python / FastAPI** et intégré à l'architecture Docker.
+
+## 📄 CV Matching
+
+InternHub propose un système de **matching entre le profil du stagiaire et les offres de stage**.
+
+Le système prend notamment en compte :
+
+- Université
+- Domaine d'études
+- Niveau de formation
+- Informations du profil
+- Disponibilité du CV
+
+Un indicateur de correspondance est affiché sur la page de l'offre afin d'aider
+l'étudiant à identifier les opportunités correspondant à son profil.
+
+## 🔮 Évolutions prévues
+
+- Recommandation personnalisée d'offres
+- Analyse avancée des CV
+- Assistance à la préparation des candidatures
+- Suggestions d'amélioration du profil
+
+<p align="center">
+  <img src="./assets/divider.svg" width="100%" height="4" alt=""/>
+</p>
+
 # 🎯 Contexte et problématique
 
 La gestion des stages implique plusieurs acteurs et de nombreuses opérations :
 
-* Recherche et publication des offres de stage
-* Dépôt et traitement des candidatures
-* Communication entre étudiants et entreprises
-* Affectation des encadrants
-* Suivi de l'avancement des stages
-* Évaluation des étudiants
-* Gestion des documents
-* Suivi administratif
+- Recherche et publication des offres de stage
+- Dépôt et traitement des candidatures
+- Communication entre étudiants et entreprises
+- Affectation des encadrants
+- Suivi de l'avancement des stages
+- Évaluation des étudiants
+- Gestion des documents
+- Suivi administratif
 
 Lorsque ces opérations sont réalisées à travers plusieurs outils ou de manière manuelle, cela peut entraîner :
 
-* Une perte d'informations
-* Un manque de visibilité sur l'avancement des stages
-* Des difficultés de communication
-* Une duplication des données
-* Un suivi administratif complexe
+- Une perte d'informations
+- Un manque de visibilité sur l'avancement des stages
+- Des difficultés de communication
+- Une duplication des données
+- Un suivi administratif complexe
+- Des difficultés à identifier rapidement les opportunités correspondant au profil d'un étudiant
 
 ### Problématique
 
-> **Comment concevoir une plateforme web centralisée permettant de digitaliser, simplifier et améliorer la gestion et le suivi des stages pour les étudiants, les entreprises, les encadrants et l'administration ?**
+> **Comment concevoir une plateforme web centralisée permettant de digitaliser, simplifier et améliorer la gestion et le suivi des stages tout en utilisant l'intelligence artificielle pour faciliter la recherche d'opportunités et accompagner les différents acteurs ?**
 
-InternHub apporte une réponse à cette problématique à travers une plateforme unique regroupant les différents processus liés aux stages.
+InternHub apporte une réponse à cette problématique à travers une plateforme unique regroupant les différents processus liés aux stages et intégrant progressivement des fonctionnalités intelligentes.
 
 <p align="center">
   <img src="./assets/divider.svg" width="100%" height="4" alt=""/>
@@ -71,22 +156,21 @@ InternHub apporte une réponse à cette problématique à travers une plateforme
 
 ## 🎯 Objectif général
 
-Développer une plateforme web centralisée permettant de gérer l'ensemble du cycle de vie d'un stage.
+Développer une plateforme web centralisée permettant de gérer l'ensemble
+du cycle de vie d'un stage.
 
 ## 📌 Objectifs spécifiques
 
-* Centraliser les offres de stage
-* Faciliter la recherche d'opportunités pour les étudiants
-* Digitaliser le processus de candidature
-* Faciliter la gestion des entreprises
-* Permettre le suivi des candidatures
-* Faciliter l'encadrement des étudiants
-* Assurer le suivi de l'avancement des stages
-* Centraliser les évaluations et rapports
-* Automatiser certaines tâches administratives
-* Mettre en place un système de notifications
-* Fournir des tableaux de bord adaptés à chaque acteur
-* Préparer l'intégration de fonctionnalités basées sur l'intelligence artificielle
+- Centraliser les offres et les candidatures
+- Faciliter la recherche d'opportunités
+- Digitaliser le processus de candidature
+- Faciliter la gestion des entreprises et des stagiaires
+- Assurer le suivi des stages
+- Faciliter l'encadrement et l'évaluation
+- Centraliser les documents
+- Fournir des tableaux de bord adaptés aux différents acteurs
+- Intégrer des fonctionnalités d'intelligence artificielle
+- Améliorer la pertinence des opportunités grâce au CV Matching
 
 <p align="center">
   <img src="./assets/divider.svg" width="100%" height="4" alt=""/>
@@ -283,6 +367,24 @@ docker compose up -d --build
 ```bash
 docker compose ps
 ```
+## ⚙️ Configuration
+
+Après le démarrage des conteneurs, Laravel utilise les variables
+d'environnement définies dans le fichier `.env`.
+
+Les principales configurations concernent :
+
+- la connexion à PostgreSQL ;
+- la configuration de Laravel ;
+- la connexion entre Laravel et FastAPI ;
+- les paramètres Docker.
+
+### 🔑 Générer la clé d'application Laravel
+
+```bash
+docker compose exec backend php artisan key:generate
+docker compose exec backend php artisan migrate
+```
 
 ## 5. Consulter les logs
 
@@ -434,24 +536,19 @@ Créer une Pull Request vers la branche `develop`.
 
 Ce projet est développé dans le cadre d'un **projet de soutenance de cycle ingénieur**.
 
-Si une licence open source est appliquée au dépôt, elle peut être indiquée ici.
+Les informations relatives à la licence seront précisées ultérieurement.
 
-**MIT License**
-
-Voir le fichier `LICENSE` pour plus d'informations.
-
-<p align="center">
-  <img src="./assets/divider.svg" width="100%" height="4" alt=""/>
-</p>
 
 # 📬 Contact
 
 Pour toute question concernant le projet, une fonctionnalité ou un problème technique, veuillez ouvrir une **Issue GitHub** ou contacter les membres de l'équipe.
 
 <p align="center">
-  <img src="./assets/divider.svg" width="100%" height="4" alt=""/>
+  <img src="./backend/public/images/LogoBgWhiteInternHub.png" alt="InternHub Logo" width="100"/>
 </p>
 
 <p align="center">
-  Developed by the <strong>InternHub Team</strong>
+  <sub>Developed with ❤️ by the <strong>InternHub Team</strong></sub>
+  <br>
+  <sub>© 2026 InternHub</sub>
 </p>
