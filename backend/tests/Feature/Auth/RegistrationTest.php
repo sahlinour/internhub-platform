@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -18,14 +19,18 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
+        $password = Str::random(32).'aA1!';
+
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => $password,
+            'password_confirmation' => $password,
+            'terms' => true,
             'role' => 'Stagiaire',
         ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
     }
