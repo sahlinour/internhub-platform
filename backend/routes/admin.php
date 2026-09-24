@@ -20,19 +20,15 @@ use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Http\Controllers\Admin\TacheController as AdminTacheController;
 
 
-/*
-|--------------------------------------------------------------------------
-| Admin Authentication
-|--------------------------------------------------------------------------
-*/
 
-Route::prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/login', [AdminAuthenticatedSessionController::class, 'create'])
-        ->name('login');
+Route::middleware('guest:admin')->group(function () {
+    Route::get('/admin/login', [AdminAuthenticatedSessionController::class, 'create'])
+        ->name('admin.login');
 
-    Route::post('/login', [AdminAuthenticatedSessionController::class, 'store'])
-        ->name('login.store');
+    Route::post('/admin/login', [AdminAuthenticatedSessionController::class, 'store'])
+        ->middleware('throttle:8,1')
+        ->name('admin.login.store');
 });
 
 
@@ -56,11 +52,6 @@ Route::middleware(['auth:admin', 'role:Admin'])
             ->name('logout');
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Admin Profile
-        |--------------------------------------------------------------------------
-        */
 
         Route::get('/profile', [AdminProfileController::class, 'show'])
             ->name('profile.show');

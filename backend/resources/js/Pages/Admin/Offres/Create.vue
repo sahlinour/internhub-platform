@@ -14,7 +14,7 @@ const form = useForm({
     description: '',
     duree: '',
     date_limite: '',
-    statut: 'ouverte',
+    statut: 'open',
     idUtilisateur_Entreprise: '',
 })
 

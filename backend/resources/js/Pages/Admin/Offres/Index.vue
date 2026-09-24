@@ -43,7 +43,7 @@ const stats = computed(() => {
         {
             label: 'Open',
             value: offers.filter(
-                offer => offer.statut === 'ouverte'
+                offer => offer.statut === 'open'
             ).length,
             detail: 'Currently open offers',
             icon: 'check',
@@ -52,7 +52,7 @@ const stats = computed(() => {
         {
             label: 'Other Status',
             value: offers.filter(
-                offer => offer.statut !== 'ouverte'
+                offer => offer.statut !== 'open'
             ).length,
             detail: 'Pending or closed offers',
             icon: 'alert',

@@ -63,7 +63,7 @@ class OffreDeStageController extends Controller
             'description' => ['nullable', 'string'],
             'duree' => ['required', 'string', 'max:255'],
             'date_limite' => ['nullable', 'date'],
-            'statut' => ['required', 'in:ouverte,en_attente,fermee'],
+            'statut' => ['required', 'in:open,pending,closed'],
             'idUtilisateur_Entreprise' => [
                 'required',
                 'exists:entreprises,user_id',
@@ -113,7 +113,7 @@ class OffreDeStageController extends Controller
             'description' => ['nullable', 'string'],
             'duree' => ['required', 'string', 'max:255'],
             'date_limite' => ['nullable', 'date'],
-            'statut' => ['required', 'in:active,inactive,closed'],
+            'statut' => ['required', 'in:open,pending,closed'],
             'idUtilisateur_Entreprise' => [
                 'required',
                 'exists:entreprises,user_id',
@@ -130,7 +130,7 @@ class OffreDeStageController extends Controller
     public function updateStatus(Request $request, $id): RedirectResponse
     {
         $validated = $request->validate([
-            'statut' => ['required', 'in:active,inactive,closed'],
+            'statut' => ['required', 'in:open,pending,closed'],
         ]);
 
         $offre = Offredestage::findOrFail($id);

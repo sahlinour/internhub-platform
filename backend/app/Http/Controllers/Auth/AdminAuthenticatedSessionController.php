@@ -33,19 +33,19 @@ class AdminAuthenticatedSessionController extends Controller
             ]);
         }
 
-        $request->session()->regenerate();
 
         $user = Auth::guard('admin')->user();
 
-        if ($user->role !== 'Admin') {
+        if ($user->role !== 'Admin' || $user->etat === 'block') {
             Auth::guard('admin')->logout();
-
             $request->session()->regenerateToken();
 
+
             throw ValidationException::withMessages([
-                'email' => 'Administrator access only.',
+               'email' => 'Invalid credentials.',
             ]);
         }
+        $request->session()->regenerate();
 
         return redirect()->route('admin.dashboard');
     }
@@ -53,7 +53,7 @@ class AdminAuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('admin')->logout();
-
+        $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('admin.login');

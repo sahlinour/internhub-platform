@@ -23,7 +23,7 @@ const form = useForm({
     description: props.offre.description ?? '',
     duree: props.offre.duree ?? '',
     date_limite: toDateInput(props.offre.date_limite),
-    statut: props.offre.statut ?? 'ouverte',
+    statut: props.offre.statut ?? 'open',
     idUtilisateur_Entreprise:
         props.offre.idUtilisateur_Entreprise ?? '',
 })
@@ -182,9 +182,9 @@ const submit = () => {
                                 class="w-full rounded-lg border border-[#dce5eb]
                                        bg-white px-3 py-2.5 text-[11px]"
                             >
-                                <option value="ouverte">Open</option>
-                                <option value="en_attente">Pending</option>
-                                <option value="fermee">Closed</option>
+                                <option value="open">Open</option>
+                                <option value="pending">Pending</option>
+                                <option value="closed">Closed</option>
                             </select>
                         </div>
 
