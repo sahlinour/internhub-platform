@@ -141,7 +141,7 @@ describe('Encadrant Tasks Index', () => {
         expect(wrapper.text()).toContain('Build the internship API')
         expect(wrapper.text()).toContain('Student One')
         expect(wrapper.text()).toContain('High')
-        expect(wrapper.text()).toContain('2026-09-30')
+        expect(wrapper.text()).toContain('30/09/2026')
         expect(wrapper.text()).toContain('In Progress')
 
         expect(wrapper.text()).toContain('Prepare documentation')
@@ -192,7 +192,7 @@ describe('Encadrant Tasks Index', () => {
         const row = wrapper.find('tbody tr')
 
         const priorityCell = row.findAll('td')[2]
-        const statusSpan = row.find('td:nth-child(5) span')
+        const statusSpan = row.find('td:nth-child(6) span')
 
         expect(priorityCell.classes()).toContain('text-red-600')
         expect(statusSpan.classes()).toContain('bg-emerald-50')
