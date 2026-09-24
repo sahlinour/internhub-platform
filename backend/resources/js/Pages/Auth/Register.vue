@@ -45,7 +45,7 @@ const submit = () => {
     class="grid min-h-screen grid-cols-1 bg-white min-[901px]:grid-cols-2"
   >
 
-    <!-- LEFT PANEL -->
+  
     <div class="min-w-0 bg-[#123b55]">
       <div
         class="relative min-h-[320px] w-full

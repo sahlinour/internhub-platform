@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Ville;
@@ -39,12 +40,16 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
 {
     $validated = $request->validate([
-        'name' => ['required', 'string', 'max:255'],
+        'name' => [
+            'required',
+            'string',
+            'min:2',
+             'max:255'
+             ],
 
         'email' => [
             'required',
             'string',
-            'lowercase',
             'email',
             'max:255',
             'unique:' . User::class,
@@ -52,24 +57,33 @@ class RegisteredUserController extends Controller
 
         'ville_id' => ['nullable', 'exists:villes,id'],
 
-        'password' => [
+      'password' => [
             'required',
             'confirmed',
-            Rules\Password::defaults(),
-        ],
+            Rules\Password::min(8)
+                ->max(256)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+                ->uncompromised(),
+       ],
+
 
         'role' => [
             'required',
             'in:Stagiaire,Entreprise',
         ],
 
-        // Company fields
+
         'secteur' => ['nullable', 'string', 'max:255'],
         'adresse' => ['nullable', 'string', 'max:255'],
         'site_web' => ['nullable', 'url', 'max:255'],
-        'description' => ['nullable', 'string'],
+        'description' => ['nullable', 'string','max:2000'],
+        'terms'=>['accepted']
     ]);
 
+    $user = DB::transaction(function () use ($validated): User {
     $user = User::create([
         'nom_complet' => $validated['name'],
         'email' => $validated['email'],
@@ -93,6 +107,10 @@ class RegisteredUserController extends Controller
             'user_id' => $user->id,
         ]);
     }
+     return $user;
+    });
+
+
     event(new Registered($user));
 
     Auth::login($user);

@@ -20,6 +20,10 @@ class RoleMiddleware
             abort(403, 'Unauthorized role.');
         }
 
+        if ($user->etat === 'block') {
+            abort(403, 'Account blocked.');
+        }
+
         return $next($request);
     }
 }

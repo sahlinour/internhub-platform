@@ -9,83 +9,62 @@ const props = defineProps({
 })
 
 const normalized = computed(() =>
-    props.status?.toLowerCase() ?? ''
+    String(props.status ?? '').trim().toLowerCase()
 )
 
 const statusClasses = computed(() => {
-    // ACTIVE
-    if (
-        normalized.value === 'active' ||
-        normalized.value === 'en cours'
-    ) {
+    if (['active', 'open', 'ouverte', 'en cours'].includes(normalized.value)) {
         return 'bg-[#e8f6ee] text-[#3f9a65]'
     }
 
-    // PENDING
-    if (
-        normalized.value === 'pending' ||
-        normalized.value === 'en attente'
-    ) {
+    if (['pending', 'en_attente', 'en attente'].includes(normalized.value)) {
         return 'bg-[#fff3dc] text-[#c28b2a]'
     }
 
-    // BLOCKED / INACTIVE / CANCELLED
     if (
-        normalized.value === 'block' ||
-        normalized.value === 'blocked' ||
-        normalized.value === 'inactive' ||
-        normalized.value === 'annulée'
+        ['block', 'blocked', 'inactive', 'closed', 'fermee', 'annulée']
+            .includes(normalized.value)
     ) {
         return 'bg-[#fceaea] text-[#c25d5d]'
     }
 
-    // COMPLETED
-    if (
-        normalized.value === 'terminée' ||
-        normalized.value === 'completed'
-    ) {
+    if (['terminée', 'completed'].includes(normalized.value)) {
         return 'bg-[#e9f1f8] text-[#3e7195]'
     }
 
-    // DEFAULT
     return 'bg-[#edf2f5] text-[#6c8290]'
 })
 
 const label = computed(() => {
-    if (normalized.value === 'block') {
-        return 'Inactive'
+    const labels = {
+        block: 'Inactive',
+        blocked: 'Inactive',
+        inactive: 'Inactive',
+        open: 'Open',
+        ouverte: 'Open',
+        pending: 'Pending',
+        en_attente: 'Pending',
+        closed: 'Closed',
+        fermee: 'Closed',
+        'en cours': 'Active',
+        'en attente': 'Pending',
+        terminée: 'Completed',
+        completed: 'Completed',
+        annulée: 'Cancelled',
     }
 
-    if (normalized.value === 'en cours') {
-        return 'Active'
-    }
-
-    if (normalized.value === 'terminée') {
-        return 'Completed'
-    }
-
-    if (normalized.value === 'annulée') {
-        return 'Cancelled'
-    }
-
-    if (!props.status) {
+    if (!normalized.value) {
         return 'Unknown'
     }
 
-    return (
-        props.status.charAt(0).toUpperCase() +
-        props.status.slice(1)
-    )
+    return labels[normalized.value]
+        ?? props.status.charAt(0).toUpperCase() + props.status.slice(1)
 })
 </script>
 
 <template>
     <span
-        class="inline-flex min-w-[62px]
-               items-center justify-center
-               rounded-full
-               px-[9px] py-[5px]
-               text-[8px] font-bold"
+        class="inline-flex min-w-[62px] items-center justify-center rounded-full px-[9px] py-[5px] text-[8px] font-bold"
         :class="statusClasses"
     >
         {{ label }}

@@ -12,8 +12,9 @@ class HomeController extends Controller
         $offres = Offredestage::with([
             'entreprise.user.ville',
         ])
+            ->where('statut', 'ouverte')
             ->latest('id')
-            ->take(6)
+            ->take(3)
             ->get();
 
         return Inertia::render('Home', [

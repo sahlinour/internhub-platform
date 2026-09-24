@@ -61,15 +61,7 @@ Route::get('/offres', [GuestOffreController::class, 'index'])
 Route::get('/offres/{id}', [GuestOffreController::class, 'show'])
     ->name('offres.show');
 
-// Admin authentication
-Route::middleware('guest')->group(function () {
 
-    Route::get('/admin/login', [AdminAuthenticatedSessionController::class, 'create'])
-        ->name('admin.login');
-
-    Route::post('/admin/login', [AdminAuthenticatedSessionController::class, 'store'])
-        ->name('admin.login.store');
-});
 
 // Admin dashboard
 Route::get('/admin/dashboard', function (Request $request) {
