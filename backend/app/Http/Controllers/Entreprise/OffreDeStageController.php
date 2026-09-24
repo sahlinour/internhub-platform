@@ -48,7 +48,8 @@ class OffreDeStageController extends Controller
             'idUtilisateur_Entreprise' => Auth::id(),
         ]);
 
-        return back()->with('message', 'Internship offer created successfully.');
+        return redirect()->route('entreprise.offres.index')
+                         ->with('message', 'Internship offer created successfully.');
     }
 
     public function update(Request $request, $id)
@@ -62,7 +63,7 @@ class OffreDeStageController extends Controller
             'description' => 'required|string',
             'duree'       => 'required|string|max:255',
             'date_limite'  => 'required|date',
-            'statut'      => 'required|in:active,inactive,closed',
+            'statut'      => 'required|in:ouverte,en_attente,fermee',
         ]);
 
         $offre->update($request->only(['titre', 'description', 'duree', 'date_limite', 'statut']));
