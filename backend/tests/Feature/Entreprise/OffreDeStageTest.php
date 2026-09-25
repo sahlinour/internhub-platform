@@ -161,7 +161,7 @@ class OffreDeStageTest extends TestCase
                 'description' => 'Nouvelle description.',
                 'duree' => '6 mois',
                 'date_limite' => now()->addDays(60)->toDateString(),
-                'statut' => 'active',
+                'statut' => 'fermee',
             ]);
 
         $response->assertSessionHasNoErrors();
@@ -172,7 +172,7 @@ class OffreDeStageTest extends TestCase
             'titre' => 'Développeur Laravel confirmé',
             'description' => 'Nouvelle description.',
             'duree' => '6 mois',
-            'statut' => 'active',
+            'statut' => 'fermee',
         ]);
     }
 
@@ -189,7 +189,7 @@ class OffreDeStageTest extends TestCase
                 'description' => 'Tentative de modification.',
                 'duree' => '6 mois',
                 'date_limite' => now()->addDays(60)->toDateString(),
-                'statut' => 'active',
+                'statut' => 'fermee',
             ]);
 
         $response->assertNotFound();
